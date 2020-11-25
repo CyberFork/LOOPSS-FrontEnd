@@ -1,5 +1,5 @@
-.backUp/
-.Graph/
-.mp3/
+./backUp
+./Graph
+./mp3
 *.zip
 atips
