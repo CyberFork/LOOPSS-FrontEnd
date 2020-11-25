@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Loops</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="./img/node.png">
+    <!-- web3 -->
+    <script src="./js/web3.min.js"></script>
+
+    <script language="javascript" type="text/javascript" src="./js/ABI_Loop.js"></script>
+
+
+    <!-- vue.js -->
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- 生产环境版本，优化了尺寸和速度 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <!-- css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link type="text/css" rel="styleSheet" href="./css/neon.css" />
+
+    <!-- 强制刷新免遗留 -->
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+    <meta http-equiv="expires" content="0">
+
+</head>
+
+<style scoped>
+    body {
+        padding: 1vh;
+        /* background-image: url(./img/fqzdj.jpg);
+        background-repeat: repeat;
+        background-color: #E6E6E6; */
+        background-color: #111;
+        overflow-x: hidden;
+        /* overflow-y: hidden;   */
+    }
+
+    svg,
+    canvas {
+        /* padding-bottom: 30px; */
+        text-align: center;
+        /* width: 100%;
+        height: 100%; */
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<body bgcolor="#E6E6FA">
+    <canvas></canvas>
+
+    <script>
+        const STAR_COUNT = (window.innerWidth + window.innerHeight) / 8,
+            STAR_SIZE = 3,
+            STAR_MIN_SCALE = 0.2,
+            OVERFLOW_THRESHOLD = 50;
+
+        const canvas = document.querySelector('canvas'),
+            context = canvas.getContext('2d');
+
+        let scale = 1, // device pixel ratio
+            width,
+            height;
+
+        let stars = [];
+
+        let pointerX,
+            pointerY;
+
+        let velocity = { x: 0, y: 0, tx: 0, ty: 0, z: 0.0005 };
+
+        let touchInput = false;
+
+        generate();
+        resize();
+        step();
+
+        window.onresize = resize;
+        // canvas.onmousemove = onMouseMove;
+        // canvas.ontouchmove = onTouchMove;
+        // canvas.ontouchend = onMouseLeave;
+        window.onmousemove = onMouseMove;
+        window.ontouchmove = onTouchMove;
+        window.ontouchend = onMouseLeave;
+        document.onmouseleave = onMouseLeave;
+
+        function generate() {
+
+            for (let i = 0; i < STAR_COUNT; i++) {
+                stars.push({
+                    x: 0,
+                    y: 0,
+                    z: STAR_MIN_SCALE + Math.random() * (1 - STAR_MIN_SCALE)
+                });
+            }
+
+        }
+
+        function placeStar(star) {
+
+            star.x = Math.random() * width;
+            star.y = Math.random() * height;
+
+        }
+
+        function recycleStar(star) {
+
+            let direction = 'z';
+
+            let vx = Math.abs(velocity.x),
+                vy = Math.abs(velocity.y);
+
+            if (vx > 1 || vy > 1) {
+                let axis;
+
+                if (vx > vy) {
+                    axis = Math.random() < vx / (vx + vy) ? 'h' : 'v';
+                }
+                else {
+                    axis = Math.random() < vy / (vx + vy) ? 'v' : 'h';
+                }
+
+                if (axis === 'h') {
+                    direction = velocity.x > 0 ? 'l' : 'r';
+                }
+                else {
+                    direction = velocity.y > 0 ? 't' : 'b';
+                }
+            }
+
+            star.z = STAR_MIN_SCALE + Math.random() * (1 - STAR_MIN_SCALE);
+
+            if (direction === 'z') {
+                star.z = 0.1;
+                star.x = Math.random() * width;
+                star.y = Math.random() * height;
+            }
+            else if (direction === 'l') {
+                star.x = -OVERFLOW_THRESHOLD;
+                star.y = height * Math.random();
+            }
+            else if (direction === 'r') {
+                star.x = width + OVERFLOW_THRESHOLD;
+                star.y = height * Math.random();
+            }
+            else if (direction === 't') {
+                star.x = width * Math.random();
+                star.y = -OVERFLOW_THRESHOLD;
+            }
+            else if (direction === 'b') {
+                star.x = width * Math.random();
+                star.y = height + OVERFLOW_THRESHOLD;
+            }
+
+        }
+
+        function resize() {
+
+            scale = window.devicePixelRatio || 1;
+
+            width = window.innerWidth * scale;
+            height = window.innerHeight * scale;
+
+            canvas.width = width;
+            canvas.height = height;
+
+            stars.forEach(placeStar);
+
+        }
+
+        function step() {
+
+            context.clearRect(0, 0, width, height);
+
+            update();
+            render();
+
+            requestAnimationFrame(step);
+
+        }
+
+        function update() {
+
+            velocity.tx *= 0.96;
+            velocity.ty *= 0.96;
+
+            velocity.x += (velocity.tx - velocity.x) * 0.8;
+            velocity.y += (velocity.ty - velocity.y) * 0.8;
+
+            stars.forEach((star) => {
+
+                star.x += velocity.x * star.z;
+                star.y += velocity.y * star.z;
+
+                star.x += (star.x - width / 2) * velocity.z * star.z;
+                star.y += (star.y - height / 2) * velocity.z * star.z;
+                star.z += velocity.z;
+
+                // recycle when out of bounds
+                if (star.x < -OVERFLOW_THRESHOLD || star.x > width + OVERFLOW_THRESHOLD || star.y < -OVERFLOW_THRESHOLD || star.y > height + OVERFLOW_THRESHOLD) {
+                    recycleStar(star);
+                }
+
+            });
+
+        }
+        function rdm() {
+            return String(Math.floor(Math.random() * 256) + ',');
+        }
+        function render() {
+
+            stars.forEach((star) => {
+
+                context.beginPath();
+                context.lineCap = 'round';
+                context.lineWidth = STAR_SIZE * star.z * scale;
+                context.strokeStyle = 'rgba(255,255,255,' + (0.5 + 0.5 * Math.random()) + ')';
+                // context.strokeStyle = 'rgba('+rdm()+rdm()+rdm()+(0.5 + 0.5*Math.random())+')';
+                // context.strokeText = "Hello World!";
+                context.beginPath();
+                context.moveTo(star.x, star.y);
+
+                var tailX = velocity.x * 2,
+                    tailY = velocity.y * 2;
+
+                // stroke() wont work on an invisible line
+                if (Math.abs(tailX) < 0.1) tailX = 0.5;
+                if (Math.abs(tailY) < 0.1) tailY = 0.5;
+
+                context.lineTo(star.x + tailX, star.y + tailY);
+
+                context.stroke();
+
+            });
+
+        }
+
+        function movePointer(x, y) {
+
+            if (typeof pointerX === 'number' && typeof pointerY === 'number') {
+
+                let ox = x - pointerX,
+                    oy = y - pointerY;
+
+                velocity.tx = velocity.tx + (ox / 8 * scale) * (touchInput ? 1 : -1);
+                velocity.ty = velocity.ty + (oy / 8 * scale) * (touchInput ? 1 : -1);
+
+            }
+
+            pointerX = x;
+            pointerY = y;
+
+        }
+
+        function onMouseMove(event) {
+
+            touchInput = false;
+
+            movePointer(event.clientX, event.clientY);
+
+        }
+
+        function onTouchMove(event) {
+
+            touchInput = true;
+
+            movePointer(event.touches[0].clientX, event.touches[0].clientY, true);
+
+            event.preventDefault();
+
+        }
+
+        function onMouseLeave() {
+
+            pointerX = null;
+            pointerY = null;
+
+        }
+    </script>
+    <!-- <script language="javascript" type="text/javascript" src="./js/trianglify.bundle.js"></script> -->
+    <script src='https://unpkg.com/trianglify@^4/dist/trianglify.bundle.js'></script>
+    <script>
+        const pattern = trianglify({
+            width: window.innerWidth,
+            height: window.innerHeight
+        })
+        document.body.appendChild(pattern.toCanvas())
+    </script>
+    <div id="app" style="width: 100%;">
+        <!-- background-color: rgba('+`255, 0, 255`+, 0.2); -->
+        <!-- :style='{background-color:"("+rdm()+rdm()+rdm()+"0.2)"}'> -->
+        <header>
+            <div class="card" style="background-color: rgba(255, 0, 255, 0.2);">
+                <div class="card-body">
+                    <span>
+                        <span class="neon" onclick="location.reload();"><a
+                                style="font-size: 8.5rem;position: absolute; top: -4rem;">∞</a><span style="
+                                top: 3.1rem;
+                                position: relative;
+                            ">LNS : {{psLNS}}</span> </a> <img src=""></span>
+                    </span>
+                    <span style="float: right;">
+                        <a>Total Minter: {{TotalSupply}} </a><br>
+                        <a>BlockHeight: {{blockHeight}}</a>
+
+                    </span>
+
+                </div>
+            </div>
+
+        </header>
+        <br>
+        <div id="element" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="300000"
+            style="position: absolute;right: 1rem;z-index: 2; background-color: rgba(255,215,0,0.4);">
+            <div class="toast-header" style="background-color:rgba(255, 215, 0, 0.3)">
+                <img src="./img/nash.ico" class="rounded mr-2" alt="NASH icon" style="width: 1rem;height: 1rem;">
+                <strong class="mr-auto" style="padding-right: 1rem;">{{toastTitle}}</strong>
+                <small> @{{timeNow}}</small>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" style="white-space: pre-line;">{{toastContent}}
+            </div>
+        </div>
+        <nav style="float: none;margin-bottom: 5px;z-index: 1;">
+            <div class="row">
+                <div class="col-9">
+                    <div class="card" style="background-color: rgba(0, 250, 154, 0.3);">
+                        <div class="card-body">
+                            $Loops contract @:<a
+                                :href="'https://kovan.etherscan.io/address/'+LoopsAddress">{{LoopsAddress}}
+                            </a>
+                            <br>
+                            <!-- MVP Oracle contract @:<a
+                                :href="'https://kovan.etherscan.io/address/'+mvpAddress">{{mvpAddress}}
+                            </a> -->
+                            <br>
+                            关注地址 :
+                            <!-- <a :href="'https://kovan.etherscan.io/address/'+addressNow"
+                                target="blank">{{addressNow}}</a> -->
+                            
+                            <!-- <div class="btn-group" role="group" aria-label="First group"
+                                style="cursor:pointer;width:50%;margin-bottom: 5px;">
+                                <input type="text" class="form-control" v-model="addressNow" placeholder="默认自己地址"
+                                aria-label="Address">
+                                <button type="button" class="btn btn-warning" style="width: 10%; cursor: pointer;"
+                                    title="刷新">刷新</button>
+                            </div> -->
+                                                    <div class="btn-group" role="group" aria-label="First group"
+                            style="cursor:pointer;width: 100%;margin-bottom: 5px;">
+                            <input type="text" class="form-control" v-model="addressNow" placeholder="默认自己地址" aria-label="Address">
+                            <button type="button" class="btn btn-warning" style="width: 50%;" title="刷新" @click='refreshAll'>刷新</button>
+                        </div>
+
+                            <!-- <hr class="my-4">
+                            Mine Field Contract:{{GovHoeTokenName}}:{{minerAddress}}
+                            <br />
+                            Total Gov locked: {{govTotalLockedF}} {{GovHoeTokenName}} -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <!-- <hr> -->
+
+
+        <!-- </div> -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card" style="width: 100%;background-color: rgba(123,104,238,0.3);">
+                    <div class="card-body">
+                        <h5 class="card-title">Balance</h5>
+                        <!-- <button type="button" class="btn btn-success" style="width:100%;margin-bottom: 5px;" title="">关注自己地址</button> -->
+                        <!-- <div class="btn-group" role="group" aria-label="First group"
+                            style="cursor:pointer;width: 100%;margin-bottom: 5px;">
+                            <input type="text" class="form-control" placeholder="0x……" aria-label="Address">
+                            <button type="button" class="btn btn-secondary" style="width: 50%;" title="获取我钱包中该地址的余额">关注其他地址</button>
+                        </div> -->
+                        <!-- <span class="btn btn-success" style="cursor:pointer;width: 100%;" @click='claimNAPs()'
+                            title="To Bank">🔰Flowing UBI: {{mintedInWalletF}}——🔰</span> -->
+                        <div  style="text-align: center;">
+                            🔰Flowing UBI: {{mintedInWalletF}}——🔰
+                        </div>
+                        <hr>
+                        <div class="btn-group" role="group" aria-label="First group"
+                            style="cursor:pointer;width: 100%;">
+                            <!-- <span class="btn btn-warning" style="cursor:pointer;width: 100%;"
+                                @click='NAPs_v_WD = napsInWallet1e18 / 1e18'>Wallet:{{napsInWalletF}}</span>
+                            <span class="btn btn-light" style="cursor:pointer;width: 100%;"
+                                @click='NAPs_v_WD = napsInBank1e18 / 1e18'>Bank:{{napsInBankF}}</span> -->
+
+                        </div>
+                        <span style="cursor:pointer">【Wallet:钱包中的其他代币余额
+                            】</span>
+
+                        <div class="btn-group" role="group" aria-label="First group"
+                            style="cursor:pointer;width: 100%;">
+
+                            <input type="text" class="form-control" v-model="lookMinter" placeholder="Address:0x" aria-label="Address">
+                            <button type="button" class="btn btn-secondary" @click="getMinterBalanceOf()" title="获取我钱包中该地址的余额">🔍</button>
+                            
+                                                    
+                            
+                            
+                            <!-- <button type="button" class="btn btn-secondary" 
+                                title="获取该地址中我的代币余额">MeInIt</button> -->
+                        </div>
+                        <div style="text-align: center;">
+                            👽{{otherMintedInWalletF}}👽
+                        </div>
+                    </div>
+                </div>
+            <!-- </div>
+            <div class="col-6">
+                <div class="card" style="width: 100%;">
+                    <div class="card-body">
+                        <div class="row" style="margin-bottom: 5px;">
+                            <span class="col-9">
+                                <h5 class="card-title">LNS: <a href='#'>LNS介绍，未匹配</a></h5>
+                            </span>
+                            <div class="col-3">
+                                <button type="button" class="btn btn-light" @click='approveLPs()'
+                                    title="Approve $NAP-ETH LPToken for this Contract">Claim</button>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom: 5px;">
+                            <div class="col-7">
+                                <a title="My $NAP-ETH LPToken Locked Mining">{{lpTokenLockedF}} $ETH 分红</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+    </div>
+    </div>
+    </div>
+</body>
+
+<script>
+    var kovan = true;
+    if (kovan) {
+        var LoopsAddress = "0x899b422158E18a899A146036200644125171B1f3";
+    } else {
+        //local
+        var LoopsAddress = "0x6E77B74a7bbC4082264948b5f89cd8821Cf4DcA0";
+    }
+    // function rdm() {
+    //     return String(Math.floor(Math.random() * 256) + ',');
+    // }
+    // var firstContractHigh = 21454192;
+    // self.setTimeout("app.RefreshFunds()", 1000);
+    self.setInterval("app.refreshAll()", 20000);
+    console.log('LoopsAddress:', LoopsAddress);
+    // console.log('MVPAddress:', MVPAddress);
+
+    // var lg = 'en';
+    //TODO:测试web3是metamask的还是我导入的
+    // web3js = new Web3(web3.currentProvider);
+    web3js = new Web3(web3.currentProvider);
+    LoopContract = new web3js.eth.Contract(Loop_ABI, LoopsAddress);
+    // MVPContract = new web3js.eth.Contract(MVP_ABI, MVPAddress);
+    // LPContract = new web3js.eth.Contract(NAPToken_ABI, LPTokenAddress);
+    //如果用户安装了MetaMask，必须要求他们授权应用登录并获取其账号才能使用
+    ethereum.enable();
+    window.ethereum;
+    // 成功之后这个会返回当前选择的账户
+    web3js.eth.getAccounts().then(function (accounts) {
+        //现在只能使用then异步的方式返回单个了
+        console.log('Now account:', accounts);
+    });
+    ethereum.on('accountsChanged', function (accounts) {
+        // Time to reload your interface with accounts[0]!
+        // app.RefreshFunds();
+        // (app.MyState = 0) & (app.FilterState = 1) & (app.getWaitJoinOracleIDsRL(app.oracle_filter_IdStart, app.LimitsReturn))
+        //   app.myOracleDatas = [];
+        //   app.lobbyOracleDatas = [];
+    })
+    var STORAGE_KEY = 'Loops';
+    var DApp_Storage = {
+        fetch: function () {
+            //整个取
+            var oracles = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            // 如果取不到就返回[]
+            // oracles.forEach(function (oracle, index) {
+            //   oracle.id = index
+            // });
+            // xxxStorage.uid = oracles.length; //这里是unitID的意思，单个item的ID
+            return oracles
+        },
+        save: function (oracles) {
+            //整个存
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(oracles))
+        }
+    };
+    var myDate = new Date();
+    var app = new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                LoopsAddress: LoopsAddress,
+                // mvpAddress: MVPAddress,
+                w3: web3js = new Web3(web3.currentProvider),
+                addressNow: '0x0000000000000000000000000000000000000000',
+                addressLook: '',
+                localDatas: DApp_Storage.fetch(),
+                //宏观数据
+                TotalSupply: 0,
+                SpiritComingEvents: '',
+                blockHeight: 0,
+                timeNow: myDate.toLocaleDateString() + '-' + myDate.toLocaleTimeString(),
+                totalLPLocked1e18: '',
+                classificationTexts: { 99: 'Click Left Side Button to show', 0: 'Wait me join', 1: 'My created, wait gote join', 2: 'My created, wait me to anneal', 3: 'My joined, wait init to anneal' },
+                cfNumber: 99,
+                //个人数据
+                psLNS: 'No LNS',
+                mintedInWallet1e18: 0,
+                mintedInWalletF: 0,
+                napsUnclaim1e18: 0,
+                napsUnclaimF: 0,
+                lpTokenLocked1e18: 0,
+                lpTokenLockedF: 0,
+                ethUnclaim1e18: 0,
+                ethUnclaimF: 0,
+                myLPproportion: 0,
+                otherMintedInWallet1e18:0,
+                otherMintedInWalletF:0,
+                lookMinter:'',
+                //通知数据
+                toastTitle: 'NASH #0 MVP',
+                toastContent: 'Welcome to NASH protocol. This page is the interface of #0 MVP Contract which is the first contract of NASH——100 plan. \
+                This toast will been used to show notification when get feedback from blockChain and will auto close in 5 mins.',
+                //Oracle数据
+                oracle_filter_joinfee: '',
+                oracle_filter_waitblocks: '',
+                oracle_filter_IdStart: '',
+                oracle_create_joinfee: '',
+                oracle_create_waitblocks: '',
+                oracle_create_rawEntropy: '',
+                oracle_create_bidFee: '',
+                fingers: { 0: '🤝', 201: '💡', 1: '✌', 2: '✊', 3: '✋' },
+                stateMapping: { 255: 'Wait join', 201: 'Joined&setStg', 1: '✌', 2: '✊', 3: '✋' },//现在已经没有255
+                OracleDatas: [],
+                FilterState: 0,// 1:in lobby not joined ,2:wait you to anneal ,3: wait init to anneal,4:expired
+                MyState: 0,
+                filterText: { 1: 'Create@', 2: 'Expire@', 3: 'Will expire@', 4: 'Already expired@' },
+                filterButtonText: { 1: { 0: 'Wait Me Join', 201: 'Wait Gote Join' }, 2: { 4: 'My Joined', 201: 'My Created wait gote' }, 3: 'Wait Anneal', 4: 'Expired' },
+                LimitsReturn: 10,
+                alertAtOracleCreate: '',
+                showAlertAtOracleCreate: false,
+                joiningOracleID: '',
+                joiningOracleCreateAt: '',
+                joiningOracleJoinFee: '',
+                joiningOracleWaitBlock: '',
+                joiningOraclePrize: '',
+                oracle_joing_bidFee: '',
+                oracle_join_joinfee: '',
+                oracle_overReason: { 0: 'AnnealInitWin', 1: 'AnnealGoteWin', 2: 'CriticalAnnealed', 3: 'AnnealExpiredOracle' },
+                //test
+                dt: '',
+
+            }
+        },
+        //声明周期
+        beforeCreat() {
+
+        },
+        Created() {
+
+        },
+        beforeMount() {
+
+        },
+        mounted() {
+            this.refreshAll();
+            this.addressNow = web3.eth.defaultAccount;
+            // $('.toast').toast('show');
+            // $('.alert').alert('close');
+        },
+        beforeUpdate() {
+
+        },
+        updated() {
+            // 每次更新其他数据的时候会调用这个更新整个数据，所以不用再手动更新了。
+            this.delyRefresh();
+        },
+        beforeDestory() {
+
+        },
+
+        destoryed() {
+
+        },
+        //方法
+        methods: {
+            // // 国际化
+            // // internationalization(_lg) {
+            // //     if (_lg == 'zh') {
+            // //         this.title = '{{GovHoeTokenName}} 治理'
+            // //     } else if (_lg == 'en') {
+            // //         this.title = '{{GovHoeTokenName}} Gov'
+            // //     }
+            // // },
+            rdm() {
+                return String(Math.floor(Math.random() * 256) + ',');
+            },
+            // 数据处理方法
+            _formatBigNumber(_bn) {
+                // return web3js.utils.fromWei(_bn, 'ether');
+                return parseFloat(web3js.utils.fromWei(_bn, 'ether')).toLocaleString();
+                // parseFloat().toLocaleString();
+            },
+            // 数据获取方法
+            refreshAll() {
+                // this.internationalization(lg);
+                this.getLoopTotalSupply();
+                this.getBlockHeight();
+            },
+            delyRefresh() {
+                // 等更新之后才有default地址
+                // this.getMynapsInBank();
+                // this.getMyNAPsInWallet();
+                // this.getMyUnclaimNaps();
+                // this.getLPTokenProportion();
+                // this.getMyUnClaimETHs();
+                // this.addressNow = web3.eth.defaultAccount;
+                this.getMyMintedInWallet();
+                // this.getMyLNS();
+                // this.getMyBentoInBank();
+                // this.getGovBalance();
+                // this.getGovLockedAmount();
+                // this.getBentoMiningSpeed();
+                // this.getMyMiningPercentage()
+            },
+            getLoopTotalSupply() {
+                LoopContract.methods.totalSupply().call().then((rst) => {
+                    this.TotalSupply = this._formatBigNumber(rst);
+                    // this.govTotalLockedF = this._formatBigNumber(rst);
+                    console.log(rst);
+                })
+            },
+            RefreshAccount() {
+                this.addressNow = web3.eth.defaultAccount;
+            },
+            async getMyLNS(){
+                this.psLNS = await LoopContract.methods.LoopNameSystem_Reverse(this.addressNow);
+                console.log('LNS:'+this.psLNS)
+            },
+            async getMyMintedInWallet() {
+                this.mintedInWallet1e18 = await LoopContract.methods.balanceOf(this.addressNow).call();
+                this.mintedInWalletF = this._formatBigNumber(this.mintedInWallet1e18);
+            },
+            async getMinterBalanceOf(){
+                if(this.lookMinter.length != 42){
+                    this.updateToastAndShow('Address error', '地址长度错误。');
+                    return;
+                }
+                this.updateToastAndShow('Other balance', '请求中');
+                this.otherMintedInWallet1e18 = await LoopContract.methods.minterBalanceOf(this.lookMinter,this.addressNow).call();
+                this.otherMintedInWalletF = this._formatBigNumber(this.otherMintedInWallet1e18);
+                this.updateToastAndShow('Other balance', '成功获取');
+                console.log(this.otherMintedInWallet1e18)
+            },
+            async getMyUnClaimETHs() {
+                this.ethUnclaim1e18 = await MVPContract.methods.unClaimedETHsOf(web3.eth.defaultAccount).call();
+                this.ethUnclaimF = this._formatBigNumber(this.ethUnclaim1e18);
+            },
+
+            // await MVPContract.methods.accumulatedProfitsPerLPToken1e18().call()
+            getBlockHeight() {
+                web3js.eth.getBlockNumber().then((rst) => { this.blockHeight = rst; console.log(rst) })
+            },
+
+            // 数据展示方法
+            updateToastAndShow(title, content) {
+                myDate = new Date();
+                this.timeNow = myDate.toLocaleDateString() + '-' + myDate.toLocaleTimeString();
+                this.toastTitle = title;
+                this.toastContent = content;
+                $('.toast').toast('show');
+            },
+            updateAlertInOracleCreate(swc, content) {
+                this.alertAtOracleCreate = content;
+                this.showAlertAtOracleCreate = swc;
+            },
+            // 数据交互方法
+            async claimAllETH() {
+                this.updateToastAndShow('Claim $ETH', `Pending: Claim ${this.ethUnclaimF} $ETHs to wallet …… ……`);
+                let rst = await MVPContract.methods.claim().send({ from: web3.eth.defaultAccount });
+                this.updateToastAndShow('Claim $ETHs', `Success: Claimed ${this.ethUnclaimF} $ETHs to wallet.`);
+            }
+        }
+    })
+
+</script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"
+    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+    crossorigin="anonymous"></script> -->
+
+
+
+</html>

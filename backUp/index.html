@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Loopss.me</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="./img/icon.png">
+    <!-- web3 -->
+    <script src="./js/web3.min.js"></script>
+
+    <script language="javascript" type="text/javascript" src="./js/ABI_Loop.js"></script>
+
+
+    <!-- vue.js -->
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/popper.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/clipboard.min.js"></script>
+    <!-- 生产环境版本，优化了尺寸和速度 -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+    <script src="./js/vue.js"></script>
+    <!-- css -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="./css/bootstrap.min.css" crossorigin="anonymous">
+    <link type="text/css" rel="styleSheet" href="./css/neon.css" />
+
+    <!-- 强制刷新免遗留 -->
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+    <meta http-equiv="expires" content="0">
+
+</head>
+
+<style scoped>
+    body {
+        padding: 1vh;
+        /* background-image: url(./img/fqzdj.jpg);
+        background-repeat: repeat;
+        background-color: #E6E6E6; */
+        background-color: #111;
+        overflow-x: hidden;
+        /* overflow-y: hidden;   */
+    }
+
+    svg,
+    canvas {
+        /* padding-bottom: 30px; */
+        text-align: center;
+        /* width: 100%;
+        height: 100%; */
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+
+    .dropdown-item {
+        cursor: pointer;
+    }
+</style>
+
+<body bgcolor="#E6E6FA">
+    <!-- <canvas></canvas>
+
+    <script>
+        const STAR_COUNT = (window.innerWidth + window.innerHeight) / 8,
+            STAR_SIZE = 3,
+            STAR_MIN_SCALE = 0.2,
+            OVERFLOW_THRESHOLD = 50;
+
+        const canvas = document.querySelector('canvas'),
+            context = canvas.getContext('2d');
+
+        let scale = 1, // device pixel ratio
+            width,
+            height;
+
+        let stars = [];
+
+        let pointerX,
+            pointerY;
+
+        let velocity = { x: 0, y: 0, tx: 0, ty: 0, z: 0.0005 };
+
+        let touchInput = false;
+
+        generate();
+        resize();
+        step();
+
+        window.onresize = resize;
+        // canvas.onmousemove = onMouseMove;
+        // canvas.ontouchmove = onTouchMove;
+        // canvas.ontouchend = onMouseLeave;
+        window.onmousemove = onMouseMove;
+        window.ontouchmove = onTouchMove;
+        window.ontouchend = onMouseLeave;
+        document.onmouseleave = onMouseLeave;
+
+        function generate() {
+
+            for (let i = 0; i < STAR_COUNT; i++) {
+                stars.push({
+                    x: 0,
+                    y: 0,
+                    z: STAR_MIN_SCALE + Math.random() * (1 - STAR_MIN_SCALE)
+                });
+            }
+
+        }
+
+        function placeStar(star) {
+
+            star.x = Math.random() * width;
+            star.y = Math.random() * height;
+
+        }
+
+        function recycleStar(star) {
+
+            let direction = 'z';
+
+            let vx = Math.abs(velocity.x),
+                vy = Math.abs(velocity.y);
+
+            if (vx > 1 || vy > 1) {
+                let axis;
+
+                if (vx > vy) {
+                    axis = Math.random() < vx / (vx + vy) ? 'h' : 'v';
+                }
+                else {
+                    axis = Math.random() < vy / (vx + vy) ? 'v' : 'h';
+                }
+
+                if (axis === 'h') {
+                    direction = velocity.x > 0 ? 'l' : 'r';
+                }
+                else {
+                    direction = velocity.y > 0 ? 't' : 'b';
+                }
+            }
+
+            star.z = STAR_MIN_SCALE + Math.random() * (1 - STAR_MIN_SCALE);
+
+            if (direction === 'z') {
+                star.z = 0.1;
+                star.x = Math.random() * width;
+                star.y = Math.random() * height;
+            }
+            else if (direction === 'l') {
+                star.x = -OVERFLOW_THRESHOLD;
+                star.y = height * Math.random();
+            }
+            else if (direction === 'r') {
+                star.x = width + OVERFLOW_THRESHOLD;
+                star.y = height * Math.random();
+            }
+            else if (direction === 't') {
+                star.x = width * Math.random();
+                star.y = -OVERFLOW_THRESHOLD;
+            }
+            else if (direction === 'b') {
+                star.x = width * Math.random();
+                star.y = height + OVERFLOW_THRESHOLD;
+            }
+
+        }
+
+        function resize() {
+
+            scale = window.devicePixelRatio || 1;
+
+            width = window.innerWidth * scale;
+            height = window.innerHeight * scale;
+
+            canvas.width = width;
+            canvas.height = height;
+
+            stars.forEach(placeStar);
+
+        }
+
+        function step() {
+
+            context.clearRect(0, 0, width, height);
+
+            update();
+            render();
+
+            requestAnimationFrame(step);
+
+        }
+
+        function update() {
+
+            velocity.tx *= 0.96;
+            velocity.ty *= 0.96;
+
+            velocity.x += (velocity.tx - velocity.x) * 0.8;
+            velocity.y += (velocity.ty - velocity.y) * 0.8;
+
+            stars.forEach((star) => {
+
+                star.x += velocity.x * star.z;
+                star.y += velocity.y * star.z;
+
+                star.x += (star.x - width / 2) * velocity.z * star.z;
+                star.y += (star.y - height / 2) * velocity.z * star.z;
+                star.z += velocity.z;
+
+                // recycle when out of bounds
+                if (star.x < -OVERFLOW_THRESHOLD || star.x > width + OVERFLOW_THRESHOLD || star.y < -OVERFLOW_THRESHOLD || star.y > height + OVERFLOW_THRESHOLD) {
+                    recycleStar(star);
+                }
+
+            });
+
+        }
+        function rdm() {
+            return String(Math.floor(Math.random() * 256) + ',');
+        }
+        function render() {
+
+            stars.forEach((star) => {
+
+                context.beginPath();
+                context.lineCap = 'round';
+                context.lineWidth = STAR_SIZE * star.z * scale;
+                context.strokeStyle = 'rgba(255,255,255,' + (0.5 + 0.5 * Math.random()) + ')';
+                // context.strokeStyle = 'rgba('+rdm()+rdm()+rdm()+(0.5 + 0.5*Math.random())+')';
+                // context.strokeText = "Hello World!";
+                context.beginPath();
+                context.moveTo(star.x, star.y);
+
+                var tailX = velocity.x * 2,
+                    tailY = velocity.y * 2;
+
+                // stroke() wont work on an invisible line
+                if (Math.abs(tailX) < 0.1) tailX = 0.5;
+                if (Math.abs(tailY) < 0.1) tailY = 0.5;
+
+                context.lineTo(star.x + tailX, star.y + tailY);
+
+                context.stroke();
+
+            });
+
+        }
+
+        function movePointer(x, y) {
+
+            if (typeof pointerX === 'number' && typeof pointerY === 'number') {
+
+                let ox = x - pointerX,
+                    oy = y - pointerY;
+
+                velocity.tx = velocity.tx + (ox / 8 * scale) * (touchInput ? 1 : -1);
+                velocity.ty = velocity.ty + (oy / 8 * scale) * (touchInput ? 1 : -1);
+
+            }
+
+            pointerX = x;
+            pointerY = y;
+
+        }
+
+        function onMouseMove(event) {
+
+            touchInput = false;
+
+            movePointer(event.clientX, event.clientY);
+
+        }
+
+        function onTouchMove(event) {
+
+            touchInput = true;
+
+            movePointer(event.touches[0].clientX, event.touches[0].clientY, true);
+
+            event.preventDefault();
+
+        }
+
+        function onMouseLeave() {
+
+            pointerX = null;
+            pointerY = null;
+
+        } -->
+    </script>
+    <script language="javascript" type="text/javascript" src="./js/trianglify.bundle.js"></script>
+    <!-- <script src='https://unpkg.com/trianglify@^4/dist/trianglify.bundle.js'></script> -->
+    <script>
+        const pattern = trianglify({
+            width: window.innerWidth,
+            height: window.innerHeight
+        })
+        document.body.appendChild(pattern.toCanvas())
+    </script>
+    <div id="app" style="width: 50%;margin: auto; min-width: 64rem;">
+        <!-- background-color: rgba('+`255, 0, 255`+, 0.2); -->
+        <!-- :style='{background-color:"("+rdm()+rdm()+rdm()+"0.2)"}'> -->
+        <header>
+            <div class="card" style="background-color: rgba(255, 0, 255, 0.2);">
+                <div class="card-body">
+                    <span>
+                        <span class="neon" onclick="location.reload();"><a
+                                style="font-size: 8.5rem;position: absolute; top: -4rem; cursor: pointer;">∞</a><span
+                                style="
+                                top: 3.1rem;
+                                position: relative;
+                                text-transform: none;">LNS : {{psLNS}}</span> </a> <img src=""></span>
+                    </span>
+                    <span style="float: right;">
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                            <span class="btn-group mr-2" role="group" aria-label="First group"
+                                style="background-color: rgba(0, 247, 255, 0.2);">
+                                <button class="dropdown-item btn" :class="{ neon: pageNumber == 0}"
+                                    @click="changePage(0)">主页页面</button>
+                                <button class="dropdown-item btn" :class="{ neon: pageNumber == 1}"
+                                    @click="changePage(1)">查询页面</button>
+                                <button class="dropdown-item btn" :class="{ neon: pageNumber == 2}"
+                                    @click="changePage(2)">LNS</button>
+                                <button class="dropdown-item btn" :class="{ neon: pageNumber == 3}"
+                                    @click="changePage(3)">SocialEX🏗</button>
+                                <button class="dropdown-item btn" :class="{ neon: pageNumber == 4}"
+                                    @click="changePage(4)">SocialMSG</button>
+                            </span>
+                        </div>
+                        <a>Total Minter: {{TotalSupply}} | </a>
+                        <a>BlockHeight: {{blockHeight}} | </a>
+                        <a>NetWork: {{netWork}}</a>
+                        <div class="form-group form-check " style="position: absolute; cursor: pointer;
+                        right: 1rem;
+                        bottom: -1rem;">
+                            <input type="checkbox" class="form-check-input" id="LNSCheck"
+                                @click="toggleLNS = !toggleLNS">
+                            <label class="form-check-label badge badge-pill badge-success" for="LNSCheck"
+                                style="cursor: pointer;">Loop Name System </label>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <div v-if='toggleLNS' class="card" style="background-color: rgba(255, 0, 255, 0.1);">
+                <div class="card-body">
+                    <h5 class="card-title">Loop name system</h5>
+                    <div class="btn-group" role="group" aria-label="First group"
+                        style="cursor:pointer;width: 100%;margin-bottom: 5px;">
+
+                        <input type="text" class="form-control" v-model='LNSToAddress' @keyup.enter="LNSResolution"
+                            placeholder="Input LNS to get Address" aria-label="LNS">
+                        <button type="button" class="btn" style="background-color: rgba(133,199,163, 0.6);"
+                            @click="LNSResolution()" title="MyAddress">👉</button>
+                        <button type="button" class="btn" style="background-color: rgba(133,199,163, 0.6);"
+                            @click="LNSReverse()" title="MyAddress">👈</button>
+                        <input type="text" class="form-control" v-model='AddressToLNS' @keyup.enter="LNSReverse"
+                            placeholder="Input Address to get LNS" aria-label="Address">
+
+                    </div>
+                </div>
+            </div>
+        </header>
+        <br>
+        <div id="element" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="10000"
+            style="position: absolute;right: 1rem;z-index: 2; background-color: rgba(255,215,0,0.4);">
+            <div class="toast-header" style="background-color:rgba(255, 215, 0, 0.3)">
+                <!-- <img src="./img/nash.ico" class="rounded mr-2" alt="NASH icon" style="width: 1rem;height: 1rem;"> -->
+                <img src="./img/icon.png" class="rounded mr-2" alt="Loop∞ icon" style="width: 1rem;height: 1rem;">
+                <strong class="mr-auto" style="padding-right: 1rem;">{{toastTitle}}</strong>
+                <small> @{{timeNow}}</small>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" style="white-space: pre-line;">{{toastContent}}
+            </div>
+        </div>
+        <!-- #0 ——————————————————————————————————————————————————————————————————————————————主页页面 -->
+        <span v-if="pageNumber == 0">
+            <div class="jumbotron" style="background-color: rgba(230, 0, 0, 0.3);">
+                
+                <h1 class="display-4"><b>Hello, human!</b></h1>
+                <p class="lead">Loopss 是一套用来构建人类早期<b title="早期村落通过社交信用系统来督促共同生产。而之后由于空间扩大以及货币能力不足而丢失。"
+                        style="cursor: pointer;">自然社交经济群体智能</b>的信用&价值映射工具。<br>其底层基于用来实现【通用人工智能AGI】的ACE理论。</p>
+                <hr class="my-4">
+                <p>不同于资本主义使用单一少量不透明的货币来映射社会成员的信用体系，我们通过从最底层开始构建信用，并为每个信用节点按时间分配信用代币，践行《货币非国家化》，充分竞争从中选出最能体现社会信用体系的货币。
+                    从而充分发挥每个人创造价值的能动性，调动全民基本生产积极性，由此才带来『全民基本收入』= UBI。在这个过程中使得价格完美拟合价值『代币价格*代币产速 = 个人单位时间生产量 * 价值』。</p>
+                <span style="float: right;">
+                    <h2>☭一起实现社会主义的货币群☭</h2>
+                    <a class="btn btn-danger btn-lg" style="float: right;" target="_blank"
+                        href="https://www.yuque.com/docs/share/c57266fd-29cd-4338-9d53-e3bd0bb679a0?#"
+                        role="button">了解更多🚀</a>
+                </span>
+                <!-- href="https://www.yuque.com/docs/share/e7dd4b11-20b9-4d62-ba4a-e40622fb1071?#" -->
+                <br><br>
+            </div>
+        </span>
+        <!-- #1 ——————————————————————————————————————————————————————————————————————————————查询页面 -->
+        <span v-if="pageNumber == 1">
+            <nav style="float: none;z-index: 1;">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card" style="background-color: rgba(0, 250, 154, 0.3);">
+                            <div class="card-body">
+                                <!-- $Loopss contract @:<a target="_blank"
+                                    :href="`https://${blockExplorer[netWork]}/address/`+LoopsAddress">{{LoopsAddress}}
+                                </a>
+                                <br>
+                                <br> -->
+                                <!-- 关注地址X: -->
+                                <h5 class="card-title">My Address X：</h5>
+                                <div class="btn-group" role="group" aria-label="First group"
+                                    style="cursor:pointer;width: 100%;margin-bottom: 5px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">X</span>
+                                    </div>
+                                    <button type="button" class="btn" style="background-color: rgba(133,199,163, 0.6);"
+                                        @click="lookXAddress = addressNow" title="MyAddress">💫</button>
+                                    
+                                    <input type="text" class="form-control" v-model="lookXAddress" placeholder="默认自己地址"
+                                        aria-label="Address">
+                                    <button type="button" class="btn btn-warning" style="width: 10%;"
+                                        title="Get 🌊Flowing immediately" @click='intervalRefresh()'>Get</button>
+                                </div>
+
+                                <div style="text-align: center;">
+                                    🌊Flowing UBI Balance@X: 💦{{mintedInWalletF}}——💧
+                                </div>
+
+                                <!-- <div class="btn-group" role="group" aria-label="First group"
+                                    style="cursor:pointer;width: 100%;">
+
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card" style="width: 100%;margin-bottom: 5px;background-color: rgba(123,104,238,0.3);">
+                        <div class="card-body">
+                            <h5 class="card-title">Other coin balance in X address</h5>
+                            <span style="cursor:pointer;">
+                                Address X中的Y$<b
+                                    style="white-space: pre;">【{{otherMintedLNS}}】</b>代币余额:{{otherMintedInWalletF}}-</span>
+                            <div class="btn-group" role="group" aria-label="First group"
+                                style="cursor:pointer;width: 100%;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Y</span>
+                                </div>
+                                <input type="text" class="form-control" v-model="lookMinterAddress"
+                                    placeholder="Address:0x" aria-label="Address">
+                                <button type="button" class="btn " @click="getMinterBalanceOf()"
+                                    style="font-size: 2rem;height: 1rem;" title="获取我钱包中该地址的余额">🔍</button>
+                            </div>
+                            <span v-if="(lookXAddress == addressNow) && otherMintedInWallet1e18 != 0">
+                                <span style="cursor:pointer">-转出Y：【{{otherMintedLNS}}】代币-
+                                </span>
+                                <div class="btn-group" role="group" aria-label="First group"
+                                    style="cursor:pointer;width: 100%;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">To</span>
+                                    </div>
+                                    <input type="text" class="form-control" v-model="sendOtherCoinToAddress"
+                                        style="width: 70%;" placeholder="Address:0x" aria-label="Address">
+                                    <input type="number" class="form-control" v-model="sendOtherCoinAmount"
+                                        style="width: 30%;" placeholder="Amount" aria-label="Amount">
+                                    <button type="button" class="btn " @click="sendOtherCoin()"
+                                        title="转账钱包中的他人代币">🔜</button>
+                                </div>
+                            </span>
+
+                            <!-- <div style="text-align: center;">
+                                👽{{otherMintedInWalletF}}👽
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-6">
+                    <div class="card" style="width: 100%;background-color: rgba(255,215,0, 0.3);">
+                        <div class="card-body">
+                            <h5 class="card-title">Trust States</h5>
+                            <div class="btn-group" role="group" aria-label="First group"
+                                style="cursor:pointer;width: 100%; margin-bottom: 1rem;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Z</span>
+                                </div>
+                                <input type="text" class="form-control" v-model="lookTrustAddress"
+                                    placeholder="Address:0x" aria-label="Address">
+                                <button type="button" class="btn btn-info" @click="getTrustState()"
+                                    title="查询双向信任关系">↔</button>
+                            </div>
+                            <br>
+                            <div class="alert alert-success" role="alert">
+                                地址X对→地址Z的Trust参数：
+                                <div class="col-12" :title="'Trust confidence:' + trustData.meToHim.portion+'%'"
+                                    style="width: 100%;">
+                                    <span>信任程度</span>
+                                    <span class="progress" style="background-color: rgba(255,215,0, 0.3);">
+                                        <span class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                                            role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                                            :style="'width: '+trustData.meToHim.portion+'%'">
+                                            {{trustData.meToHim.portion}}%</span>
+                                    </span>
+                                </div>
+                                [兑换比例
+                                {{trustData.meToHim.ratio / 1e18}}Z/1X]
+                            </div>
+                            <div class="alert alert-success" role="alert">
+                                地址Z对→地址X的Trust参数：
+                                <div class="col-12" :title="'Trust confidence:' + trustData.heToMe.portion+'%'"
+                                    style="width: 100%;">
+                                    <span>信任程度</span>
+                                    <span class="progress" style="background-color: rgba(255,215,0, 0.3);">
+                                        <span class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                                            role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                                            :style="'width: '+trustData.heToMe.portion+'%'">
+                                            {{trustData.heToMe.portion}}%</span>
+                                    </span>
+                                </div>
+                                [兑换比例
+                                {{trustData.heToMe.ratio / 1e18}}X/1Z]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6" v-if='1'>
+                    <div class="card" style="width: 100%;background-color: rgba(255,215,0, 0.3);">
+                        <div class="card-body" style="max-height: 30rem;overflow: auto;">
+                            <div class="row">
+                                <div class="col-5">
+                                    <h5 class="card-title">Trust Logs</h5>
+                                </div>
+                                <!-- 这里这样是为了并排 -->
+                                <div class="col-7">
+                                    <div class="btn-group" role="group" aria-label="Basic example"
+                                        style="float: right;">
+                                        <button type="button" @click="getMyTrusted()" class="btn btn-light">
+                                            X Trusted🤝</button>
+                                        <button type="button" @click="getTrustedMe()" class="btn btn-light">
+                                            Trusted X👭</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div v-for="tl in trustLogs">
+                                <span class="badge badge-pill badge-success"><a
+                                        :href="`https://${blockExplorer[netWork]}/tx/`+tl.transactionHash"
+                                        target="_blank" title="Open EtherScan">📑</a>@{{tl.blockNumber}}⛓<a
+                                        :title="tl.returnValues.TrustSender" class="toCopy"  :data-clipboard-text="tl.returnValues.TrustSender"
+                                        style="cursor: pointer;">{{tl.returnValues.TrustSender.substring(0,5)}}…</a>→Trusted→<a
+                                        :title="tl.returnValues.BeenTrusted" class="toCopy"  :data-clipboard-text="tl.returnValues.BeenTrusted"
+                                        style="cursor: pointer;">{{tl.returnValues.BeenTrusted.substring(0,5)}}…</a> |
+                                    Type：0.{{tl.returnValues.TrustType}} Value：{{tl.returnValues.TrustValue}}</span>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </span>
+        <!-- #2 ——————————————————————————————————————————————————————————————————————————————LNS页面 -->
+        <span v-if="pageNumber == 2">
+            <nav style="float: none;z-index: 1;">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card" style="background-color: rgba(0, 250, 154, 0.3);">
+                            <div class="card-body">
+
+                                <h5 class="card-title">Register LNS</h5>
+                                <div class="btn-group" role="group" aria-label="First group"
+                                    style="cursor:pointer;width: 100%;margin-bottom: 5px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">For</span>
+                                        <button type="button" class="btn"
+                                            style="background-color: rgba(133,199,163, 0.6);"
+                                            @click="LNSforAddress = zeroAddress" title="ZeroAddress">🕳</button>
+                                        <button type="button" class="btn"
+                                            style="background-color: rgba(133,199,163, 0.6);"
+                                            @click="LNSforAddress = addressNow" title="MyAddress">💫</button>
+                                    </div>
+                                    <input type="text" class="form-control" v-model="LNSforAddress"
+                                        placeholder="For address">
+                                </div>
+                                <div class="btn-group" role="group" aria-label="First group"
+                                    style="cursor:pointer;width: 100%;margin-bottom: 5px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">LNS</span>
+                                    </div>
+                                    <input type="text" class="form-control" v-model="LNSText"
+                                        placeholder="LNS you want to register" aria-label="Address">
+                                    <button type="button" class="btn btn-warning" style="width: 70%;" title="Check Fee"
+                                        @click='checkLNS()'>Check-Fee:{{LNSFeeF}}{{coinName[netWork]}}</button>
+                                    <button v-if="(CKAddressToLNS == '') && (CKLNSToAddress == zeroAddress)"
+                                        type="button" class="btn btn-success" style="width: 30%;" title="Register LNS"
+                                        @click='registerLNS()'>注册</button>
+                                </div>
+                                <!-- <hr> -->
+                                <h5 class="card-title">(For) address info</h5>
+                                <div class="btn-group" role="group" aria-label="First group"
+                                    style="cursor:pointer;width: 100%;margin-bottom: 5px;">
+                                    <button type="button" class="btn btn-sm btn-info" style="width: 80%;"
+                                        title="Check Fee" @click='getAccountInfo()'>🔍</button>
+                                    <button v-if="AccountInfoData.beenTrustCount" type="button"
+                                        class="btn btn-sm btn-warning" style="width: 20%;" title="Close Info"
+                                        @click="AccountInfoData = ''">🔺</button>
+                                </div>
+                                <!-- 累计收益先放一放，因为这里vue对不存在的值会报错 -->
+                                <!-- {{LNSRegisterLog[0].returnValues.NowPerLNS_Profits1e18}}
+                                {{_formatBigNumber(String(parseInt(AccountInfoData.realizedLNS_Profits1e18)/1e18))}} -->
+                                <span v-if="AccountInfoData.beenTrustCount">
+                                    <p>Been Trust Count: {{AccountInfoData.beenTrustCount}}</p>
+                                    <p>Inviter: {{AccountInfoData.inviter}}</p>
+                                    <p>Last Transfer:
+                                        {{AccountInfoData.lastUpdatePoint == 0? 'Never Transfered' :getLocalTime(AccountInfoData.lastUpdatePoint)}}
+                                    </p>
+                                    <p>LNS: 【{{AccountInfoData.userLNS_LNS}}】<a v-if="AccountInfoData.userLNS_LNS"
+                                            class="badge badge-success">Invite Bonus Available</a><a
+                                            v-if="!AccountInfoData.userLNS_LNS" class="badge badge-danger">
+                                            NO LNS ⚠ Invite Bonus Not Available</a></p>
+                                    <p v-if="UnClaimBonus">unClaim Bonus:{{_formatBigNumber(UnClaimBonus)}}
+                                        ${{coinName[netWork]}}</p>
+
+                                    <!-- <a href="#" class="badge badge-danger">Danger</a> -->
+                                </span>
+                                <button v-if="(LNSforAddress == addressNow) && (AccountInfoData.userLNS_LNS)"
+                                    type="button" class="btn btn-success" style="width: 100%;" title="Check Fee"
+                                    @click='ClaimBonus()'>Claim Community Bonus : {{_formatBigNumber(UnClaimBonus)}}
+                                    ${{coinName[netWork]}}</button>
+                                <!-- <hr> -->
+                                <!-- <h5 class="card-title">Community Bonus</h5> -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="card" style="background-color: rgba(0, 250, 154, 0.3);">
+                            <div class="card-body">
+
+
+                                <h5 class="card-title">LNS Logs 📅</h5>
+
+                                <button type="button" class="btn btn-sm btn-info" style="width: 100%;"
+                                    title="(For) address LNS logs" @click='getLNSRegisterLog()'>(For) LNS register
+                                    log</button>
+                                <span v-for='flg in LNSRegisterLog'>
+
+                                    <span class="badge badge-pill badge-success" style="cursor: pointer;"><a
+                                            :href="`https://${blockExplorer[netWork]}/tx/`+flg.transactionHash"
+                                            target="_blank" title="Open EtherScan">📑</a>@{{flg.blockNumber}}⛓
+                                        <a
+                                            :title="flg.returnValues.Inviter">{{flg.returnValues.Inviter.substring(0,5)}}…</a>Invited
+
+                                        <a
+                                            :title="flg.returnValues.Owner">{{flg.returnValues.Owner.substring(0,5)}}…</a>
+                                        <a style="white-space: pre;">←【{{flg.returnValues.LNS}}】</a>
+                                        |
+                                        Bonus: {{_formatBigNumber(flg.returnValues.Inviter_Bonus)}}
+                                        {{coinName[netWork]}}</span>
+                                </span>
+                                <hr>
+                                <!-- TODO:处理overflow -->
+                                <button type="button" class="btn btn-sm btn-info" style="width: 100%;"
+                                    title="Invited by (for) logs" @click='getLNSInviteLogs()'>(For) address
+                                    invited</button>
+                                <span v-for='flg in LNSInviteLogs'>
+
+                                    <span class="badge badge-pill badge-success" style="cursor: pointer;"><a
+                                            :href="`https://${blockExplorer[netWork]}/tx/`+flg.transactionHash"
+                                            target="_blank" title="Open EtherScan">📑</a>@{{flg.blockNumber}}⛓
+                                        <a
+                                            :title="flg.returnValues.Inviter">{{flg.returnValues.Inviter.substring(0,5)}}…</a>Invited
+
+                                        <a
+                                            :title="flg.returnValues.Owner">{{flg.returnValues.Owner.substring(0,5)}}…</a>
+                                        <a style="white-space: pre;">←【{{flg.returnValues.LNS}}】</a>
+                                        |
+                                        Bonus: {{_formatBigNumber(flg.returnValues.Inviter_Bonus)}}
+                                        {{coinName[netWork]}}</span>
+                                </span>
+                                <hr>
+                                <!-- TODO:处理overflow -->
+                                <button type="button" class="btn btn-sm btn-info" style="width: 100%;"
+                                    title="Invited by (for) logs" @click='getAllLNSLogs()'>All LNS logs</button>
+                                <span v-for='flg in AllLNSLogs'>
+
+                                    <span class="badge badge-pill badge-success" style="cursor: pointer;"><a
+                                            :href="`https://${blockExplorer[netWork]}/tx/`+flg.transactionHash"
+                                            target="_blank" title="Open EtherScan">📑</a>@{{flg.blockNumber}}⛓
+                                        <a
+                                            :title="flg.returnValues.Inviter">{{flg.returnValues.Inviter.substring(0,5)}}…</a>Invited
+
+                                        <a
+                                            :title="flg.returnValues.Owner">{{flg.returnValues.Owner.substring(0,5)}}…</a>
+                                        <a style="white-space: pre;">←【{{flg.returnValues.LNS}}】</a>
+                                        |
+                                        Bonus: {{_formatBigNumber(flg.returnValues.Inviter_Bonus)}}
+                                        {{coinName[netWork]}}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="card" style="background-color: rgba(0, 250, 154, 0.3);">
+                            <div class="card-body">
+
+                            </div>
+                        </div> -->
+                </div>
+            </nav>
+            <!-- <div class="row">
+                <div class="col-12">
+                    <div class="card" style="width: 100%;">
+                        <div class="card-body">
+                            <div class="row" style="margin-bottom: 5px;">
+                                <span class="col-9">
+                                    <h5 class="card-title"><a>Loop Name System👷🏗🚧</a></h5>
+                                </span>
+                                <img src="./img/img_LNS.jpg" style="
+                                width: 100%;
+                                height: 100%;
+                            ">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </span>
+        <!-- #3 ——————————————————————————————————————————————————————————————————————————————Swap页面 -->
+        <span v-if="pageNumber == 3">
+            <!-- <nav style="float: none;z-index: 1;">
+                <div class="row">
+                    <div class="col-9">
+                        <div class="card" style="background-color: rgba(0, 250, 154, 0.3);">
+                            <div class="card-body">
+                                $Loopss contract @:<a
+                                    :href="'https://kovan.etherscan.io/address/'+LoopsAddress">{{LoopsAddress}}
+                                </a>
+                                <br>
+                                <br>
+                                关注地址X:
+                                <div class="btn-group" role="group" aria-label="First group"
+                                    style="cursor:pointer;width: 100%;margin-bottom: 5px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">X</span>
+                                    </div>
+                                    <input type="text" class="form-control" v-model="addressNow" placeholder="默认自己地址"
+                                        aria-label="Address">
+                                    <button type="button" class="btn btn-warning" style="width: 50%;" title="刷新"
+                                        @click='intervalRefresh()'>刷新</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav> -->
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card" style="width: 100%;">
+                        <div class="card-body">
+                            <div class="row" style="margin-bottom: 5px;">
+                                <span class="col-9">
+                                    <h5 class="card-title"><a>Social Exchange👷🏗🚧</a></h5>
+                                </span>
+                                <img src="./img/img_SEX.jpg" style="
+                                width: 100%;
+                                height: 100%;
+                            ">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </span>
+        <!-- #4 ——————————————————————————————————————————————————————————————————————————————SM页面 -->
+        <span v-if="pageNumber == 4">
+            <div class="row">
+                <div class="col-6">
+                    <div class="card" style="width: 100%;background-color: rgba(127,220,227, 0.3);">
+                        <div class="card-body">
+                            <div class="row" style="margin-bottom: 5px;">
+                                <span class="col-9">
+                                    <h5 class="card-title"><a>Social Message:</a></h5>
+                                </span>
+                                <div class="btn-group" role="group" aria-label="First group"
+                                    style="cursor:pointer;width: 100%; margin-bottom: 1rem;">
+
+                                    <!-- <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">X</span>
+                                    </div> -->
+                                    <button type="button" class="btn" style="background-color: rgba(133,199,163, 0.6);"
+                                        @click="lookMessageAddress = zeroAddress" title="ZeroAddress">🕳</button>
+                                    <button type="button" class="btn" style="background-color: rgba(133,199,163, 0.6);"
+                                        @click="lookMessageAddress = addressNow" title="MyAddress">💫</button>
+                                    <input type="text" class="form-control" v-model="lookMessageAddress"
+                                        placeholder="Address:0x" aria-label="Address">
+                                    <button type="button" class="btn" style="background-color: rgba(202,207,149, 0.6);"
+                                        @click="getSentMsg()" title="查询发出的消息">📤</button>
+                                    <button type="button" class="btn" style="background-color: rgba(133,199,163, 0.6);"
+                                        @click="getRecMsg()" title="查询接收的消息">📩</button>
+                                    <div class="btn-group">
+                                        <!-- <button type="button" class="btn btn-info">📶</button> -->
+                                        <button type="button" class="btn btn-info dropdown-toggle dropdown-toggle-split"
+                                            data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">📶{{msgGetCL}}
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <div class="dropdown-menu" style="background-color: rgba(255,215,0,0.7);">
+                                            <a class="dropdown-item" @click="msgGetCL = '∞'" href="#">Channel📶：∞ ——All
+                                                Msg</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" @click="msgGetCL = 12557" href="#">Channel📶：12557
+                                                ——Lite Msg</a>
+                                            <a class="dropdown-item" @click="msgGetCL = 0" href="#">Channel📶：0
+                                                ——Passerby Msg</a>
+                                            <a class="dropdown-item" @click="msgGetCL = 1" href="#">Channel📶：1 ——Mini
+                                                Holder Msg</a>
+                                            <a class="dropdown-item" @click="msgGetCL = 10" href="#">Channel📶：10
+                                                ——Holder Msg</a>
+                                            <a class="dropdown-item" @click="msgGetCL = 20" href="#">Channel📶：20 ——???
+                                                Msg</a>
+                                            <a class="dropdown-item" @click="msgGetCL = 30" href="#">Channel📶：30 ——????
+                                                Msg</a>
+                                            <a class="dropdown-item" @click="msgGetCL = 88" href="#">Channel📶：88 ——Fomo
+                                                Msg</a>
+                                            <a class="dropdown-item" @click="msgGetCL = 100" href="#">Channel📶：100
+                                                ——Senator Msg</a>
+                                            <a class="dropdown-item" @click="msgGetCL = 520" href="#">Channel📶：520
+                                                ——Love Msg</a>
+                                            <a class="dropdown-item" @click="msgGetCL = 888" href="#">Channel📶：888
+                                                ——Fanatic Msg</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" @click="msgGetCL = 142857"
+                                                href="#">Channel📶：142587
+                                                ——To Satoshi Nakamoto</a>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn" style="background-color: rgba(241,210,189, 0.6);"
+                                        @click="getAllMsg()" title="All message">👁‍🗨</button>
+                                </div>
+                                <!-- <div class="input-group-prepend" style="width: 100%;margin-bottom: 5px;">
+                                    <span class="input-group-text" id="basic-addon1">Channel📶</span>
+                                    <div class="btn-group mr-2" role="group" aria-label="First group">
+                                        <button type="button" class="btn btn-secondary">0</button>
+                                        <button type="button" class="btn btn-secondary">1</button>
+                                        <button type="button" class="btn btn-secondary">2</button>
+                                        <button type="button" class="btn btn-secondary">3</button>
+                                        <button type="button" class="btn btn-secondary">4</button>
+                                        <button type="button" class="btn btn-secondary">5</button>
+                                        <button type="button" class="btn btn-secondary">6</button>
+                                        <button type="button" class="btn btn-secondary">7</button>
+                                        <button type="button" class="btn btn-secondary">8</button>
+                                        <button type="button" class="btn btn-secondary">9</button>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="card" style="width: 100%;background-color: rgba(127,220,227, 0.3);">
+                        <div class="card-body">
+                            <div class="row" style="margin-bottom: 5px;">
+                                <span class="col-9">
+                                    <h5 class="card-title"><a>Send Message</a></h5>
+                                </span>
+
+                                <div class="input-group-prepend" style="width: 100%;margin-bottom: 5px;">
+                                    <span class="input-group-text" id="basic-addon1">Send To</span>
+                                    <input type="text" class="form-control" v-model="MessageSendToAddress"
+                                        placeholder="SendToAddress:0x" aria-label="Address">
+                                </div>
+
+                                <div class="input-group-prepend" style="width: 100%;margin-bottom: 5px;">
+                                    <span class="input-group-text" id="basic-addon1">Title</span>
+                                    <input type="text" class="form-control" v-model="MessageSendToTitle"
+                                        placeholder="Title" aria-label="Title">
+                                    <div class="btn-group">
+                                        <!-- <button type="button" class="btn btn-info">📶</button> -->
+                                        <button type="button" class="btn btn-info dropdown-toggle dropdown-toggle-split"
+                                            data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">📶{{msgSendCL}}
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <div class="dropdown-menu" style="background-color:rgba(255,215,0,0.7);">
+                                            <a class="dropdown-item" title='Open 《Lite msg documents》'
+                                                href="#">Documents📁：12557 ——Lite Msg</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" @click="msgSendCL = 0" href="#">Channel📶：0
+                                                ——Passerby Msg</a>
+                                            <a class="dropdown-item" @click="msgSendCL = 1" href="#">Channel📶：1 ——Mini
+                                                Holder Msg</a>
+                                            <a class="dropdown-item" @click="msgSendCL = 10" href="#">Channel📶：10
+                                                ——Holder Msg</a>
+                                            <a class="dropdown-item" @click="msgSendCL = 20" href="#">Channel📶：20 ——???
+                                                Msg</a>
+                                            <a class="dropdown-item" @click="msgSendCL = 30" href="#">Channel📶：30
+                                                ——???? Msg</a>
+                                            <a class="dropdown-item" @click="msgSendCL = 88" href="#">Channel📶：88
+                                                ——Fomo Msg</a>
+                                            <a class="dropdown-item" @click="msgSendCL = 100" href="#">Channel📶：100
+                                                ——Senator Msg</a>
+                                            <a class="dropdown-item" @click="msgSendCL = 520" href="#">Channel📶：520
+                                                ——Love Msg</a>
+                                            <a class="dropdown-item" @click="msgSendCL = 888" href="#">Channel📶：888
+                                                ——Fanatic Msg</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-group-prepend" style="width: 100%;margin-bottom: 5px;">
+                                    <input type="text" class="form-control" v-model="MessageSendToContent"
+                                        placeholder="Content" aria-label="Content">
+                                    <button type="button" class="btn" @click="sendMsg()"
+                                        title="Send Message to Chain">📤</button>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card" style="width: 100%;background-color: rgba(127,220,227, 0.3);">
+                        <div class="card-body" style="max-height: 30rem; overflow: auto;">
+                            <!-- <div v-for="md in messageDatas" class="alert alert-light" role="alert" style="background-color: rgba(106,181,177, 0.3);">
+                                {{md.returnValues.Title}}{{md.returnValues.Content}}
+                            </div> -->
+                            <div v-for="md in messageDatas" class="card"
+                                style="width: 100%;background-color: rgba(106,181,177, 0.3); margin-bottom: 1rem;">
+                                <div class="card-body">
+                                    <span class="badge badge-pill badge-primary"><a
+                                            :href="`https://${blockExplorer[netWork]}/tx/`+md.transactionHash"
+                                            target="_blank" title="Open EtherScan">📑</a>@{{md.blockNumber}}⛓<a
+                                            :title="md.returnValues.Sender" class="toCopy"  :data-clipboard-text="md.returnValues.Sender"
+                                            style="cursor: pointer;">{{md.returnValues.Sender.substring(0,5)}}…</a>→Sent→<a
+                                            :title="md.returnValues.Receiver" class="toCopy"  :data-clipboard-text="md.returnValues.Receiver"
+                                            style="cursor: pointer;">{{md.returnValues.Receiver.substring(0,5)}}…</a> |
+                                        Channel📶{{md.returnValues.Channel}}</span>
+                                    <h5 class="card-title">{{md.returnValues.Title}}</h5>
+                                    <p class="card-text">{{md.returnValues.Content}}</p>
+
+                                </div>
+                            </div>
+                            <!-- messageDatas -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </span>
+    </div>
+    <!-- 调色：
+    rgba(253,208,239, 0.3)
+    241,210,189
+    202,207,149
+    133,199,163
+    106,181,177
+    127,220,227 -->
+</body>
+
+<script>
+    var LoopsAddress = '0x0000000000000000000000000000000000000000';
+    var LoopContract;
+    web3js = new Web3(web3.currentProvider);
+
+    // function rdm() {
+    //     return String(Math.floor(Math.random() * 256) + ',');
+    // }
+    // var firstContractHigh = 21454192;
+    var lt = self.setInterval("getNetwork()", 1000);
+    function getNetwork() {
+        if (LoopsAddress == '0x0000000000000000000000000000000000000000') {
+            networkId = parseInt(ethereum.chainId);
+            console.log(networkId)
+            switch (networkId) {
+                case 1://mainnet
+                    LoopsAddress = "";
+                    break;
+                case 42://kovan
+                    LoopsAddress = "0x697c8EF8f85cddD090Bb126746C71d72637c04F4";
+                    app.LoopsAddress = LoopsAddress;
+                    app.netWork = 'Kovan'
+                    LoopContract = new web3js.eth.Contract(Loop_ABI, LoopsAddress);
+                    console.log('LoopsAddress@kovan:', LoopsAddress);
+                    break;
+                case 56://BSC
+                    LoopsAddress = "0x697c8EF8f85cddD090Bb126746C71d72637c04F4";
+                    app.LoopsAddress = LoopsAddress;
+                    app.netWork = 'BSC'
+                    LoopContract = new web3js.eth.Contract(Loop_ABI, LoopsAddress);
+                    console.log('LoopsAddress@kovan:', LoopsAddress);
+                    break;
+                case 1337://tf
+                    LoopsAddress = "0x6a88674830C21b45efE45f286beF73a9f085a6Cf";
+                    app.LoopsAddress = LoopsAddress;
+                    app.netWork = 'Truffle'
+                    LoopContract = new web3js.eth.Contract(Loop_ABI, LoopsAddress);
+                    console.log('LoopsAddress@TF:', LoopsAddress);
+                    break;
+                default:
+                    break;
+            }
+            app.intervalRefresh();
+            app.RefreshAccount();
+            app.getMyLNS();
+            // clearInterval(lt);
+        }
+        else {
+            self.setInterval("app.intervalRefresh()", 20000);
+            clearInterval(lt);
+        }
+    }
+
+    ethereum.on('networkChanged', function (networkId) {
+        networkId = parseInt(networkId)
+        switch (networkId) {
+            case 1://mainnet
+                LoopsAddress = "";
+                break;
+            case 42://kovan
+                LoopsAddress = "0x697c8EF8f85cddD090Bb126746C71d72637c04F4";
+                app.LoopsAddress = LoopsAddress;
+                app.netWork = 'Kovan'
+                LoopContract = new web3js.eth.Contract(Loop_ABI, LoopsAddress);
+                console.log('LoopsAddress@kovan:', LoopsAddress);
+                break;
+            case 56://BSC
+                LoopsAddress = "0x697c8EF8f85cddD090Bb126746C71d72637c04F4";
+                app.LoopsAddress = LoopsAddress;
+                app.netWork = 'BSC'
+                LoopContract = new web3js.eth.Contract(Loop_ABI, LoopsAddress);
+                console.log('LoopsAddress@kovan:', LoopsAddress);
+                break;
+            case 1337://tf
+                LoopsAddress = "0x6a88674830C21b45efE45f286beF73a9f085a6Cf";
+                app.LoopsAddress = LoopsAddress;
+                app.netWork = 'Truffle'
+                LoopContract = new web3js.eth.Contract(Loop_ABI, LoopsAddress);
+                console.log('LoopsAddress@TF:', LoopsAddress);
+                break;
+            default:
+                break;
+        }
+        // app.intervalRefresh();
+        // app.RefreshAccount();
+        // app.getMyLNS();
+    })
+    ethereum.on('accountsChanged', function (accounts) {
+        //刷新初始化也会调用这个方法哦
+        app.addressNow = web3.eth.defaultAccount;
+        app.lookXAddress = app.addressNow;
+        app.intervalRefresh();
+        app.getMyLNS();
+    })
+    ethereum.enable();
+    window.ethereum;
+    // 成功之后这个会返回当前选择的账户
+    web3js.eth.getAccounts().then(function (accounts) {
+        //现在只能使用then异步的方式返回单个了
+        console.log('Now account:', accounts);
+    });
+
+
+    var STORAGE_KEY = 'Loops';
+    var DApp_Storage = {
+        fetch: function () {
+            //整个取
+            var oracles = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            // 如果取不到就返回[]
+            // oracles.forEach(function (oracle, index) {
+            //   oracle.id = index
+            // });
+            // xxxStorage.uid = oracles.length; //这里是unitID的意思，单个item的ID
+            return oracles
+        },
+        save: function (oracles) {
+            //整个存
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(oracles))
+        }
+    };
+    var myDate = new Date();
+    function getLocalTime(nS) {
+        return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/, ' ');
+    }
+    var app = new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                LoopsAddress: LoopsAddress,
+                // mvpAddress: MVPAddress,
+                w3: web3js = new Web3(web3.currentProvider),
+                zeroAddress: '0x0000000000000000000000000000000000000000',
+                addressNow: this.zeroAddress,
+                addressLook: '',
+                localDatas: DApp_Storage.fetch(),
+                //宏观数据
+                defaultPage: 0,
+                netWork: 'unKnow',
+                TotalSupply: 0,
+                SpiritComingEvents: '',
+                blockHeight: 0,
+                timeNow: myDate.toLocaleDateString() + '-' + myDate.toLocaleTimeString(),
+                totalLPLocked1e18: '',
+                classificationTexts: { 99: 'Click Left Side Button to show', 0: 'Wait me join', 1: 'My created, wait gote join', 2: 'My created, wait me to anneal', 3: 'My joined, wait init to anneal' },
+                cfNumber: 99,
+                pageNumber: 0,
+                coinName: { 'Kovan': 'ETH', 'BSC': 'BNB' },
+                blockExplorer: { 'Kovan': 'kovan.etherscan.io', 'BSC': 'bscscan.com' },
+                //LNS解析相关
+                AddressToLNS: '',
+                LNSToAddress: '',
+                toggleLNS: 0,
+                //个人数据
+                psLNS: '',
+                mintedInWallet1e18: 0,
+                mintedInWalletF: 0,
+                trustData: { meToHim: { portion: 0, ratio: 1e18 }, heToMe: { portion: 0, ratio: 1e18 } },
+                napsUnclaim1e18: 0,
+                napsUnclaimF: 0,
+                lpTokenLocked1e18: 0,
+                lpTokenLockedF: 0,
+                ethUnclaim1e18: 0,
+                ethUnclaimF: 0,
+                myLPproportion: 0,
+                otherMintedInWallet1e18: 0,
+                otherMintedInWalletF: 0,
+                otherMintedLNS: '',
+                lookXAddress: LoopsAddress,//为了避免最开始获取时报错
+                lookMinterAddress: '',
+                lookTrustAddress: '',
+                lookMessageAddress: '',
+                trustLogs: {},
+                sendOtherCoinToAddress: '',
+                sendOtherCoinAmount: 0,
+                //MSG数据
+                messageChannel: 0,
+                messageDatas: {},
+                MessageSendToAddress: '',
+                MessageSendToTitle: '',
+                MessageSendToContent: '',
+                msgGetCL: "∞",
+                msgSendCL: 0,
+                //LNS
+                LNSforAddress: '',
+                CKAddressToLNS: '???',
+                CKLNSToAddress: '',
+                LNSText: '',
+                LNSFee1e18: 0,
+                LNSFeeF: '',
+
+                LNSRegisterLog: '',
+                LNSInviteLogs: '',
+                AllLNSLogs: '',
+
+                UnClaimBonus: 0,
+
+                AccountInfoData: { realizedLNS_Profits1e18: 0 },
+                //通知数据
+                toastTitle: 'NASH #0 MVP',
+                toastContent: 'Welcome to NASH protocol. This page is the interface of #0 MVP Contract which is the first contract of NASH——100 plan. \
+                This toast will been used to show notification when get feedback from blockChain and will auto close in 5 mins.',
+                //test
+                dt: '',
+
+            }
+        },
+        //声明周期
+        beforeCreat() {
+
+        },
+        Created() {
+
+        },
+        beforeMount() {
+            this.changePage(this.defaultPage);
+            //先调用一次，避免update
+            // this.updateToastAndShow('Welcome', "目前已经上线与Circles UBI同样的主网：xDAI，请添加以下参数：【Network Name: xDai New RPC -URL: https://xdai.poanetwork.dev】【ChainID (Optional): 100 】【Symbol: xDai】【Block Explorer URL: https://blockscout.com/poa/xdai】并切换到xDAI网络")
+            this.updateToastAndShow('Welcome', "目前跨链前端正在开发中，应用天然跨链，目前已上线BSC 币安智能链主网，更多文档请查看主页页面的【了解更多🚀】")
+        },
+        mounted() {
+            // this.updateToastAndShow('Welcome', "目前已经上线与Circles UBI同样的主网：xDAI，请添加以下参数：【Network Name: xDai New RPC -URL: https://xdai.poanetwork.dev】【ChainID (Optional): 100 】【Symbol: xDai】【Block Explorer URL: https://blockscout.com/poa/xdai】并切换到xDAI网络")
+            this.updateToastAndShow('Welcome', "目前跨链前端正在开发中，应用天然跨链，目前已上线BSC 币安智能链主网，更多文档请查看主页页面的【了解更多🚀】")
+            // this.intervalRefresh();
+        },
+        beforeUpdate() {
+
+        },
+        updated() {
+            // 每次更新其他数据的时候会调用这个更新整个数据，所以不用再手动更新了。
+            this.delyRefresh();
+        },
+        beforeDestory() {
+
+        },
+
+        destoryed() {
+
+        },
+        watch: {
+            LNSforAddress: {
+                handler: function (LNSforAddress) {
+                    // todoStorage.save(todos)
+                    this.AccountInfoData = {}
+                },
+                //TODO:这个deep啥意思？
+                deep: true
+            }
+        },
+        //方法
+        methods: {
+            // // 国际化
+            // // internationalization(_lg) {
+            // //     if (_lg == 'zh') {
+            // //         this.title = '{{GovHoeTokenName}} 治理'
+            // //     } else if (_lg == 'en') {
+            // //         this.title = '{{GovHoeTokenName}} Gov'
+            // //     }
+            // // },
+            // copy(obj) {
+            //     obj.focus();
+            //     document.execCommand("Copy"); // 执行浏览器复制命令
+            //     // this.$message({
+            //     //     message: '复制成功',
+            //     //     type: 'success'
+            //     // });
+            // },
+            clipboardSuccess(){
+                this.updateToastAndShow('CP', '地址长度错误@查询其他代币余额');
+            },
+            rdm() {
+                return String(Math.floor(Math.random() * 256) + ',');
+            },
+            changePage(_pageNumber) {
+                switch (_pageNumber) {
+                    case 1:
+                        this.lookXAddress = this.addressNow;
+                        break;
+                    case 2:
+                        this.LNSforAddress = this.addressNow;
+                        break;
+                    case 4:
+                        this.lookMessageAddress = this.addressNow;
+                        break;
+
+                    default:
+                        break;
+                }
+                this.pageNumber = _pageNumber;
+            },
+            // 数据处理方法
+            _formatBigNumber(_bn) {
+                // return web3js.utils.fromWei(_bn, 'ether');
+                return parseFloat(web3js.utils.fromWei(_bn, 'ether')).toLocaleString();
+                // parseFloat().toLocaleString();
+            },
+            // 数据获取方法
+            async intervalRefresh() {
+                // this.internationalization(lg);
+                await this.getBlockHeight();
+                this.getLoopTotalSupply();
+            },
+            delyRefresh() {
+                this.getMyMintingInWallet();
+                // this.getMyLNS();
+                // this.getMyBentoInBank();
+                // this.getGovBalance();
+                // this.getGovLockedAmount();
+                // this.getBentoMiningSpeed();
+                // this.getMyMiningPercentage()
+            },
+            getLoopTotalSupply() {
+                LoopContract.methods.totalSupply().call().then((rst) => {
+                    this.TotalSupply = this._formatBigNumber(rst);
+                    // this.govTotalLockedF = this._formatBigNumber(rst);
+                    console.log(rst);
+                })
+            },
+            RefreshAccount() {
+                this.addressNow = web3.eth.defaultAccount;
+                // this.lookMessageAddress = this.addressNow;
+            },
+            async getMyLNS() {
+                this.psLNS = await LoopContract.methods.LoopNameSystem_Reverse(this.addressNow).call();
+                // console.log(this.psLNS)
+                if (this.psLNS == '') this.psLNS = '';
+                // console.log('LNS:' + this.psLNS)
+            },
+            async getMyMintingInWallet() {
+                // console.log()
+                this.mintedInWallet1e18 = await LoopContract.methods.balanceOf(this.lookXAddress).call();
+                this.mintedInWalletF = this._formatBigNumber(this.mintedInWallet1e18);
+                this.myLPproportion = (this.mintedInWallet1e18 / 1e18) / 10;
+            },
+            async getMinterBalanceOf() {
+                if (this.lookMinterAddress.length != 42) {
+                    this.updateToastAndShow('Address error', '地址长度错误@查询其他代币余额');
+                    return;
+                }
+                this.updateToastAndShow('Other balance', '请求中');
+                this.otherMintedLNS = await LoopContract.methods.LoopNameSystem_Reverse(this.lookMinterAddress).call();
+                if (this.otherMintedLNS == '') {
+                    this.otherMintedLNS = ''
+                }
+                this.otherMintedInWallet1e18 = await LoopContract.methods.minterBalanceOf(this.lookMinterAddress, this.lookXAddress).call();
+                this.otherMintedInWalletF = this._formatBigNumber(this.otherMintedInWallet1e18);
+
+                this.updateToastAndShow('Other balance', '获取成功');
+                // console.log(this.otherMintedInWallet1e18)
+            },
+            async getTrustState() {
+                if (this.lookTrustAddress.length != 42) {
+                    this.updateToastAndShow('Address error', '地址长度错误@查询信任关系');
+                    return;
+                }
+                this.updateToastAndShow('Trust State', '请求中');
+                // 请求 我对他{程度，比例} 他对我{程度，比例}
+                // getProportionReceiverTrustedSender
+                // getRatioReceiver100TokenForSender
+                let cache = this.trustData;
+
+                let rst = await LoopContract.methods.getTrustStatesForAB(this.lookXAddress, this.lookTrustAddress).call();
+                // console.log(rst);
+                cache.meToHim.portion = rst[0];
+                cache.heToMe.portion = rst[2];
+                cache.meToHim.ratio = rst[1];
+                cache.heToMe.ratio = rst[3];
+                this.trustData = cache;
+                // console.log(this.trustData)
+                this.updateToastAndShow('Trust State', '获取成功');
+            },
+            async getAllMsg() {
+                this.updateToastAndShow('Social Message', `⏳Fetching ALL Message……`);
+                this.messageDatas = (await LoopContract.getPastEvents('SocialMessage', { fromBlock: 0 })).reverse();
+                this.updateToastAndShow('Social Message', `✅Fetching ALL Message`);
+            },
+            async getRecMsg() {
+                if (this.lookMessageAddress.length != 42) {
+                    this.updateToastAndShow('Address❌', '地址长度错误@查询社交消息');
+                    return;
+                }
+                let rst;
+                this.updateToastAndShow('Social Message', `请求⏳【${this.lookMessageAddress}】接收的消息`);
+                if (this.msgGetCL == "∞") {
+                    rst = await LoopContract.getPastEvents('SocialMessage', { filter: { Receiver: this.lookMessageAddress }, fromBlock: 0 });
+                } else {
+                    rst = await LoopContract.getPastEvents('SocialMessage', { filter: { Receiver: this.lookMessageAddress, Channel: this.msgGetCL }, fromBlock: 0 });
+                    //0 channel由于web3的问题需要特殊处理
+                    if (this.msgGetCL == 0) {
+                        var cache = [];
+                        for (ml in rst) {
+                            // console.log(rst[ml])
+                            if (rst[ml].returnValues.Channel == "0") {
+                                cache.push(rst[ml]);
+                            }
+                        }
+                        rst = cache;
+                    }
+                }
+                this.updateToastAndShow('Social Message', `请求成功✅`);
+                this.messageDatas = rst.reverse();;
+                // console.log(rst)
+            },
+            async getSentMsg() {
+                if (this.lookMessageAddress.length != 42) {
+                    this.updateToastAndShow('Address❌', '地址长度错误@查询社交消息');
+                    return;
+                }
+                let rst;
+                this.updateToastAndShow('Social Message', `请求⏳【${this.lookMessageAddress}】发出的消息`);
+                if (this.msgGetCL == "∞") {
+                    rst = await LoopContract.getPastEvents('SocialMessage', { filter: { Sender: this.lookMessageAddress }, fromBlock: 0 });
+                } else {
+                    rst = await LoopContract.getPastEvents('SocialMessage', { filter: { Sender: this.lookMessageAddress, Channel: this.msgGetCL }, fromBlock: 0 });
+                    //0 channel由于web3的问题需要特殊处理
+                    if (this.msgGetCL == 0) {
+                        var cache = [];
+                        for (ml in rst) {
+                            // console.log(rst[ml])
+                            if (rst[ml].returnValues.Channel == "0") {
+                                cache.push(rst[ml]);
+                            }
+                        }
+                        rst = cache;
+                    }
+
+                }
+                this.updateToastAndShow('Social Message', `请求成功✅`);
+                this.messageDatas = rst.reverse();;
+                // console.log(rst)
+            },
+            async sendMsg() {
+                // this.MessageSendToAddress
+                // this.MessageSendToTitle
+                // this.MessageSendToContent
+
+                //         function sendSocialMessage(
+                // uint256 _channel,
+                // string calldata _title,
+                // string calldata _content,
+                // address _sendTo
+                if (this.MessageSendToAddress == '' || this.MessageSendToTitle == '' || this.MessageSendToContent == '') {
+                    this.updateToastAndShow('Send Message', '❌数据不全');
+                    return;
+                }
+                this.updateToastAndShow('Send Message', '⏳Pending……');
+
+                let rst = await LoopContract.methods.sendSocialMessage(this.msgSendCL, this.MessageSendToTitle, this.MessageSendToContent, this.MessageSendToAddress).send({ from: web3.eth.defaultAccount });
+                console.log(rst);
+                this.updateToastAndShow('Send Message', '👌Sent success');
+
+            },
+            async LNSResolution() {
+                if (this.LNSToAddress == '') {
+                    this.updateToastAndShow('Resolution LNS', '❌Please input LNS for resolution Address');
+                    return
+                }
+                this.updateToastAndShow('Resolution LNS', '⏳Fetching LNS → Address');
+                this.AddressToLNS = await LoopContract.methods.LoopNameSystem_Resolution(this.LNSToAddress).call();
+                this.updateToastAndShow('Resolution LNS', '✅Fetching LNS → Address');
+            },
+            async LNSReverse() {
+                if (this.AddressToLNS == '') {
+                    this.updateToastAndShow('Reverse LNS', '❌Please input Address for Reverse LNS');
+                    return
+                }else                 if (this.AddressToLNS.length != 42) {
+                    this.updateToastAndShow('Reverse LNS', '❌Address Error.');
+                    return
+                }
+                this.updateToastAndShow('Reverse LNS', '⏳Fetching Address → LNS');
+                this.LNSToAddress = await LoopContract.methods.LoopNameSystem_Reverse(this.AddressToLNS).call();
+                this.updateToastAndShow('Reverse LNS', '✅Fetching Address → LNS');
+            },
+            async checkLNS() {
+
+                this.CKAddressToLNS = await LoopContract.methods.LoopNameSystem_Reverse(this.LNSforAddress).call();
+                if (this.CKAddressToLNS != '') {
+                    this.updateToastAndShow('Register LNS', this.LNSforAddress + ' already named :【' + this.CKAddressToLNS + '】');
+                    return
+                }
+                // console.log(isNamed)
+                // LNSText
+                if (this.LNSText == '') {
+                    this.updateToastAndShow('Register LNS', '❌Please input LNS');
+                    return;
+                }
+                this.updateToastAndShow('Register LNS', 'Check:⏳Pending……');
+                this.LNSFee1e18 = await LoopContract.methods.registerFee(this.LNSText).call();
+                this.LNSFeeF = this._formatBigNumber(this.LNSFee1e18);
+                this.CKLNSToAddress = await LoopContract.methods.LoopNameSystem_Resolution(this.LNSText).call();
+                // console.log(rst);
+                if (this.CKLNSToAddress == this.zeroAddress) {
+                    this.updateToastAndShow('Register LNS', 'Check: ✅Available to register');
+                } else {
+                    this.updateToastAndShow('Register LNS', 'Check: ❌Registered by：' + this.CKLNSToAddress);
+                }
+            },
+            async registerLNS() {
+                if (this.LNSText == '') {
+                    this.updateToastAndShow('Register LNS', '❌Please input LNS');
+                    return;
+                }
+                this.updateToastAndShow('Register LNS', 'Register LNS:⏳Pending……');
+                await LoopContract.methods.registerLNS(this.LNSText, this.LNSforAddress).send({ from: web3.eth.defaultAccount, value: this.LNSFee1e18 });
+                this.updateToastAndShow('Register LNS', 'Register LNS:✅Success');
+                this.getMyLNS();
+            },
+
+            async sendOtherCoin() {
+                // sendOtherCoinToAddress
+                // sendOtherCoinAmount
+                if (this.sendOtherCoinToAddress == '' || this.sendOtherCoinAmount == '') {
+                    this.updateToastAndShow('Send Other Coin', '❌数据不全');
+                    return;
+                }
+                this.updateToastAndShow('Send Other Coin', '⏳Pending……');
+                let rst = await LoopContract.methods.loopTransfer([this.sendOtherCoinToAddress], web3js.utils.toWei(String(this.sendOtherCoinAmount)), 0, this.lookMinterAddress).send({ from: web3.eth.defaultAccount });
+                this.updateToastAndShow('Send Other Coin', '👌Sent success');
+            },
+            async getMyTrusted() {
+                this.updateToastAndShow('Trust Logs', '⏳Fetching X Trusted🤝 Logs');
+                this.trustLogs = (await LoopContract.getPastEvents('TrustEvent', { filter: { TrustSender: this.lookXAddress }, fromBlock: 0 })).reverse();//.pop().returnValues.Creater;
+                this.updateToastAndShow('Trust Logs', '✅Fetched X Trusted🤝 Logs');
+                // this.dt = await LoopContract.getPastEvents('TrustEvent', { filter: { }, fromBlock: 0 })//.pop().returnValues.Creater;
+
+                // console.log(this.trustLogs);
+            },
+            async getTrustedMe() {
+                this.updateToastAndShow('Trust Logs', '⏳Fetching Trusted X👭 Logs');
+                this.trustLogs = (await LoopContract.getPastEvents('TrustEvent', { filter: { BeenTrusted: this.lookXAddress }, fromBlock: 0 })).reverse();//.pop().returnValues.Creater;
+                this.updateToastAndShow('Trust Logs', '✅Fetched Trusted X👭 Logs');
+                // this.dt = await LoopContract.getPastEvents('TrustEvent', { filter: { }, fromBlock: 0 })//.pop().returnValues.Creater;
+                // console.log(this.dt);
+            },
+            async getLNSRegisterLog() {
+                if (this.LNSforAddress == '' || this.LNSforAddress == undefined) {
+                    this.updateToastAndShow('Fetch LNS log', '❌Please input (For) address.');
+                    return;
+                }
+                this.updateToastAndShow('Fetch LNS log', '⏳Fetching……');
+                this.LNSRegisterLog = (await LoopContract.getPastEvents('NewLNS', { filter: { Owner: this.LNSforAddress }, fromBlock: 0 })).reverse();
+                this.updateToastAndShow('Fetch LNS log', '✅Success：' + this.LNSRegisterLog.length + ' items');
+
+            },
+            async getLNSInviteLogs() {
+                if (this.LNSforAddress == '' || this.LNSforAddress == undefined) {
+                    this.updateToastAndShow('Fetch LNS logs', '❌Please input (For) address.');
+                    return;
+                }
+                this.updateToastAndShow('Fetch LNS logs', '⏳Fetching……');
+                this.LNSInviteLogs = (await LoopContract.getPastEvents('NewLNS', { filter: { Inviter: this.LNSforAddress }, fromBlock: 0 })).reverse();
+                this.updateToastAndShow('Fetch LNS logs', '✅Success：' + this.LNSInviteLogs.length + ' items');
+            },
+            async getAllLNSLogs() {
+                this.updateToastAndShow('Fetch All LNS logs', '⏳Fetching……');
+                this.AllLNSLogs = (await LoopContract.getPastEvents('NewLNS', { fromBlock: 0 })).reverse();
+                this.updateToastAndShow('Fetch All LNS logs', '✅Success：' + this.AllLNSLogs.length + ' items');
+            },
+            async getUnClaimBonus(ucAddress) {
+                this.UnClaimBonus = await LoopContract.methods.unClaimBonusOf(ucAddress).call();
+            },
+            async getAccountInfo() {
+                this.UnClaimBonus = 0;
+                if (this.LNSforAddress == '' || this.LNSforAddress == undefined) {
+                    this.updateToastAndShow('Account info', '❌Please input (For) address.');
+                    return;
+                }
+                this.updateToastAndShow('Account info', '⏳Fetching……');
+                this.LNSRegisterLog = await LoopContract.getPastEvents('NewLNS', { filter: { Owner: this.LNSforAddress }, fromBlock: 0 })
+                this.AccountInfoData = await LoopContract.methods.getAccountInfoOf(this.LNSforAddress).call();
+                // if (this.LNSforAddress == this.addressNow) {
+                this.getUnClaimBonus(this.LNSforAddress);
+                // }
+                this.updateToastAndShow('Account info', '✅Succes');
+            },
+            async ClaimBonus() {
+                this.updateToastAndShow('Claim Bonus', '⏳Pending');
+                await LoopContract.methods.claim().send({ from: web3.eth.defaultAccount });
+                this.updateToastAndShow('Claim Bonus', '✅Succes');
+            },
+            // await MVPContract.methods.accumulatedProfitsPerLPToken1e18().call()
+            getBlockHeight() {
+                web3js.eth.getBlockNumber().then((rst) => { this.blockHeight = rst; console.log(rst) })
+            },
+
+            // 数据展示方法
+            updateToastAndShow(title, content) {
+                myDate = new Date();
+                this.timeNow = myDate.toLocaleDateString() + '-' + myDate.toLocaleTimeString();
+                this.toastTitle = title;
+                this.toastContent = content;
+                $('.toast').toast('show');
+            },
+            updateAlertInOracleCreate(swc, content) {
+                this.alertAtOracleCreate = content;
+                this.showAlertAtOracleCreate = swc;
+            },
+            // 数据交互方法
+            async claimAllETH() {
+                this.updateToastAndShow('Claim $ETH', `Pending: Claim ${this.ethUnclaimF} $ETHs to wallet …… ……`);
+                let rst = await MVPContract.methods.claim().send({ from: web3.eth.defaultAccount });
+                this.updateToastAndShow('Claim $ETHs', `Success: Claimed ${this.ethUnclaimF} $ETHs to wallet.`);
+            }
+        }
+    })
+
+    var clipboard = new ClipboardJS('.toCopy');
+
+    clipboard.on('success', function(e) {
+        console.log(e);
+        app.updateToastAndShow('Copy', '✅Copied: '+ e.text);
+    });
+
+    clipboard.on('error', function(e) {
+        console.log(e);
+    });
+
+</script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"
+    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+    crossorigin="anonymous"></script> -->
+
+
+
+</html>
