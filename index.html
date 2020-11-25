@@ -21,6 +21,7 @@
     <script src="./js/bootstrap.min.js"></script>
     <script src="./js/clipboard.min.js"></script>
     <script src="./js/cytoscape.min.js"></script>
+    <script src="./js/cytoscape-cxtmenu.js"></script>
     <!-- 生产环境版本，优化了尺寸和速度 -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
     <script src="./js/vue.js"></script>
@@ -39,11 +40,12 @@
 <style scoped>
     #cy {
         position: relative;
+        width: 100%;
+        height: 30rem;
         left: 0;
         top: 0;
         bottom: 0;
         right: 0;
-        height: 30rem;
         z-index: 999;
     }
 
@@ -59,15 +61,11 @@
 
     svg,
     canvas {
-        /* padding-bottom: 30px; */
         text-align: center;
-        /* width: 100%;
-        height: 100%; */
         position: absolute;
         top: 0;
         left: 0;
         z-index: -1;
-        position: fixed;
         width: 100%;
         height: 100%;
     }
@@ -1112,9 +1110,20 @@ left: 5%;
                             <span class="progress" style="background-color: rgba(106,181,177, 0.3);">
                                 <span class="progress-bar progress-bar-striped progress-bar-animated bg-success"
                                     role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
-                                    :style="'width: '+ progressValue +'%'">
-                                    {{progressValue}}%</span>
+                                    :style="'width: '+ netProgressValue +'%'">
+                                    {{netProgressValue}}%</span>
                             </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </span>
+        <span v-if="pageNumber == 99">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card" style="background-color: rgba(127,220,227, 0.3);">
+                        <div class="card-body">
+                            ⏳L⏳O⏳A⏳D⏳I⏳N⏳G⏳……加载中，请稍等
                         </div>
                     </div>
                 </div>
@@ -1129,6 +1138,8 @@ left: 5%;
     106,181,177
     127,220,227 -->
 </body>
+
+
 
 <script>
     var LoopsAddress = '0x0000000000000000000000000000000000000000';
@@ -1351,7 +1362,7 @@ left: 5%;
                 msgSendCL: 0,
                 // Info nets roam loopss
                 netDatas: [],
-                progressValue: 0,
+                netProgressValue: 0,
                 //通知数据
                 toastTitle: 'NASH #0 MVP',
                 toastContent: 'Welcome to NASH protocol. This page is the interface of #0 MVP Contract which is the first contract of NASH——100 plan. \
@@ -1456,16 +1467,18 @@ left: 5%;
             rdm() {
                 return String(Math.floor(Math.random() * 256) + ',');
             },
-            changePage(_pageNumber) {
+            async changePage(_pageNumber) {
                 switch (_pageNumber) {
                     case 0:
 
                         break;
                     case 1://查询
                         this.lookMyAddress = this.addressNow;
-                        // this.getMyLNS();
-                        this.getMyMintingInWallet();
+                        this.pageNumber = 99;
+                        await this.getMyMintingInWallet();
+                        //TODO 更新进度条
                         this.getYCoinList();
+
                         break;
                     case 2://LNS
                         this.LNSforAddress = this.addressNow;
@@ -1478,7 +1491,7 @@ left: 5%;
                         this.lookMessageAddress = this.addressNow;
                         break;
                     case 5:
-
+                        this.netProgressValue = 0;
                         break;
                     default:
                         break;
@@ -1861,13 +1874,16 @@ left: 5%;
                 }
                 this.updateToastAndShow('社会交易所@交易', '⏳Sending Loop Transfer');
                 let rst = await LoopContract.methods.loopTransfer([this.loop_toSwapTokenAddress, this.addressNow], web3js.utils.toWei(String(this.loopInputd1e18)), web3js.utils.toWei(String(this.loopOutputd1e18)), this.loop_lanuchTokenAddress)
-                    .send({ from: this.addressNow });
+                .send({ from: web3.eth.defaultAccount });
                 this.updateToastAndShow('社会交易所@交易', '✅Sent Loop Transfer');
 
             },
             //—————————————————————————————————————————————————info———————————————————————————————————————————————————————————————
+            async toTransfer(to,value){
+                await LoopContract.methods.transfer(to,web3js.utils.toWei(String(value))).send({ from: web3.eth.defaultAccount });
+            },
             async drawNets() {
-                this.progressValue = 0;
+                this.netProgressValue = 0;
                 // netDatas
                 let cacheNetDatas = (await LoopContract.getPastEvents('TrustEvent', { filter: { TrustSender: this.addressNow }, fromBlock: 0 })).reverse();
                 let setList = [];
@@ -1897,13 +1913,13 @@ left: 5%;
                     // console.log(cLNS)
                     cacheData = { data: { id: YTAds, name: cLNS } };
                     myNodes.push(cacheData)
-                    cacheData = { data: { source: this.addressNow, target: YTAds } };
+                    cacheData = { data: { source: this.addressNow, target: YTAds, label: setList[i].returnValues.TrustValue + '%' }, classes: 'autorotate' };
                     myEdges.push(cacheData)
                     if (i == parseInt(setList.length / 2)) {
                         // console.log(cLNS);
                         myNodes.push({ data: { id: this.addressNow, name: this.psLNS } })
                     }
-                    this.progressValue = ((i + 1) / setList.length) * 100;
+                    this.netProgressValue = ((i + 1) / setList.length) * 100;
                 }
                 let _nodes = myNodes;
                 let _edges = myEdges;
@@ -1929,12 +1945,13 @@ left: 5%;
 
                 var cy = cytoscape({
                     container: document.getElementById('cy'),
-
-                    layout: {
-                        name: 'grid',
-                        rows: Math.sqrt(setList.length) ,
-                        cols: Math.sqrt(setList.length) 
+                    ready: function () {
                     },
+                    // layout: {
+                    //     name: 'grid',
+                    //     rows: Math.sqrt(setList.length),
+                    //     cols: Math.sqrt(setList.length)
+                    // },
 
                     style: [
                         {
@@ -1952,60 +1969,84 @@ left: 5%;
                             }
                         },
 
-                        // some style for the extension
-
                         {
-                            selector: '.eh-handle',
-                            style: {
-                                'background-color': 'red',
-                                'width': 12,
-                                'height': 12,
-                                'shape': 'ellipse',
-                                'overlay-opacity': 0,
-                                'border-width': 12, // makes the handle easier to hit
-                                'border-opacity': 0
+                            "selector": "node[label]",
+                            "style": {
+                                "label": "data(label)"
                             }
                         },
 
                         {
-                            selector: '.eh-hover',
-                            style: {
-                                'background-color': 'red'
+                            "selector": "edge[label]",
+                            "style": {
+                                "label": "data(label)",
+                                "color": "#fff",
+                                "width": 3
                             }
                         },
 
-                        {
-                            selector: '.eh-source',
-                            style: {
-                                'border-width': 2,
-                                'border-color': 'red'
-                            }
-                        },
 
                         {
-                            selector: '.eh-target',
-                            style: {
-                                'border-width': 2,
-                                'border-color': 'red'
-                            }
-                        },
-
-                        {
-                            selector: '.eh-preview, .eh-ghost-edge',
-                            style: {
-                                'background-color': 'red',
-                                'line-color': 'red',
-                                'target-arrow-color': 'red',
-                                'source-arrow-color': 'red'
-                            }
-                        },
-
-                        {
-                            selector: '.eh-ghost-edge.eh-preview-active',
-                            style: {
-                                'opacity': 0
+                            "selector": ".autorotate",
+                            "style": {
+                                "edge-text-rotation": "autorotate"
                             }
                         }
+
+                        // some style for the extension
+
+                        // {
+                        //     selector: '.eh-handle',
+                        //     style: {
+                        //         'background-color': 'red',
+                        //         'width': 12,
+                        //         'height': 12,
+                        //         'shape': 'ellipse',
+                        //         'overlay-opacity': 0,
+                        //         'border-width': 12, // makes the handle easier to hit
+                        //         'border-opacity': 0
+                        //     }
+                        // },
+
+                        // {
+                        //     selector: '.eh-hover',
+                        //     style: {
+                        //         'background-color': 'red'
+                        //     }
+                        // },
+
+                        // {
+                        //     selector: '.eh-source',
+                        //     style: {
+                        //         'border-width': 2,
+                        //         'border-color': 'red'
+                        //     }
+                        // },
+
+                        // {
+                        //     selector: '.eh-target',
+                        //     style: {
+                        //         'border-width': 2,
+                        //         'border-color': 'red'
+                        //     }
+                        // },
+
+                        // {
+                        //     selector: '.eh-preview, .eh-ghost-edge',
+                        //     style: {
+                        //         'background-color': 'red',
+                        //         'line-color': 'red',
+                        //         'target-arrow-color': 'red',
+                        //         'source-arrow-color': 'red'
+                        //     }
+                        // },
+
+                        // {
+                        //     selector: '.eh-ghost-edge.eh-preview-active',
+                        //     style: {
+                        //         'opacity': 0
+                        //     }
+                        // }
                     ],
 
                     elements: {
@@ -2013,134 +2054,60 @@ left: 5%;
                         edges: _edges
                     }
                 });
+                cy.cxtmenu({
+                    selector: 'node',
+
+                    commands: [
+                        {
+                            content: 'CopyAddress',
+                            select: function (ele) {
+                                console.log(ele.id());
+                            }
+                        },
+
+                        {
+                            content: 'CheckLNS',
+                            select: function (ele) {
+                                console.log(ele.data('name'));
+                            },
+                            // enabled: true
+                        },
+
+                        {
+                            content: 'SendMsg',
+                            select: function (ele) {
+                                console.log(ele.position());
+                            }
+                        }
+                    ]
+                });
+
+                cy.cxtmenu({
+                    selector: 'edge',
+
+                    commands: [
+                        {
+                            content: 'reset',
+                            select: function (ele) {
+                                console.log(ele);
+                            }
+                        },
+
+                        {
+                            content: 'delete',
+                            select: function (ele) {
+                                // xdt = ele;
+                                // console.log(xdt);
+                                app.toTransfer(ele["_private"]["data"]["target"],0)
+                            }
+                        }
+                    ]
+                });
             },
 
         }
     })
-    function drawCY() {
-
-
-        // document.addEventListener('DOMContentLoaded', function () {
-
-        var cy = cytoscape({
-            container: document.getElementById('cy'),
-
-            layout: {
-                name: 'grid',
-                rows: 2,
-                cols: 2
-            },
-
-            style: [
-                {
-                    selector: 'node[name]',
-                    style: {
-                        'content': 'data(name)'
-                    }
-                },
-
-                {
-                    selector: 'edge',
-                    style: {
-                        'curve-style': 'bezier',
-                        'target-arrow-shape': 'triangle'
-                    }
-                },
-
-                // some style for the extension
-
-                {
-                    selector: '.eh-handle',
-                    style: {
-                        'background-color': 'red',
-                        'width': 12,
-                        'height': 12,
-                        'shape': 'ellipse',
-                        'overlay-opacity': 0,
-                        'border-width': 12, // makes the handle easier to hit
-                        'border-opacity': 0
-                    }
-                },
-
-                {
-                    selector: '.eh-hover',
-                    style: {
-                        'background-color': 'red'
-                    }
-                },
-
-                {
-                    selector: '.eh-source',
-                    style: {
-                        'border-width': 2,
-                        'border-color': 'red'
-                    }
-                },
-
-                {
-                    selector: '.eh-target',
-                    style: {
-                        'border-width': 2,
-                        'border-color': 'red'
-                    }
-                },
-
-                {
-                    selector: '.eh-preview, .eh-ghost-edge',
-                    style: {
-                        'background-color': 'red',
-                        'line-color': 'red',
-                        'target-arrow-color': 'red',
-                        'source-arrow-color': 'red'
-                    }
-                },
-
-                {
-                    selector: '.eh-ghost-edge.eh-preview-active',
-                    style: {
-                        'opacity': 0
-                    }
-                }
-            ],
-
-            elements: {
-                nodes: [
-                    { data: { id: 'j', name: 'Jerry' } },
-                    { data: { id: 'e', name: 'Elaine' } },
-                    { data: { id: 'k', name: 'Kramer' } },
-                    { data: { id: 'g', name: 'George' } }
-                ],
-                edges: [
-                    { data: { source: 'j', target: 'e' } },
-                    { data: { source: 'j', target: 'k' } },
-                    { data: { source: 'j', target: 'g' } },
-                    { data: { source: 'e', target: 'j' } },
-                    { data: { source: 'e', target: 'k' } },
-                    { data: { source: 'k', target: 'j' } },
-                    { data: { source: 'k', target: 'e' } },
-                    { data: { source: 'k', target: 'g' } },
-                    { data: { source: 'g', target: 'j' } }
-                ]
-            }
-        });
-
-        // var eh = cy.edgehandles();
-
-        // document.querySelector('#draw-on').addEventListener('click', function() {
-        //   eh.enableDrawMode();
-        // });
-
-        // document.querySelector('#draw-off').addEventListener('click', function() {
-        //   eh.disableDrawMode();
-        // });
-
-        // document.querySelector('#start').addEventListener('click', function() {
-        //   eh.start( cy.$('node:selected') );
-        // });
-
-        // });
-    }
-
+var xdt;
     var clipboard = new ClipboardJS('.toCopy');
 
     clipboard.on('success', function (e) {
