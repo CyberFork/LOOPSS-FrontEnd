@@ -1101,7 +1101,8 @@ left: 5%;
                         <div class="card-body">
                             <h4 class="card-title">Roam Loopss<span class="badge badge-pill badge-info">
                                     Loopss Nets</span></h4>
-                            <button type="button" class="btn" @click="drawNets()" title="get nets">🕸</button>
+                            <button type="button" class="btn" @click="(cenAddress = addressNow)&&(drawNets(psLNS))"
+                                title="get nets">🕸</button>
                             <!-- <div class="jumbotron" id="cy"> -->
 
                             <div id="cy">
@@ -1118,6 +1119,75 @@ left: 5%;
                 </div>
             </div>
         </span>
+        <!-- Vertically centered modal -->
+        <!-- <div id="modalDialog" class="modal-dialog modal-dialog-centered">
+            ...test
+        </div> -->
+        <div class="modal fade" id="staticBackdropJoinOracle" data-backdrop="static" data-keyboard="false" tabindex="-1"
+            role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="top: 30%;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Set Trust
+                            #</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+
+                        <div class="alert alert-primary" role="alert" style="text-align: center;display: block;">
+                            <langer> {{selectEdge}}</langer>
+                            <br>
+                            <small> To:{{edgeToAddress}}</small>
+                            <!--
+                            <br>
+                            <small> | 💡Create@:  | </small>
+                            <small>⏳WaitBlocks: | </small> -->
+
+                        </div>
+
+                        <span class="btn-group mr-2" style="width: 100%;margin-bottom: 5px;" role="group"
+                            aria-label="First group">
+                            <button type="button" class="btn btn-primary neon"
+                                @click='trustCommand=1'>信任程度🙌</button>
+                            <button type="button" class="btn btn-success neon"
+                                @click='trustCommand=2'>兑换比例🖇</button>
+                            <!-- <button type="button" class="btn btn-primary neon" @click='oracle_myStrategy=3'>✋</button> -->
+                        </span>
+                        <span v-if="trustCommand==1">
+                            <div class="btn-group" role="group" aria-label="First group"
+                                style="cursor:pointer;width: 100%;margin-bottom: 5px;">
+                                <input class="input-group-text" style="width: 100%;margin-bottom: 5px;" type="number" min="1" max="99"
+                                    step="1" placeholder="信任百分比" v-model='trustValue'></input>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">%</span>
+                                </div>
+                            </div>
+                        </span>
+                        <span v-if="trustCommand==2">
+                            <div class="btn-group" role="group" aria-label="First group"
+                                style="cursor:pointer;width: 100%;margin-bottom: 5px;">
+                                <input v-if="trustCommand==2" class="input-group-text"
+                                    style="width: 100%;margin-bottom: 5px;" type="number" step="0.1" min="0.01" max="99"
+                                    placeholder="许可兑换比例" v-model='trustValue'></input>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">:1</span>
+                                </div>
+
+                            </div>
+                        </span>
+
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#" style="width: 100%;" class="btn btn-warning"
+                            @click="toTransfer(edgeToAddress, (trustCommand+(trustValue/100))/10)">Reset</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- #5 ——————————————————————————————————————————————————————————————————————————————waiting 页面 -->
         <span v-if="pageNumber == 99">
             <div class="row">
                 <div class="col-12">
@@ -1363,6 +1433,11 @@ left: 5%;
                 // Info nets roam loopss
                 netDatas: [],
                 netProgressValue: 0,
+                cenAddress: '',
+                selectEdge: '',
+                edgeToAddress: '',
+                trustCommand: 0,
+                trustValue: 0,
                 //通知数据
                 toastTitle: 'NASH #0 MVP',
                 toastContent: 'Welcome to NASH protocol. This page is the interface of #0 MVP Contract which is the first contract of NASH——100 plan. \
@@ -1492,6 +1567,8 @@ left: 5%;
                         break;
                     case 5:
                         this.netProgressValue = 0;
+                        this.cenAddress = this.addressNow
+                        this.drawNets(this.psLNS);
                         break;
                     default:
                         break;
@@ -1874,29 +1951,34 @@ left: 5%;
                 }
                 this.updateToastAndShow('社会交易所@交易', '⏳Sending Loop Transfer');
                 let rst = await LoopContract.methods.loopTransfer([this.loop_toSwapTokenAddress, this.addressNow], web3js.utils.toWei(String(this.loopInputd1e18)), web3js.utils.toWei(String(this.loopOutputd1e18)), this.loop_lanuchTokenAddress)
-                .send({ from: web3.eth.defaultAccount });
+                    .send({ from: web3.eth.defaultAccount });
                 this.updateToastAndShow('社会交易所@交易', '✅Sent Loop Transfer');
 
             },
             //—————————————————————————————————————————————————info———————————————————————————————————————————————————————————————
-            async toTransfer(to,value){
-                await LoopContract.methods.transfer(to,web3js.utils.toWei(String(value))).send({ from: web3.eth.defaultAccount });
+            async toTransfer(to, value) {
+                await LoopContract.methods.transfer(to, web3js.utils.toWei(String(value))).send({ from: web3.eth.defaultAccount });
             },
-            async drawNets() {
+            async drawNets(cenLNS) {
                 this.netProgressValue = 0;
                 // netDatas
-                let cacheNetDatas = (await LoopContract.getPastEvents('TrustEvent', { filter: { TrustSender: this.addressNow }, fromBlock: 0 })).reverse();
+                let cacheNetDatas = (await LoopContract.getPastEvents('TrustEvent', { filter: { TrustSender: this.cenAddress }, fromBlock: 0 })).reverse();
                 let setList = [];
                 let filter = {};
+                let ratioDict = {};
                 for (let i = 0; i < cacheNetDatas.length; i++) {
                     // console.log(i,cacheNetDatas[i].returnValues.BeenTrusted,filter[cacheNetDatas[i].returnValues.BeenTrusted])
-                    if (filter[cacheNetDatas[i].returnValues.BeenTrusted] == undefined) {
+                    if (filter[cacheNetDatas[i].returnValues.BeenTrusted] == undefined && cacheNetDatas[i].returnValues.TrustType == 1) {
                         // console.log(i)
                         filter[cacheNetDatas[i].returnValues.BeenTrusted] = 1;
                         setList.push(cacheNetDatas[i]);
+                    } else if (ratioDict[cacheNetDatas[i].returnValues.BeenTrusted] == undefined && cacheNetDatas[i].returnValues.TrustType == 2) {
+                        ratioDict[cacheNetDatas[i].returnValues.BeenTrusted] = cacheNetDatas[i].returnValues.TrustValue;
+                        // console.log(cacheNetDatas[i])
+                        // console.log(i)
                     }
                 }
-
+                this.dt = ratioDict;
                 this.netDatas = setList;
                 console.log(this.netDatas);
                 let myNodes = [];
@@ -1904,6 +1986,10 @@ left: 5%;
                 let cacheData;
                 for (let i = 0; i < setList.length; i++) {
 
+                    if (setList[i].returnValues.TrustValue == 0) {
+                        //对于信任又取消的直接跳过
+                        continue
+                    }
                     let YTAds = setList[i].returnValues.BeenTrusted//Y Token address
                     // console.log(YTAds)
                     let cLNS = await LoopContract.methods.LoopNameSystem_Reverse(YTAds).call();
@@ -1913,11 +1999,11 @@ left: 5%;
                     // console.log(cLNS)
                     cacheData = { data: { id: YTAds, name: cLNS } };
                     myNodes.push(cacheData)
-                    cacheData = { data: { source: this.addressNow, target: YTAds, label: setList[i].returnValues.TrustValue + '%' }, classes: 'autorotate' };
+                    cacheData = { data: { source: this.cenAddress, target: YTAds, label: `${setList[i].returnValues.TrustValue}% | ${ratioDict[YTAds] == undefined ? '1' : ratioDict[YTAds] / 1e18}:1` }, classes: 'autorotate' };
                     myEdges.push(cacheData)
                     if (i == parseInt(setList.length / 2)) {
                         // console.log(cLNS);
-                        myNodes.push({ data: { id: this.addressNow, name: this.psLNS } })
+                        myNodes.push({ data: { id: this.cenAddress, name: cenLNS } })
                     }
                     this.netProgressValue = ((i + 1) / setList.length) * 100;
                 }
@@ -2074,6 +2160,16 @@ left: 5%;
                         },
 
                         {
+                            content: 'AsCenter',
+                            select: function (ele) {
+                                // console.log(ele.id(),ele.data('name'));
+                                app.cenAddress = ele.id();
+                                app.drawNets(ele.data('name'));
+                            },
+                            // enabled: true
+                        },
+
+                        {
                             content: 'SendMsg',
                             select: function (ele) {
                                 console.log(ele.position());
@@ -2081,33 +2177,37 @@ left: 5%;
                         }
                     ]
                 });
+                if (app.cenAddress == app.addressNow) {
+                    cy.cxtmenu({
+                        selector: 'edge',
 
-                cy.cxtmenu({
-                    selector: 'edge',
+                        commands: [
+                            {
+                                content: 'reset',
+                                select: function (ele) {
+                                    // console.log(ele.data('label'));
+                                    app.selectEdge = ele.data('label');
+                                    app.edgeToAddress = ele.data('target');
+                                    $('#staticBackdropJoinOracle').modal('toggle');
+                                }
+                            },
 
-                    commands: [
-                        {
-                            content: 'reset',
-                            select: function (ele) {
-                                console.log(ele);
+                            {
+                                content: 'delete',
+                                select: function (ele) {
+                                    // xdt = ele;
+                                    // console.log(xdt);
+                                    app.toTransfer(ele["_private"]["data"]["target"], 0)
+                                },
                             }
-                        },
-
-                        {
-                            content: 'delete',
-                            select: function (ele) {
-                                // xdt = ele;
-                                // console.log(xdt);
-                                app.toTransfer(ele["_private"]["data"]["target"],0)
-                            }
-                        }
-                    ]
-                });
+                        ]
+                    });
+                }
             },
 
         }
     })
-var xdt;
+    var xdt;
     var clipboard = new ClipboardJS('.toCopy');
 
     clipboard.on('success', function (e) {
