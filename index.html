@@ -1128,8 +1128,8 @@ left: 5%;
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">Set Trust
-                            #</h5>
+                        <h5 class="modal-title" id="staticBackdropLabel">Reset Trust
+                            </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -1563,7 +1563,9 @@ left: 5%;
                         this.lookMinterAddress = this.addressNow;
                         break;
                     case 4://Msg
+                        this.pageNumber = 99;
                         this.lookMessageAddress = this.addressNow;
+                        await this.getRecMsg();
                         break;
                     case 5:
                         this.netProgressValue = 0;
@@ -1586,6 +1588,7 @@ left: 5%;
                 // this.internationalization(lg);
                 await this.getBlockHeight();
                 await this.getLoopTotalSupply();
+                this.getMyLNS();
                 this.getMyMintingInWallet();
             },
             delyRefresh() {
@@ -1746,7 +1749,7 @@ left: 5%;
                         rst = cache;
                     }
                 }
-                this.updateToastAndShow('Social Message', `请求成功✅`);
+                this.updateToastAndShow('Message receive', `请求成功✅`);
                 this.messageDatas = rst.reverse();;
                 // console.log(rst)
             },
@@ -1756,7 +1759,7 @@ left: 5%;
                     return;
                 }
                 let rst;
-                this.updateToastAndShow('Social Message', `请求⏳【${this.lookMessageAddress}】发出的消息`);
+                this.updateToastAndShow('Message sent', `请求⏳【${this.lookMessageAddress}】发出的消息`);
                 if (this.msgGetCL == "∞") {
                     rst = await LoopContract.getPastEvents('SocialMessage', { filter: { Sender: this.lookMessageAddress }, fromBlock: 0 });
                 } else {
@@ -2145,22 +2148,24 @@ left: 5%;
 
                     commands: [
                         {
-                            content: 'CopyAddress',
+                            content: 'cpAd',
                             select: function (ele) {
-                                console.log(ele.id());
+                                // console.log(ele.id());
+                                cpb.copy(ele.id());
                             }
                         },
 
                         {
-                            content: 'CheckLNS',
+                            content: 'cpLNS',
                             select: function (ele) {
-                                console.log(ele.data('name'));
+                                // console.log(ele.data('name'));
+                                cpb.copy(ele.data('name'));
                             },
                             // enabled: true
                         },
 
                         {
-                            content: 'AsCenter',
+                            content: '📍',
                             select: function (ele) {
                                 // console.log(ele.id(),ele.data('name'));
                                 app.cenAddress = ele.id();
@@ -2170,20 +2175,24 @@ left: 5%;
                         },
 
                         {
-                            content: 'SendMsg',
+                            content: '📤',
                             select: function (ele) {
-                                console.log(ele.position());
+                                // console.log(ele.position());
+                                app.updateToastAndShow('Send message', `Send to ${ele.data('name')}:${ele.id()}` );
+                                app.changePage(4);
+                                app.MessageSendToAddress = ele.id();
                             }
                         }
                     ]
                 });
-                if (app.cenAddress == app.addressNow) {
+                if (app.cenAddress.toLowerCase() == app.addressNow.toLowerCase()) {
+                    console.log('self')
                     cy.cxtmenu({
                         selector: 'edge',
 
                         commands: [
                             {
-                                content: 'reset',
+                                content: '🎛',
                                 select: function (ele) {
                                     // console.log(ele.data('label'));
                                     app.selectEdge = ele.data('label');
@@ -2193,7 +2202,7 @@ left: 5%;
                             },
 
                             {
-                                content: 'delete',
+                                content: '❌',
                                 select: function (ele) {
                                     // xdt = ele;
                                     // console.log(xdt);
@@ -2208,6 +2217,9 @@ left: 5%;
         }
     })
     var xdt;
+ /**
+ * @name 剪贴板 for dom
+ */
     var clipboard = new ClipboardJS('.toCopy');
 
     clipboard.on('success', function (e) {
@@ -2219,6 +2231,55 @@ left: 5%;
         console.log(e);
     });
 
+
+
+/**
+ * @name 剪贴板 for js
+ * @type Object
+ */
+const cpb=(function()
+{
+/*成员*/
+
+    let copyDummy;
+    /**
+     * @name 初始化
+     * @type Function
+     * @see Clipboard
+     */
+    let initiate=function()
+    {
+        let textarea=document.createElement('textarea');
+        textarea.style='position:absolute; width:0; height:0; opacity:0;';
+        copyDummy=textarea;
+        document.body.appendChild(copyDummy);
+    };
+
+/*接口*/
+
+    /**
+     * @name 复制
+     * @type Function
+     * @see Clipboard
+     * @param {String} value 内容
+     */
+    let copy=function(value)
+    {
+        copyDummy.value=value;
+        copyDummy.select();
+        document.execCommand('Copy');
+        app.updateToastAndShow('Copy', '✅Copied: ' + value);
+    };
+
+/*构造*/
+
+    document.addEventListener('DOMContentLoaded',function()
+    {
+        initiate();
+    });
+
+    return {copy};
+})();
 </script>
 
 <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
