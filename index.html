@@ -313,7 +313,7 @@
     <script>
         const pattern = trianglify({
             width: window.innerWidth,
-            height: document.body.clientHeight 
+            height: document.body.clientHeight
         })
         document.body.appendChild(pattern.toCanvas())
     </script>
@@ -1130,7 +1130,7 @@ left: 5%;
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="staticBackdropLabel">Reset Trust
-                            </h5>
+                        </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -1151,17 +1151,15 @@ left: 5%;
 
                         <span class="btn-group mr-2" style="width: 100%;margin-bottom: 5px;" role="group"
                             aria-label="First group">
-                            <button type="button" class="btn btn-primary neon"
-                                @click='trustCommand=1'>信任程度🙌</button>
-                            <button type="button" class="btn btn-success neon"
-                                @click='trustCommand=2'>兑换比例🖇</button>
+                            <button type="button" class="btn btn-primary neon" @click='trustCommand=1'>信任程度🙌</button>
+                            <button type="button" class="btn btn-success neon" @click='trustCommand=2'>兑换比例🖇</button>
                             <!-- <button type="button" class="btn btn-primary neon" @click='oracle_myStrategy=3'>✋</button> -->
                         </span>
                         <span v-if="trustCommand==1">
                             <div class="btn-group" role="group" aria-label="First group"
                                 style="cursor:pointer;width: 100%;margin-bottom: 5px;">
-                                <input class="input-group-text" style="width: 100%;margin-bottom: 5px;" type="number" min="1" max="99"
-                                    step="1" placeholder="信任百分比" v-model='trustValue'></input>
+                                <input class="input-group-text" style="width: 100%;margin-bottom: 5px;" type="number"
+                                    min="1" max="99" step="1" placeholder="信任百分比" v-model='trustValue'></input>
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1">%</span>
                                 </div>
@@ -2014,7 +2012,7 @@ left: 5%;
                     cacheData = { data: { source: this.cenAddress, target: YTAds, label: `${setList[i].returnValues.TrustValue}% | ${ratioDict[YTAds] == undefined ? '1' : ratioDict[YTAds] / 1e18}:1` }, classes: 'autorotate' };
                     myEdges.push(cacheData)
 
-                    
+
                 }
                 // console.log(myNodes,myEdges)
                 let _nodes = myNodes;
@@ -2155,15 +2153,20 @@ left: 5%;
 
                     commands: [
                         {
-                            content: 'cpAd',
+                            content: '复制地址',
                             select: function (ele) {
                                 // console.log(ele.id());
                                 cpb.copy(ele.id());
                             }
                         },
-
                         {
-                            content: 'cpLNS',
+                            content: '浏览器',
+                            select: function (ele) {
+                                window.open(`https://${app.blockExplorer[app.netWork]}/address/` + ele.id())
+                            }
+                        },
+                        {
+                            content: '复制LNS',
                             select: function (ele) {
                                 // console.log(ele.data('name'));
                                 cpb.copy(ele.data('name'));
@@ -2185,7 +2188,7 @@ left: 5%;
                             content: '📤',
                             select: function (ele) {
                                 // console.log(ele.position());
-                                app.updateToastAndShow('Send message', `Send to ${ele.data('name')}:${ele.id()}` );
+                                app.updateToastAndShow('Send message', `Send to ${ele.data('name')}:${ele.id()}`);
                                 app.changePage(4);
                                 app.MessageSendToAddress = ele.id();
                             }
@@ -2224,9 +2227,9 @@ left: 5%;
         }
     })
     var xdt;
- /**
- * @name 剪贴板 for dom
- */
+    /**
+    * @name 剪贴板 for dom
+    */
     var clipboard = new ClipboardJS('.toCopy');
 
     clipboard.on('success', function (e) {
@@ -2240,53 +2243,49 @@ left: 5%;
 
 
 
-/**
- * @name 剪贴板 for js
- * @type Object
- */
-const cpb=(function()
-{
-/*成员*/
-
-    let copyDummy;
     /**
-     * @name 初始化
-     * @type Function
-     * @see Clipboard
+     * @name 剪贴板 for js
+     * @type Object
      */
-    let initiate=function()
-    {
-        let textarea=document.createElement('textarea');
-        textarea.style='position:absolute; width:0; height:0; opacity:0;';
-        copyDummy=textarea;
-        document.body.appendChild(copyDummy);
-    };
+    const cpb = (function () {
+        /*成员*/
 
-/*接口*/
+        let copyDummy;
+        /**
+         * @name 初始化
+         * @type Function
+         * @see Clipboard
+         */
+        let initiate = function () {
+            let textarea = document.createElement('textarea');
+            textarea.style = 'position:absolute; width:0; height:0; opacity:0;';
+            copyDummy = textarea;
+            document.body.appendChild(copyDummy);
+        };
 
-    /**
-     * @name 复制
-     * @type Function
-     * @see Clipboard
-     * @param {String} value 内容
-     */
-    let copy=function(value)
-    {
-        copyDummy.value=value;
-        copyDummy.select();
-        document.execCommand('Copy');
-        app.updateToastAndShow('Copy', '✅Copied: ' + value);
-    };
+        /*接口*/
 
-/*构造*/
+        /**
+         * @name 复制
+         * @type Function
+         * @see Clipboard
+         * @param {String} value 内容
+         */
+        let copy = function (value) {
+            copyDummy.value = value;
+            copyDummy.select();
+            document.execCommand('Copy');
+            app.updateToastAndShow('Copy', '✅Copied: ' + value);
+        };
 
-    document.addEventListener('DOMContentLoaded',function()
-    {
-        initiate();
-    });
+        /*构造*/
 
-    return {copy};
-})();
+        document.addEventListener('DOMContentLoaded', function () {
+            initiate();
+        });
+
+        return { copy };
+    })();
 </script>
 
 <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
