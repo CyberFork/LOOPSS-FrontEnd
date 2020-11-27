@@ -56,6 +56,7 @@
         background-color: #E6E6E6; */
         background-color: #111;
         overflow-x: hidden;
+        min-height: 80rem;
         /* overflow-y: hidden;   */
     }
 
@@ -312,7 +313,7 @@
     <script>
         const pattern = trianglify({
             width: window.innerWidth,
-            height: window.innerHeight
+            height: document.body.clientHeight 
         })
         document.body.appendChild(pattern.toCanvas())
     </script>
@@ -1255,7 +1256,7 @@ left: 5%;
             }
             app.intervalRefresh();
             app.RefreshAccount();
-            app.getMyLNS();
+            // app.getMyLNS();
             // clearInterval(lt);
         }
         else {
@@ -1283,7 +1284,7 @@ left: 5%;
                 app.netWork = 'BSC'
                 console.log('LoopsAddress@BSC:', LoopsAddress);
                 LoopContract = new web3js.eth.Contract(Loop_ABI, LoopsAddress);
-                app.getMyLNS();
+                // app.getMyLNS();
                 break;
             case 1337://tf
                 LoopsAddress = "0x6a88674830C21b45efE45f286beF73a9f085a6Cf";
@@ -1295,10 +1296,11 @@ left: 5%;
             default:
                 break;
         }
-        app.intervalRefresh();
+        // app.intervalRefresh();
         app.RefreshAccount();
 
     })
+    ethereum.autoRefreshOnNetworkChange = false;
     ethereum.on('accountsChanged', function (accounts) {
         //刷新初始化也会调用这个方法哦
         app.addressNow = web3.eth.defaultAccount;
@@ -1680,6 +1682,7 @@ left: 5%;
                 this.updateToastAndShow('Trust State', '获取成功');
             },
             async getYCoinList() {
+                //TODO改为按transfer
                 this.YCoinList = [];
                 // 获取My地址信任过的TrustLog
                 let trustedList = (await LoopContract.getPastEvents('TrustEvent', { filter: { TrustSender: this.lookMyAddress }, fromBlock: 0 }))//.reverse();
@@ -1966,12 +1969,13 @@ left: 5%;
                 this.netProgressValue = 0;
                 // netDatas
                 let cacheNetDatas = (await LoopContract.getPastEvents('TrustEvent', { filter: { TrustSender: this.cenAddress }, fromBlock: 0 })).reverse();
+                console.log(cacheNetDatas)
                 let setList = [];
                 let filter = {};
                 let ratioDict = {};
                 for (let i = 0; i < cacheNetDatas.length; i++) {
                     // console.log(i,cacheNetDatas[i].returnValues.BeenTrusted,filter[cacheNetDatas[i].returnValues.BeenTrusted])
-                    if (filter[cacheNetDatas[i].returnValues.BeenTrusted] == undefined && cacheNetDatas[i].returnValues.TrustType == 1) {
+                    if (filter[cacheNetDatas[i].returnValues.BeenTrusted] == undefined && cacheNetDatas[i].returnValues.TrustType < 2) {
                         // console.log(i)
                         filter[cacheNetDatas[i].returnValues.BeenTrusted] = 1;
                         setList.push(cacheNetDatas[i]);
@@ -1988,11 +1992,16 @@ left: 5%;
                 let myEdges = [];
                 let cacheData;
                 for (let i = 0; i < setList.length; i++) {
-
+                    if (i == parseInt(setList.length / 2)) {
+                        // console.log(cLNS);
+                        myNodes.push({ data: { id: this.cenAddress, name: cenLNS } })
+                    }
+                    this.netProgressValue = ((i + 1) / setList.length) * 100;
                     if (setList[i].returnValues.TrustValue == 0) {
                         //对于信任又取消的直接跳过
                         continue
                     }
+                    // console.log(setList[i])
                     let YTAds = setList[i].returnValues.BeenTrusted//Y Token address
                     // console.log(YTAds)
                     let cLNS = await LoopContract.methods.LoopNameSystem_Reverse(YTAds).call();
@@ -2004,12 +2013,10 @@ left: 5%;
                     myNodes.push(cacheData)
                     cacheData = { data: { source: this.cenAddress, target: YTAds, label: `${setList[i].returnValues.TrustValue}% | ${ratioDict[YTAds] == undefined ? '1' : ratioDict[YTAds] / 1e18}:1` }, classes: 'autorotate' };
                     myEdges.push(cacheData)
-                    if (i == parseInt(setList.length / 2)) {
-                        // console.log(cLNS);
-                        myNodes.push({ data: { id: this.cenAddress, name: cenLNS } })
-                    }
-                    this.netProgressValue = ((i + 1) / setList.length) * 100;
+
+                    
                 }
+                // console.log(myNodes,myEdges)
                 let _nodes = myNodes;
                 let _edges = myEdges;
                 // let _nodes = [
