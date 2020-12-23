@@ -25,16 +25,15 @@
 <body>
     <div id="app">
 
-        <el-row class="tac " v-if="ratioWH > 0.6">
-            <el-col :span="5">
+        <el-row class="tac " v-if="ratioWH > 0.6" style="height: 100%;">
+            <el-col :span="4" style="height: 100%;max-width: 16rem;">
                 <!-- <img src="./img/icon.png"> -->
                 <div class="grid-content bg-purple" style="text-align: center;" v-if="ratioWH > 0.9">
                     <h3>LOOPSS</h3>
                     <h5>无需质押，信任挖矿</h5>
                 </div>
                 <el-menu default-active="1-4-1" class="el-menu-vertical-demo bg-purple grid-content"
-                    :collapse="hideSider">
-
+                    :collapse="hideSider" style="height: 100%;">
                     <el-menu-item index="1">
                         <i class="el-icon-s-home"></i>
                         <span slot="title">Home-首页</span>
@@ -61,7 +60,20 @@
                     </el-menu-item>
                 </el-menu>
             </el-col>
+            <el-col :span="20" style="height: 100%;">
+                <el-row>
 
+                    <el-col :span="2">
+                        <div class="grid-content bg-purple-light"></div>
+                    </el-col>
+                    <el-col :span="20">
+                        <div class="grid-content bg-purple"></div>
+                    </el-col>
+                    <el-col :span="2">
+                        <div class="grid-content bg-purple-light"></div>
+                    </el-col>
+                </el-row>
+            </el-col>
 
         </el-row>
 
@@ -113,7 +125,12 @@
             min-height: 36px;
         }
 
+        html,
         body {
+            height: 100%
+        }
+
+        #app {
             height: 100%;
         }
     </style>
@@ -122,13 +139,6 @@
 
 
 <script>
-    window.onresize = function () {
-        // changeMargin();
-        app.ratioWH = window.innerWidth / window.innerHeight;
-        // console.log(window.innerHeight, window.innerWidth)
-
-    };
-
     // Address
     var adLoopssMe = '0x8E4DfCF7fa2425eC9950f9789D2EB92142bb0C86';
     var adLoopMemeToken = '0x880E7Df34378712107AcdaCF705c2257Bf42b1A5';
@@ -185,7 +195,6 @@
                     break;
             }
             app.intervalRefresh();
-            app.RefreshAccount();
         }
         else {
             self.setInterval("app.intervalRefresh()", 20000);
@@ -205,6 +214,31 @@
                 hideSider: false
             }
         },
+        //声明周期
+        beforeCreat() {
+
+        },
+        Created() {
+
+        },
+        beforeMount() {
+
+        },
+        mounted() {
+
+        },
+        beforeUpdate() {
+
+        },
+        updated() {
+
+        },
+        beforeDestory() {
+
+        },
+        destoryed() {
+
+        },
         watch: {
             ratioWH: {
                 handler: function (ratioWH) {
@@ -220,17 +254,42 @@
 
         },
         methods: {
-            handleOpen(key, keyPath) {
-                console.log(key, keyPath);
+            // 数据处理方法
+            _formatBigNumber(_bn) {
+                // return web3js.utils.fromWei(_bn, 'ether');
+                return parseFloat(web3js.utils.fromWei(_bn, 'ether')).toLocaleString();
+                // parseFloat().toLocaleString();
             },
-            handleClose(key, keyPath) {
-                console.log(key, keyPath);
+            async intervalRefresh() {
+                // this.internationalization(lg);
+                await this.getBlockHeight();
+                await this.getLoopTotalSupply();
+                // this.getMyLNS();
+                // this.getMyMintingInWallet();
             },
-            // hideSider(key,keyPath){
+            getBlockHeight() {
+                web3js.eth.getBlockNumber().then((rst) => { this.blockHeight = rst; console.log(rst) })
+            },
+            getLoopTotalSupply() {
+                icLoopsMeContract.methods.totalSupply().call().then((rst) => {
+                    this.TotalSupply = this._formatBigNumber(rst);
+                    console.log(rst);
+                })
+            },
+            // handleOpen(key, keyPath) {
             //     console.log(key, keyPath);
-            // }
+            // },
+            // handleClose(key, keyPath) {
+            //     console.log(key, keyPath);
+            // },
+
         }
     })
+
+    app.ratioWH = window.innerWidth / window.innerHeight;
+    window.onresize = function () {
+        app.ratioWH = window.innerWidth / window.innerHeight;
+    };
 </script>
 
 </html>
