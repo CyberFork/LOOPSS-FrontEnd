@@ -1,5 +1,6 @@
-./backUp
-./Graph
-./mp3
+backUp
+Graph
+mp3
+labels
 *.zip
 atips
