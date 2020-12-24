@@ -1,4 +1,4 @@
-var LoopMemeToken_ABI = [
+var LOOPToken_ABI = [
 	{
 		"inputs": [],
 		"stateMutability": "nonpayable",

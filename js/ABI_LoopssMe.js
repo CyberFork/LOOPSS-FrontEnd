@@ -22,7 +22,7 @@ var LoopssMe_ABI = [
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "tokens",
+				"name": "amount",
 				"type": "uint256"
 			}
 		],
@@ -47,7 +47,7 @@ var LoopssMe_ABI = [
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "tokens",
+				"name": "amount",
 				"type": "uint256"
 			},
 			{
@@ -196,7 +196,7 @@ var LoopssMe_ABI = [
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "tokens",
+				"name": "amount",
 				"type": "uint256"
 			}
 		],
@@ -221,7 +221,7 @@ var LoopssMe_ABI = [
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "tokens",
+				"name": "amount",
 				"type": "uint256"
 			},
 			{
@@ -1022,7 +1022,7 @@ var LoopssMe_ABI = [
 			},
 			{
 				"internalType": "uint256",
-				"name": "tokens",
+				"name": "amount",
 				"type": "uint256"
 			}
 		],

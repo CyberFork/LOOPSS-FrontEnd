@@ -16,7 +16,7 @@
     <script src="./js/web3.min.js"></script>
     <!-- ABIs -->
     <script language="javascript" type="text/javascript" src="./js/ABI_LoopssMe.js"></script>
-    <script language="javascript" type="text/javascript" src="./js/ABI_LoopMemeToken.js"></script>
+    <script language="javascript" type="text/javascript" src="./js/ABI_LOOPToken.js"></script>
     <script language="javascript" type="text/javascript" src="./js/ABI_LOOPPool.js"></script>
 
 
@@ -141,8 +141,8 @@
 <script>
     // Address
     var adLoopssMe = '0x8E4DfCF7fa2425eC9950f9789D2EB92142bb0C86';
-    var adLoopMemeToken = '0x880E7Df34378712107AcdaCF705c2257Bf42b1A5';
-    var adLoopPool = '0x89434bfc9708623317F964774708cF9f11963e01';
+    var adLOOPToken = '0x880E7Df34378712107AcdaCF705c2257Bf42b1A5';//symbol of LOOPToken is LOOP
+    var adLOOPPool = '0x89434bfc9708623317F964774708cF9f11963e01';
     // Contract Instance
     var icLoopsMeContract;
     var icMemeTokenContract;
@@ -169,21 +169,21 @@
                 case 1337://tf
                     app.netWork = 'Localhost'
                     icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe);
-                    icMemeTokenContract = new web3js.eth.Contract(LoopMemeToken_ABI, adLoopMemeToken);
-                    icPoolContract = new web3js.eth.Contract(LoopPool_ABI, adLoopPool);
+                    icMemeTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
+                    icPoolContract = new web3js.eth.Contract(LOOPPool_ABI, adLOOPPool);
                     connected = true;
                     break;
                 case 1://mainnet
                     app.netWork = 'Ethereum'
                     icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe);
-                    icMemeTokenContract = new web3js.eth.Contract(LoopMemeToken_ABI, adLoopMemeToken);
+                    icMemeTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
                     icPoolContract = new web3js.eth.Contract(LoopPool_ABI, adLoopPool);
                     connected = true;
                     break;
                 case 42://kovan
                     app.netWork = 'Kovan'
                     icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe);
-                    icMemeTokenContract = new web3js.eth.Contract(LoopMemeToken_ABI, adLoopMemeToken);
+                    icMemeTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
                     icPoolContract = new web3js.eth.Contract(LoopPool_ABI, adLoopPool);
                     connected = true;
                     break;
