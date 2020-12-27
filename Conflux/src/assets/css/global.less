@@ -1,0 +1,60 @@
+@import "~ant-design-vue/dist/antd.less";
+
+// Colors
+@body-background: #fff;
+@layout-body-background: #fff;
+@layout-sider-background-light: #eee;
+@menu-bg: #eee;
+@layout-header-background: rgba(233, 233, 233, .8);
+@layout-header-height: 48px;
+@layout-header-padding: 0 20px;
+@menu-collapsed-width: 60px;
+// @primary-color: #1CB289; // 全局主色
+// @link-color: #1CB289; // 链接色
+// @success-color: #1CB289; // 成功色
+// @warning-color: #faad14; // 警告色
+// @error-color: #f5222d; // 错误色
+
+@heading-color: #333333; // 标题色
+@text-color:#666666; // 主文本色
+@text-color-secondary: #999999; // 次文本色
+@disabled-color: #cccccc; // 失效色
+@border-color-base: #dddddd; // 边框色
+
+//Size
+@font-size-base: 14px;
+@font-size-lg: @font-size-base + 2px;
+@font-size-sm: @font-size-base - 2px;
+@tabs-title-font-size: @font-size-lg;
+@border-radius-base: 6px; // 组件圆角
+@table-padding-vertical: 8px;
+@table-padding-horizontal: 8px;
+
+//其他
+@font-family: 'PingFang SC', Helvetica, 'Microsoft Yahei', Avenir, Arial, 'sans-serif';
+@box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.15); // 浮层阴影
+@modal-mask-bg: fade(@black, 65%);
+
+.ant-space {
+	flex-wrap: wrap;
+}
+
+.ant-calendar-picker{
+	text-align: center;
+}
+
+body,
+html {
+	padding: 0;
+	margin: 0;
+	height: 100%;
+	width: 100%;
+	min-height: 480px;
+	.flex-box{
+		display: flex;
+	}
+	.pointer{
+		cursor: pointer;
+		user-select: none;
+	}
+}
