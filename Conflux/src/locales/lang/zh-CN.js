@@ -50,7 +50,7 @@ const locale = {
     mining: {
       title: '你获得的 LOOP',
       curToken: '当前余额',
-      waitToken: '待领取',
+      unClaimTokens: '待领取',
       trustCalc: '信任算力',
       tip1: '剩余领取时间',
       tip2: '过期后LOOP会消失，请每天按时领取',

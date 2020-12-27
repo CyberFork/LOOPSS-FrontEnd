@@ -45,7 +45,7 @@
           <a-text block class="info-content">{{$t('home.task.info')}}</a-text>
           <div class="flex-box">
             <a-input class="share-input" :default-value="inviteLink + user" />
-            <a-button class="copy-btn" @click="copyFn(inviteLink)">复制 <a-icon type="copy" /></a-button>
+            <a-button class="copy-btn" @click="copyFn(inviteLink + user)">复制 <a-icon type="copy" /></a-button>
           </div>
           <div class="share-wrap">
             <a-text>{{$t('home.task.shareTip')}}</a-text>
@@ -83,7 +83,8 @@
         miningedTotal: 0,
         trustTotal: 0,
         duration: 3000,
-        inviteLink: ' https://loopss.me/invited/',
+        // inviteLink: ' https://loopss.me/invited/',
+        inviteLink: ' https://loopss.me/#',
         price: 0
       }
     },
@@ -93,6 +94,7 @@
           this.$message.success('复制成功')
         })
       },
+      //TODO 定时刷新
       getInfo() {
         Api.getInfo().then(res => {
           this.total = res.total

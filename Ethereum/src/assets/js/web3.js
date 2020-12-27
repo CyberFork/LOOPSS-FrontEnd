@@ -1,3 +1,6 @@
+import LoopssMe_ABI from './ABI_LoopssMe.json';
+import LOOPToken_ABI from './ABI_LOOPToken.json';
+import LOOPPool_ABI from './ABI_LOOPPool.json';
 // Address
 var adLoopssMe = '0x8E4DfCF7fa2425eC9950f9789D2EB92142bb0C86';
 var adLOOPToken = '0x880E7Df34378712107AcdaCF705c2257Bf42b1A5';
@@ -7,6 +10,7 @@ let icLoopsMeContract;
 let icLOOPTokenContract;
 let icPoolContract;
 // web3 connect
+let netWork;
 let web3js = new Web3(web3.currentProvider);
 let ethereum = window.ethereum;
 ethereum.autoRefreshOnNetworkChange = true;
@@ -17,43 +21,45 @@ web3js.eth.getAccounts().then(function (accounts) {
     console.log('Now account:', accounts);
 });
 // delay metamask connection
-var lt = self.setInterval(connectNetwork, 6000);
+var lt = self.setInterval(connectNetwork, 1000);
 var connected = false;
 function connectNetwork() {
     if (connected === false) {
-        networkId = parseInt(ethereum.chainId);
+        let networkId = parseInt(ethereum.chainId);
         switch (networkId) {
+            case 42://kovan
+                netWork = 'Kovan'
+                icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe);
+                icLOOPTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
+                icPoolContract = new web3js.eth.Contract(LOOPPool_ABI, adLOOPPool);
+                console.log(icPoolContract);
+                connected = true;
+                break;
             case 1337://tf
-                app.netWork = 'Localhost'
+                netWork = 'Localhost'
                 icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe);
                 icLOOPTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
                 icPoolContract = new web3js.eth.Contract(LOOPPool_ABI, adLOOPPool);
                 connected = true;
                 break;
             case 1://mainnet
-                app.netWork = 'Ethereum'
-                icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe);
-                icLOOPTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
-                icPoolContract = new web3js.eth.Contract(LOOPPool_ABI, adLOOPPool);
-                connected = true;
-                break;
-            case 42://kovan
-                app.netWork = 'Kovan'
+                netWork = 'Ethereum'
                 icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe);
                 icLOOPTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
                 icPoolContract = new web3js.eth.Contract(LOOPPool_ABI, adLOOPPool);
                 connected = true;
                 break;
             // case 56://BSC
-            //     app.netWork = 'BSC'
+            //    netWork = 'BSC'
             //     LoopContract = new web3js.eth.Contract(Loop_ABI, LoopsAddress);
             //     break;
             default:
                 break;
         }
-        app.intervalRefresh();
+        // app.intervalRefresh();
+        console.log(icPoolContract);
     } else {
-        self.setInterval("app.intervalRefresh()", 20000);
+        // self.setInterval("app.intervalRefresh()", 20000);
         clearInterval(lt);
     }
 }
@@ -61,3 +67,5 @@ console.log(connectNetwork)
 console.log(icLoopsMeContract)
 console.log(icLOOPTokenContract)
 console.log(icPoolContract)
+console.log(netWork)
+// export default w3

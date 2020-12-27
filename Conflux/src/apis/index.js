@@ -28,12 +28,12 @@ const Api = {
     return Promise.resolve({
       needInviteCount: 3, //仍然需要邀请人数
       curToken: 43534, //当前余额
-      waitToken: 3254, //待领取
+      unClaimTokens: 3254, //待领取
       trustCalc: 23422, //信任算力
       time: 35345
     })
   },
-  getToken() {
+  updateAndClaim() {
     //挖矿-收取token & 更新算力
     return Promise.resolve()
   },

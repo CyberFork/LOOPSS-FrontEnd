@@ -11,7 +11,7 @@ import 'assets/css/global.less' //全局样式
 import 'components/utils' //全局公用组件
 
 import 'assets/js/axios'
-import 'assets/js/web3'
+// import 'assets/js/web3'
 import './filters' //全局公用filter
 
 Vue.use(Antd)

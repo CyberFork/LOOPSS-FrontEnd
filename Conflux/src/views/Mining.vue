@@ -21,8 +21,8 @@
               <div>{{$t('mining.mining.curToken')}}</div>
             </div>
             <div class="cont-item">
-              <div>{{myInfo.waitToken}}</div>
-              <div>{{$t('mining.mining.waitToken')}}</div>
+              <div>{{myInfo.unClaimTokens}}</div>
+              <div>{{$t('mining.mining.unClaimTokens')}}</div>
             </div>
             <div class="cont-item">
               <div>{{myInfo.trustCalc}}</div>
@@ -34,7 +34,7 @@
               <a-text block>{{$t('mining.mining.tip1')}}: {{myInfo.time}}</a-text>
               <a-text gray>{{$t('mining.mining.tip2')}}</a-text>
             </div>
-            <a-button @click="getToken">{{$t('mining.mining.btnTip')}}</a-button>
+            <a-button @click="updateAndClaim">{{$t('mining.mining.btnTip')}}</a-button>
           </div>
         </a-card>
       </a-spin>
@@ -114,7 +114,7 @@
           loading: false,
           needInviteCount: 0,
           curToken: 0,
-          waitToken: 0,
+          unClaimTokens: 0,
           trustCalc: 0,
           time: 0
         },
@@ -153,9 +153,9 @@
           })
         }, 1000)
       },
-      getToken(){
+      updateAndClaim(){
         this.myInfo.loading = false
-        Api.getToken()
+        Api.updateAndClaim()
         .then(this.getMyInfo)
         .catch(() => {
           this.myInfo.loading = false

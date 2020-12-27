@@ -50,7 +50,7 @@ const locale = {
     mining: {
       title: 'You get the LOOP',
       curToken: 'The current balance',
-      waitToken: 'To receive',
+      unClaimTokens: 'To receive',
       trustCalc: 'Trust is force',
       tip1: 'Remaining collection time',
       tip2: 'After expiration, the LOOP will disappear. Please pick it up on time every day',
