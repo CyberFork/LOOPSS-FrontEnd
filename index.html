@@ -18,6 +18,10 @@
     <script language="javascript" type="text/javascript" src="./js/ABI_LoopssMe.js"></script>
     <script language="javascript" type="text/javascript" src="./js/ABI_LOOPToken.js"></script>
     <script language="javascript" type="text/javascript" src="./js/ABI_LOOPPool.js"></script>
+    <!-- Modules -->
+    <script src="./js/clipboard.min.js"></script>
+    <script src="./js/cytoscape.min.js"></script>
+    <script src="./js/cytoscape-cxtmenu.js"></script>
 
 
 </head>
@@ -63,14 +67,76 @@
             <el-col :span="20" style="height: 100%;">
                 <el-row>
 
-                    <el-col :span="2">
-                        <div class="grid-content bg-purple-light"></div>
+                    <el-col :span="1">
+                        <div class="grid-content "></div>
                     </el-col>
                     <el-col :span="20">
-                        <div class="grid-content bg-purple"></div>
+                        <div class="grid-content bg-purple" style="text-align: center;">
+                            <h1>LOOP是未来信任网络</h1>
+                            <p>为使数百万人加入，我们准备以信任关系分发未来货币</p>
+                            <b>理论产出</b>
+                            <div class="grid-content bg-purple-dark" style="width:70%;
+                            margin: auto;">
+                                <a style="font-size: 6rem;">∞</a>
+                                <a style="font-size: 2rem;
+                                position: relative;
+                                top: -1rem;">{{theoryMineSupply}}</a>
+                            </div>
+                            <div style="width:70%;margin: auto;">
+                                <p style="font-size: 1rem;">
+                                    LOOP 每 10 秒钟 产出1个 ,信任网络所有成员共同分享
+
+                                    获得好友的信任数量越多，相比其他人可以更快速积累LOOP
+                                </p>
+                            </div>
+
+                            <div class="grid-content bg-block" style="width:70%;
+                            margin: auto;">
+                                <el-row>
+                                    <el-col :span="12">
+                                        <div class="grid-content ">
+                                            <img src="./img/icon.png" class="lpicon">
+                                            LOOP
+                                            <a class="toCopy" href="#" title="复制地址" :data-clipboard-text="adLoopssMe">cp
+                                            </a>
+                                            <a :href="`https://${blockExplorer[netWork]}/address/`+adLoopssMe"
+                                                target="_blank">
+                                                ↗</a>
+                                        </div>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <div class="grid-content ">
+                                            Price:???
+                                        </div>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="8">
+                                        <div class="grid-content " style="font-size: 12px;">
+                                            总计已产出：{{theoryP}}
+                                        </div>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <div class="grid-content " style="font-size: 12px;">
+                                            LOOP已包装：{{LOOPwrpped}}
+                                        </div>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <div class="grid-content " style="font-size: 12px;">
+                                            挖矿信任数：{{totalMiningTrust}}
+                                        </div>
+                                    </el-col>
+                                </el-row>
+                            </div>
+                            <br>
+                            <div class="grid-content bg-purple-dark" style="width:70%;
+                            margin: auto;">
+                                <h2 style="float: left;">当前任务</h2>
+                            </div>
+                        </div>
                     </el-col>
-                    <el-col :span="2">
-                        <div class="grid-content bg-purple-light"></div>
+                    <el-col :span="1">
+                        <div class="grid-content "></div>
                     </el-col>
                 </el-row>
             </el-col>
@@ -104,6 +170,12 @@
 
 
     <style>
+        .lpicon {
+            border-radius: 1.5rem;
+            width: 3rem;
+            height: 3rem;
+        }
+
         .el-col {
             border-radius: 4px;
         }
@@ -120,10 +192,15 @@
             background: #e5e9f2;
         }
 
+        .bg-block {
+            background: rgba(121, 121, 121, 1);
+        }
+
         .grid-content {
             border-radius: 4px;
             min-height: 36px;
         }
+
 
         html,
         body {
@@ -136,7 +213,6 @@
     </style>
 
 </body>
-
 
 <script>
     // Address
@@ -159,10 +235,9 @@
     });
     // delay metamask connection
     var lt = self.setInterval("connectNetwork()", 1000);
-    var connected = false;
     function connectNetwork() {
 
-        if (connected == false) {
+        if (app.connected == false) {
             networkId = parseInt(ethereum.chainId);
             console.log(networkId)
             switch (networkId) {
@@ -171,21 +246,21 @@
                     icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe);
                     icLOOPTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
                     icPoolContract = new web3js.eth.Contract(LOOPPool_ABI, adLOOPPool);
-                    connected = true;
+                    app.connected = true;
                     break;
                 case 1://mainnet
                     app.netWork = 'Ethereum'
                     icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe);
                     icLOOPTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
-                    icPoolContract = new web3js.eth.Contract(LoopPool_ABI, adLoopPool);
-                    connected = true;
+                    icPoolContract = new web3js.eth.Contract(LOOPPool_ABI, adLOOPPool);
+                    app.connected = true;
                     break;
                 case 42://kovan
                     app.netWork = 'Kovan'
                     icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe);
                     icLOOPTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
-                    icPoolContract = new web3js.eth.Contract(LoopPool_ABI, adLoopPool);
-                    connected = true;
+                    icPoolContract = new web3js.eth.Contract(LOOPPool_ABI, adLOOPPool);
+                    app.connected = true;
                     break;
                 // case 56://BSC
                 //     app.netWork = 'BSC'
@@ -208,10 +283,18 @@
             return {
                 //connection
                 netWork: 'Unknow',
-                //
+                // 整体数据
+                adLoopssMe: adLoopssMe,
+                theoryMineSupply: 12345,
+                blockExplorer: { 'Kovan': 'kovan.etherscan.io', 'BSC': 'bscscan.com' },
+                connected: false,
                 visible: false,
                 ratioWH: 1,
-                hideSider: false
+                hideSider: false,
+                //首页
+                theoryP:0,
+                LOOPwrpped:9999999999,
+                totalMiningTrust:9999999999,
             }
         },
         //声明周期
@@ -225,7 +308,7 @@
 
         },
         mounted() {
-
+            
         },
         beforeUpdate() {
 
@@ -250,6 +333,13 @@
                     }
                 },
                 deep: true
+            },
+            connected:{
+                handler:function(connected){
+                    if(connected){
+                        this.changePage()
+                    }
+                }
             }
 
         },
@@ -276,6 +366,31 @@
                     console.log(rst);
                 })
             },
+            // 页面管理
+            changePage(){
+                this.initHome()
+            },
+            // 首页init功能
+            initHome() {
+                // 计算时间上的理论产出
+                this.calTheoryP();
+                this.getLOOPwrapSupply();
+                this.getLOOPPoolTrustCount();
+                // 获取 已包装的ERC20数量
+                // 获取正在挖矿的Trust数量
+            },
+            calTheoryP() {
+                myDate = new Date();
+                let dTime = myDate.getTime() - 1608975285000;
+                this.theoryP = dTime / 10000
+                // let trustedList = await icLoopsMeContract.getPastEvents('TrustEvent', { filter: { BeenTrusted: adLOOPToken}, fromBlock: 0 }).reverse();
+            },
+            async getLOOPwrapSupply() {
+                this.LOOPwrpped = await icLOOPTokenContract.methods.totalSupply().call()
+            },
+            async getLOOPPoolTrustCount() {
+                this.totalMiningTrust = await icPoolContract.methods.totalMiningTrust().call()
+            }
             // handleOpen(key, keyPath) {
             //     console.log(key, keyPath);
             // },
@@ -290,6 +405,20 @@
     window.onresize = function () {
         app.ratioWH = window.innerWidth / window.innerHeight;
     };
+
+    /**
+    * @name 剪贴板 for dom
+    */
+    var clipboard = new ClipboardJS('.toCopy');
+
+    clipboard.on('success', function (e) {
+        console.log(e);
+        // app.updateToastAndShow('Copy', '✅Copied: ' + e.text);
+    });
+
+    clipboard.on('error', function (e) {
+        console.log(e);
+    });
 </script>
 
 </html>
