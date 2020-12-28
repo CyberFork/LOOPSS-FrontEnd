@@ -117,7 +117,7 @@ const Api = {
       return Promise.resolve(false)
     }
   },
-  async getMyTrusts() {
+  async getTrustMe() {
     let allTrustMe = (await icLoopsMeContract.getPastEvents('TrustEvent', { filter: { BeenTrusted: web3.eth.defaultAccount }, fromBlock: 0 })).reverse();
     let trustSet = [];
     let filter = {};
@@ -136,43 +136,67 @@ const Api = {
       list: trustSet
     })
   },
-  searchByAdress(address) {
+  async getMyTrusts() {
+    let allTrustMe = (await icLoopsMeContract.getPastEvents('TrustEvent', { filter: { TrustSender: web3.eth.defaultAccount }, fromBlock: 0 })).reverse();
+    let trustSet = [];
+    let filter = {};
+    for (let i = 0; i < allTrustMe.length; i++) {
+      if (filter[allTrustMe[i].returnValues.BeenTrusted] === undefined && allTrustMe[i].returnValues.TrustType < 2) {
+        filter[allTrustMe[i].returnValues.BeenTrusted] = true;
+        if (parseInt(allTrustMe[i].returnValues.TrustType) !== 0) {
+          trustSet.push(allTrustMe[i]);
+        }
+      }
+    }
     //挖矿-获取我信任的人
+    // console.log(trustSet)
     return Promise.resolve({
-      total: 30,
+      total: trustSet.length,
+      list: trustSet
+    })
+  },
+  async searchByAdress(_address) {
+    //挖矿-获取我信任的人
+    let myTrustValueTo = await icLoopsMeContract.methods.getProportionReceiverTrustedSender(web3.eth.defaultAccount, _address).call();
+    let toTrustValueMe = await icLoopsMeContract.methods.getProportionReceiverTrustedSender(_address, web3.eth.defaultAccount).call();
+    let _trustType = myTrustValueTo * toTrustValueMe > 0 ? 3 : myTrustValueTo === toTrustValueMe ? 0 : parseInt(myTrustValueTo) === 0 ? 1 : 2; //1已信任您 2您已信任 3互相信任
+    console.log(_trustType)
+    return Promise.resolve({
+      total: 1,
       list: [{
-        address: 'x0565555555555',
-        trustType: 1, //1已信任您 2您已信任 3互相信任
-        time: '2020-03-04 13:44:23'
-      }, {
-        address: 'x0565555555555',
-        trustType: 2,
-        time: '2020-03-04 13:44:23'
-      }, {
-        address: 'x0565555555555',
-        trustType: 3,
-        time: '2020-03-04 13:44:23'
-      }, {
-        address: 'x0565555555555',
-        trustType: 2,
-        time: '2020-03-04 13:44:23'
-      }, {
-        address: 'x0565555555555',
-        trustType: 1, //1已信任您 2您已信任 3互相信任
-        time: '2020-03-04 13:44:23'
-      }, {
-        address: 'x0565555555555',
-        trustType: 2,
-        time: '2020-03-04 13:44:23'
-      }, {
-        address: 'x0565555555555',
-        trustType: 3,
-        time: '2020-03-04 13:44:23'
-      }, {
-        address: 'x0565555555555',
-        trustType: 2,
+        address: _address,
+        trustType: _trustType,
         time: '2020-03-04 13:44:23'
       }]
+      // }, {
+      //   address: 'x0565555555555',
+      //   trustType: 2,
+      //   time: '2020-03-04 13:44:23'
+      // }, {
+      //   address: 'x0565555555555',
+      //   trustType: 3,
+      //   time: '2020-03-04 13:44:23'
+      // }, {
+      //   address: 'x0565555555555',
+      //   trustType: 2,
+      //   time: '2020-03-04 13:44:23'
+      // }, {
+      //   address: 'x0565555555555',
+      //   trustType: 1, //1已信任您 2您已信任 3互相信任
+      //   time: '2020-03-04 13:44:23'
+      // }, {
+      //   address: 'x0565555555555',
+      //   trustType: 2,
+      //   time: '2020-03-04 13:44:23'
+      // }, {
+      //   address: 'x0565555555555',
+      //   trustType: 3,
+      //   time: '2020-03-04 13:44:23'
+      // }, {
+      //   address: 'x0565555555555',
+      //   trustType: 2,
+      //   time: '2020-03-04 13:44:23'
+      // }]
     })
   },
   addTrust(address) {

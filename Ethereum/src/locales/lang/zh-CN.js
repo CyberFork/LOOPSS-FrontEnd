@@ -70,7 +70,7 @@ const locale = {
     trustYou: '已信任您',
     youTrust: '您已信任',
     bothTrust: '互相信任',
-    unknownTrust: '信任未知',
+    unknownTrust: '互不信任',
     yourTrusts: '您信任的人',
   }
 }

@@ -99,7 +99,7 @@
       <a-spin :spinning="yourTrusts.loading && !yourTrusts.busy">
         <div
           class="content"
-          v-infinite-scroll="getMyTrusts"
+          v-infinite-scroll="getTrustMe"
           :infinite-scroll-disabled="yourTrusts.busy"
           :infinite-scroll-distance="10"
         >
@@ -210,7 +210,7 @@ export default {
           this.myInfo.loading = false;
         });
     },
-    getMyTrusts() {
+    getTrustMe() {
       this.yourTrusts.loading = true;
       this.yourTrusts.busy = false;
       this.yourTrusts.pn++;
@@ -221,7 +221,7 @@ export default {
         return;
       }
       setTimeout(() => {
-        Api.getMyTrusts()
+        Api.getTrustMe()
           .then((res) => {
             this.yourTrusts.total = res.total;
             this.yourTrusts.list = [...this.yourTrusts.list, ...res.list];
