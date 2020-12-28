@@ -83,8 +83,8 @@
         miningedTotal: 0,
         trustTotal: 0,
         duration: 3000,
-        // inviteLink: ' https://loopss.me/invited/',
-        inviteLink: ' https://loopss.me/#',
+        inviteLink: ' https://loopss.me/invited/',
+        // inviteLink: ' https://loopss.me/#',
         price: 0
       }
     },

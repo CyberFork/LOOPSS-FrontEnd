@@ -8,7 +8,7 @@ import LOOPPool_ABI from '../assets/js/ABI_LOOPPool.json';
 // Address
 var adLoopssMe = '0x8E4DfCF7fa2425eC9950f9789D2EB92142bb0C86';
 var adLOOPToken = '0x880E7Df34378712107AcdaCF705c2257Bf42b1A5';
-var adLOOPPool = '0x89434bfc9708623317F964774708cF9f11963e01';
+var adLOOPPool = '0xBdf7d4725cfecAaCE3B25bA395E48bDCEc946C90';
 // Contract Instance
 let icLoopsMeContract;
 let icLOOPTokenContract;
@@ -60,26 +60,49 @@ const Api = {
     //首页-获取当前loop价格
     return Promise.resolve("∞")
   },
+  // 数据处理方法
+  _formatBigNumber(_bn) {
+    // return web3js.utils.fromWei(_bn, 'ether');
+    return parseFloat(web3js.utils.fromWei(_bn, 'ether'))//.toLocaleString();
+    // parseFloat().toLocaleString();
+  },
+  //时间格式化
+  _getDateTime(time) {
+    if (time >= 60 && time <= 3600) {
+      time = parseInt(time / 60) + ":" + time % 60
+    } else {
+      if (time > 3600) {
+        time = parseInt(time / 3600) + ":" + parseInt(((time % 3600) / 60)) + ":" + time % 60;
+      } else {
+        time = time + "秒";
+      }
+    }
+    return time;
+  },
   async getMyInfo() {
     // 被信任数量计算还需信任数量
     let myTrustCount = (await icLoopsMeContract.methods.getAccountInfoOf(web3.eth.defaultAccount).call()).beenTrustCount;
     let needTrust = myTrustCount > 3 ? 0 : 3 - myTrustCount;
     // 获取未领取数量
-    let unClaim = await icPoolContract.methods.unClaimOf(web3.eth.defaultAccount).call()
+    let unClaim = this._formatBigNumber(await icPoolContract.methods.unClaimOf(web3.eth.defaultAccount).call())
     // 获取当前未包装余额
-    let unWrappedLOOP = await icLoopsMeContract.methods.minterBalanceOf(adLOOPToken, web3.eth.defaultAccount).call();
+    let unWrappedLOOP = this._formatBigNumber(await icLoopsMeContract.methods.minterBalanceOf(adLOOPToken, web3.eth.defaultAccount).call());
     // 获取当前已经包装余额
     // 获取当前信任挖矿算力
     let myMiningTrustCount = await icPoolContract.methods.minerTrustCount(web3.eth.defaultAccount).call()
     // 获取上次挖矿时间，以及计算离24小时距离
     let myLastUpdateTime = await icPoolContract.methods.minerLastUpdateTime(web3.eth.defaultAccount).call()
+    let myDate = new Date();
+    let dTime = 86400 - (parseInt(myDate.getTime() / 1000) - (myLastUpdateTime));//直接得到的第三个Trust时间戳
+    let remindTime = this._getDateTime(dTime)
     //挖矿-获取个人信息
     return Promise.resolve({
       needInviteCount: needTrust, //仍然需要邀请人数
       unClaimTokens: unClaim, //待领取
       curToken: unWrappedLOOP, //当前未包装余额
       trustCalc: myMiningTrustCount, //信任算力
-      time: parseInt(myLastUpdateTime) === 0 ? 'Never' : myLastUpdateTime // 最近挖矿的更新时间
+      time: remindTime
+      // time: parseInt(myLastUpdateTime) === 0 ? 'Never' : myLastUpdateTime // 最近挖矿的更新时间
     })
   },
   async updateAndClaim() {
@@ -94,43 +117,23 @@ const Api = {
       return Promise.resolve(false)
     }
   },
-  getMyTrusts() {
+  async getMyTrusts() {
+    let allTrustMe = (await icLoopsMeContract.getPastEvents('TrustEvent', { filter: { BeenTrusted: web3.eth.defaultAccount }, fromBlock: 0 })).reverse();
+    let trustSet = [];
+    let filter = {};
+    for (let i = 0; i < allTrustMe.length; i++) {
+      if (filter[allTrustMe[i].returnValues.TrustSender] === undefined && allTrustMe[i].returnValues.TrustType < 2) {
+        filter[allTrustMe[i].returnValues.TrustSender] = true;
+        if (parseInt(allTrustMe[i].returnValues.TrustType) !== 0) {
+          trustSet.push(allTrustMe[i]);
+        }
+      }
+    }
     //挖矿-获取我信任的人
+    // console.log(trustSet)
     return Promise.resolve({
-      total: 30,
-      list: [{
-        address: 'x0565555555555',
-        isAdd: 1, //true-已信任 false-未信任
-        time: '2020-03-04 13:44:23'
-      }, {
-        address: 'x0565555555555',
-        isAdd: 0,
-        time: '2020-03-04 13:44:23'
-      }, {
-        address: 'x0565555555555',
-        isAdd: 0,
-        time: '2020-03-04 13:44:23'
-      }, {
-        address: 'x0565555555555',
-        isAdd: 0,
-        time: '2020-03-04 13:44:23'
-      }, {
-        address: 'x0565555555555',
-        isAdd: 1, //1已信任您 2您已信任 3互相信任
-        time: '2020-03-04 13:44:23'
-      }, {
-        address: 'x0565555555555',
-        isAdd: 1,
-        time: '2020-03-04 13:44:23'
-      }, {
-        address: 'x0565555555555',
-        isAdd: 0,
-        time: '2020-03-04 13:44:23'
-      }, {
-        address: 'x0565555555555',
-        isAdd: 1,
-        time: '2020-03-04 13:44:23'
-      }]
+      total: trustSet.length,
+      list: trustSet
     })
   },
   searchByAdress(address) {

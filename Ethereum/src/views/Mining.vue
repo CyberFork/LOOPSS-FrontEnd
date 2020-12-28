@@ -111,7 +111,7 @@
             >
               <div class="list-item-wrap">
                 <a-space size="large">
-                  <a-text>{{ item.address }}</a-text>
+                  <a-text>{{ item.returnValues.TrustSender }}</a-text>
                   <div class="add-user">
                     <a-icon v-if="item.isAdded" type="user-add" />
                   </div>
@@ -121,9 +121,13 @@
                   <a-icon
                     class="pointer"
                     type="copy"
-                    @click="copyFn(item.address)"
+                    @click="copyFn(item.returnValues.TrustSender)"
                   />
-                  <a-text link target="_blank" :href="item.address">
+                  <a-text
+                    link
+                    target="_blank"
+                    :href="item.returnValues.TrustSender"
+                  >
                     <a-avatar size="small" icon="ant-cloud" />
                   </a-text>
                 </a-space>
@@ -221,6 +225,7 @@ export default {
           .then((res) => {
             this.yourTrusts.total = res.total;
             this.yourTrusts.list = [...this.yourTrusts.list, ...res.list];
+            console.log(this.yourTrusts.list);
             this.yourTrusts.loading = false;
             this.yourTrusts.busy = false;
           })
