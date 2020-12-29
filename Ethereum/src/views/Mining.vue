@@ -29,7 +29,7 @@
             </div>
             <div class="cont-item">
               <!-- <div>{{ myInfo.curToken }}</div> -->
-              <a-button v-if="myInfo.ifTrustLOOP" @click="updateAndClaim">{{
+              <a-button v-if="myInfo.ifTrustLOOP" @click="withdraw">{{
                 myInfo.curToken
               }}</a-button>
               <div>{{ $t("mining.mining.curToken") }}</div>
@@ -221,6 +221,17 @@ export default {
             this.$message.warning("信任数量不足");
             this.myInfo.loading = false;
           }
+        })
+        .catch(() => {
+          this.myInfo.loading = false;
+        });
+    },
+    withdraw() {
+      // 包装内网Token到钱包
+      this.myInfo.loading = true;
+      Api.wrappToken()
+        .then((res) => {
+          this.myInfo.loading = false;
         })
         .catch(() => {
           this.myInfo.loading = false;
