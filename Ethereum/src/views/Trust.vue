@@ -231,9 +231,21 @@ export default {
           });
       }, 1000);
     },
+    showInvitedUrl() {
+      let { invitedUrl } = this.$route.params;
+      console.log("invitedUrl", invitedUrl);
+
+      invitedUrl = invitedUrl.replace(/#/, "");
+      console.log("invitedUrl without # :", invitedUrl);
+      this.invitedUrl = invitedUrl;
+      this.search.inputVal = invitedUrl;
+    },
   },
   beforeDestroy() {
     this.removeSearchTimer();
+  },
+  mounted() {
+    this.showInvitedUrl();
   },
 };
 </script>

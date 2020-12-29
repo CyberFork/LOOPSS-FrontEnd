@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import i18n from '@/locales'
+import Trust from '@/views/Trust.vue'
 
 // hack router push callback
 const originalPush = Router.prototype.push
@@ -34,11 +35,20 @@ const routes = [{
   {
     path: '/trust',
     name: 'trust',
-    component: () => import( /* webpackChunkName: "trust" */ '@/views/Trust.vue'),
+    component: Trust,
     meta: {
       title: i18n.t('menu.trust'),
       menu: true,
       menuIcon: 'user'
+    }
+  },
+  {
+    path: '/invited',
+    name: 'invited',
+    component: Trust,
+    meta: {
+      title: i18n.t('menu.trust'),
+      menu: false,
     }
   },
   {

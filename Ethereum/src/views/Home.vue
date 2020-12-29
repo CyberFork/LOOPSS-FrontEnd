@@ -106,9 +106,21 @@
         Api.getPrice().then(res => {
           this.price = res
         })
+      },
+      isInvited() {
+      const invitedUrl = window.location.href
+        .split("/invited")[1]
+        .split("/")[1];
+      if (invitedUrl.indexOf("0x") !== -1) {
+        this.$router.push({
+          name: "trust",
+          params: { invitedUrl },
+        });
       }
     },
+    },
     created(){
+      this.isInvited()
       this.getInfo()
       this.getPrice()
     }
