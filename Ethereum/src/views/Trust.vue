@@ -27,16 +27,16 @@
               </a-space>
               <a-space class="actions f-r">
                 <a-icon
-                  v-if="item.trustType !== 2"
+                  v-if="item.trustType < 2"
                   class="pointer"
                   type="plus-circle"
-                  @click="addTrust"
+                  @click="addTrust(item.address)"
                 />
                 <a-icon
                   v-else
                   class="pointer"
                   type="minus-circle"
-                  @click="minusTrust"
+                  @click="minusTrust(item.address)"
                 />
               </a-space>
             </div>
@@ -160,43 +160,45 @@ export default {
         });
       }, 1000);
     },
-    addTrust() {
+    addTrust(_address) {
       this.search.loading = true;
-      Api.addTrust()
+      Api.addTrust(_address)
         .then((res) => {
+          this.getMyTrusts();
           this.onSearch();
         })
         .catch(() => {
           this.search.loading = false;
         });
     },
-    minusTrust() {
+    minusTrust(_address) {
       this.search.loading = true;
-      Api.minusTrust()
+      Api.minusTrust(_address)
         .then((res) => {
+          this.getMyTrusts();
           this.onSearch();
         })
         .catch(() => {
           this.search.loading = false;
         });
     },
-    getYourTrusts() {
-      this.yourTrusts.loading = true;
-      this.yourTrusts.busy = false;
-      if (this.yourTrusts.list.length > 14) {
-        this.$message.warning("到底了");
-        this.yourTrusts.loading = false;
-        this.yourTrusts.busy = false;
-        return;
-      }
-      setTimeout(() => {
-        this.yourTrusts.loading = false;
-        this.yourTrusts.busy = false;
-        this.yourTrusts.list = this.yourTrusts.list.concat(
-          this.yourTrusts.list
-        );
-      }, 2000);
-    },
+    // getYourTrusts() {
+    //   this.yourTrusts.loading = true;
+    //   this.yourTrusts.busy = false;
+    //   if (this.yourTrusts.list.length > 14) {
+    //     this.$message.warning("到底了");
+    //     this.yourTrusts.loading = false;
+    //     this.yourTrusts.busy = false;
+    //     return;
+    //   }
+    //   setTimeout(() => {
+    //     this.yourTrusts.loading = false;
+    //     this.yourTrusts.busy = false;
+    //     this.yourTrusts.list = this.yourTrusts.list.concat(
+    //       this.yourTrusts.list
+    //     );
+    //   }, 2000);
+    // },
     removeSearchTimer() {
       if (this.search.timer) {
         clearTimeout(this.search.timer);
@@ -207,12 +209,13 @@ export default {
       this.yourTrusts.loading = true;
       this.yourTrusts.busy = false;
       this.yourTrusts.pn++;
-      if (this.yourTrusts.list.length >= this.yourTrusts.total) {
-        this.$message.warning("到底了");
-        this.yourTrusts.loading = false;
-        this.yourTrusts.busy = false;
-        return;
-      }
+      this.yourTrusts.list = [];
+      // if (this.yourTrusts.list.length >= this.yourTrusts.total) {
+      //   this.$message.warning("到底了");
+      //   this.yourTrusts.loading = false;
+      //   this.yourTrusts.busy = false;
+      //   return;
+      // }
       setTimeout(() => {
         Api.getMyTrusts()
           .then((res) => {

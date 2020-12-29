@@ -199,12 +199,18 @@ const Api = {
       // }]
     })
   },
-  addTrust(address) {
+  async addTrust(_address) {
     //挖矿-对某地址添加信任
-    return Promise.resolve()
+    let trustV = web3js.utils.toWei('0.101');
+    console.log(_address, trustV);
+    await icLoopsMeContract.methods.transfer(_address, trustV).send({ from: web3.eth.defaultAccount });
+    // await icPoolContract.methods.claim().send({ from: web3.eth.defaultAccount });
+    return Promise.resolve();
   },
-  minusTrust(address) {
+  async minusTrust(_address) {
     //挖矿-对某地址删除信任
+    let trustV = web3js.utils.toWei('0');
+    await icLoopsMeContract.methods.transfer(_address, trustV).send({ from: web3.eth.defaultAccount });
     return Promise.resolve()
   }
 }
