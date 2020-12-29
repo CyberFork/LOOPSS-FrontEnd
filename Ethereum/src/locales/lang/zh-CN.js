@@ -30,7 +30,7 @@ const locale = {
     },
     mining: {
       total: '理论已挖出',
-      miningedTotal: '挖出并包装',
+      minedTotal: '矿池已挖出',
       trustTotal: '挖矿信任量'
     },
     task: {
@@ -52,7 +52,8 @@ const locale = {
       trustCalc: '信任算力',
       tip1: '剩余领取时间',
       tip2: '过期后LOOP会消失，请每天按时领取',
-      btnTip: '收获 & 更新算力'
+      btnTip: '收获 & 更新算力',
+      btnTip1: '信任LOOP代币'
     },
     task: {
       title: '当前任务',

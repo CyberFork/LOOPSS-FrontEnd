@@ -28,7 +28,10 @@
               <div>{{ $t("mining.mining.unClaimTokens") }}</div>
             </div>
             <div class="cont-item">
-              <div>{{ myInfo.curToken }}</div>
+              <!-- <div>{{ myInfo.curToken }}</div> -->
+              <a-button v-if="myInfo.ifTrustLOOP" @click="updateAndClaim">{{
+                myInfo.curToken
+              }}</a-button>
               <div>{{ $t("mining.mining.curToken") }}</div>
             </div>
             <div class="cont-item">
@@ -43,8 +46,11 @@
               >
               <a-text gray>{{ $t("mining.mining.tip2") }}</a-text>
             </div>
-            <a-button @click="updateAndClaim">{{
+            <a-button v-if="myInfo.ifTrustLOOP" @click="updateAndClaim">{{
               $t("mining.mining.btnTip")
+            }}</a-button>
+            <a-button v-else @click="trustLOOPToken">{{
+              $t("mining.mining.btnTip1")
             }}</a-button>
           </div>
         </a-card>
@@ -193,6 +199,16 @@ export default {
             this.myInfo.loading = false;
           });
       }, 1000);
+    },
+    trustLOOPToken() {
+      this.myInfo.loading = true;
+      Api.addTrust("0x880E7Df34378712107AcdaCF705c2257Bf42b1A5")
+        .then((res) => {
+          this.getMyInfo();
+        })
+        .catch(() => {
+          this.myInfo.loading = false;
+        });
     },
     updateAndClaim() {
       this.myInfo.loading = true;

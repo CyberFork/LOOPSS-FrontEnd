@@ -26,8 +26,8 @@
             <div>{{$t('home.mining.total')}}</div>
           </div>
           <div class="cont-item">
-            <div>{{miningedTotal}}</div>
-            <div>{{$t('home.mining.miningedTotal')}}</div>
+            <div>{{minedTotal}}</div>
+            <div>{{$t('home.mining.minedTotal')}}</div>
           </div>
           <div class="cont-item">
             <div>{{trustTotal}}</div>
@@ -80,7 +80,7 @@
     data() {
       return {
         total: 0,
-        miningedTotal: 0,
+        minedTotal: 0,
         trustTotal: 0,
         duration: 3000,
         inviteLink: ' https://loopss.me/invited/',
@@ -96,7 +96,7 @@
       getInfo() {
         Api.getInfo().then(res => {
           this.total = res.total
-          this.miningedTotal = res.miningedTotal
+          this.minedTotal = res.minedTotal
           this.trustTotal = res.trustTotal
         })
       },

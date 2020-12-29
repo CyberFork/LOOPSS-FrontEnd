@@ -8,7 +8,7 @@ import LOOPPool_ABI from '../assets/js/ABI_LOOPPool.json';
 // Address
 var adLoopssMe = '0x8E4DfCF7fa2425eC9950f9789D2EB92142bb0C86';
 var adLOOPToken = '0x880E7Df34378712107AcdaCF705c2257Bf42b1A5';
-var adLOOPPool = '0xBdf7d4725cfecAaCE3B25bA395E48bDCEc946C90';
+var adLOOPPool = '0xD1E97844Ad40c9B53Aa51EA38e6928011D027f1A';
 // Contract Instance
 let icLoopsMeContract;
 let icLOOPTokenContract;
@@ -29,7 +29,8 @@ icLOOPTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
 icPoolContract = new web3js.eth.Contract(LOOPPool_ABI, adLOOPPool);
 console.log(icLOOPTokenContract)
 console.log(icLoopsMeContract)
-
+//TODO: 监听账户变化时进行重新登录与页面刷新
+//TODO: 检测钱包是否连接，连接的情况下才显示页面。未连接时显示提示连接钱包页面。类似noscript
 const Api = {
   login(params) {
     //登录
@@ -43,16 +44,17 @@ const Api = {
   async getInfo() {
     // 理论产出
     let myDate = new Date();
-    let dTime = myDate.getTime() - 1608975280000;//直接得到的第三个Trust时间戳
-    let theoryP = (dTime / 10000) * 0.01
+    let dTime = parseInt(myDate.getTime() / 10000) - 160897528;//直接得到的第三个Trust时间戳
+    let theoryP = ((dTime) * 0.01);
     // 已挖出并包装：
-    let _wrapped = await icLOOPTokenContract.methods.totalSupply().call()
+    let _minedTotal = this._formatBigNumber(await icPoolContract.methods.totalMined().call());
+    // await icLOOPTokenContract.methods.totalSupply().call()
     // 挖矿信任数：
     let _trustTotal = await icPoolContract.methods.totalMiningTrust().call() //全网信任量
     //首页-总量信息
     return Promise.resolve({
       total: theoryP, //总计已产出
-      miningedTotal: _wrapped, //已经被挖出
+      minedTotal: _minedTotal, //已经被挖出
       trustTotal: _trustTotal
     })
   },
@@ -95,13 +97,22 @@ const Api = {
     let myDate = new Date();
     let dTime = 86400 - (parseInt(myDate.getTime() / 1000) - (myLastUpdateTime));//直接得到的第三个Trust时间戳
     let remindTime = this._getDateTime(dTime)
+    // 判定是否Trust了LOOP
+    let _ifTrustLOOP
+    if (parseInt(await icLoopsMeContract.methods.getProportionReceiverTrustedSender(web3.eth.defaultAccount, adLOOPToken).call()) > 0) {
+      _ifTrustLOOP = true;
+    } else {
+      _ifTrustLOOP = false;
+    }
+    console.log(_ifTrustLOOP)
     //挖矿-获取个人信息
     return Promise.resolve({
       needInviteCount: needTrust, //仍然需要邀请人数
       unClaimTokens: unClaim, //待领取
       curToken: unWrappedLOOP, //当前未包装余额
       trustCalc: myMiningTrustCount, //信任算力
-      time: remindTime
+      time: remindTime,
+      ifTrustLOOP: _ifTrustLOOP
       // time: parseInt(myLastUpdateTime) === 0 ? 'Never' : myLastUpdateTime // 最近挖矿的更新时间
     })
   },
@@ -116,6 +127,13 @@ const Api = {
     } else {
       return Promise.resolve(false)
     }
+  },
+  async wrappToken(){
+    //检测是否Approve给LOOPToken合约
+
+    // 如果是，则调用wrap方法
+    // 如果不是，则调用approve
+    // await icLOOPTokenContract.methods
   },
   async getTrustMe() {
     let allTrustMe = (await icLoopsMeContract.getPastEvents('TrustEvent', { filter: { BeenTrusted: web3.eth.defaultAccount }, fromBlock: 0 })).reverse();
