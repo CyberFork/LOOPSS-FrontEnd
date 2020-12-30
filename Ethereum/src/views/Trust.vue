@@ -233,7 +233,10 @@ export default {
     },
     showInvitedUrl() {
       let { invitedUrl } = this.$route.params;
+      if(!invitedUrl) return
       console.log("invitedUrl", invitedUrl);
+      //replace url string
+      window.history.replaceState(null, "", '/');
 
       invitedUrl = invitedUrl.replace(/#/, "");
       console.log("invitedUrl without # :", invitedUrl);
