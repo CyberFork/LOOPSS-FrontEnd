@@ -57,7 +57,7 @@
           :infinite-scroll-disabled="yourTrusts.busy"
           :infinite-scroll-distance="10"
         >
-          <a-list class="your-trust-list" :data-source="yourTrusts.list"                                   >
+          <a-list class="your-trust-list" :data-source="yourTrusts.list">
             <a-list-item
               slot="renderItem"
               slot-scope="item, index"
@@ -233,8 +233,8 @@ export default {
     },
     showInvitedUrl() {
       let { invitedUrl } = this.$route.params;
-      console.log("invitedUrl", invitedUrl);
-
+      if (!invitedUrl) return;
+      window.history.replaceState(null, "", "/");
       invitedUrl = invitedUrl.replace(/#/, "");
       console.log("invitedUrl without # :", invitedUrl);
       this.invitedUrl = invitedUrl;
