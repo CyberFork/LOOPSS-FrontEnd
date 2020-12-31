@@ -1,7 +1,6 @@
 // import w3 from "../assets/js/web3.js";
 // console.log('index.js', w3)
 // import { icLoopsMeContract, icLOOPTokenContract, icPoolContract } from 'assets/js/web3';
-// TODO ： 如何引入web3.js的合约对象？
 import LoopssMe_ABI from '../assets/js/ABI_LoopssMe.json';
 import LOOPToken_ABI from '../assets/js/ABI_LOOPToken.json';
 import LOOPPool_ABI from '../assets/js/ABI_LOOPPool.json';

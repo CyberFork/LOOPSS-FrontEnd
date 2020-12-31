@@ -231,6 +231,7 @@ export default {
           });
       }, 1000);
     },
+    //TODO在nginx服务器下为什么会404呢
     showInvitedUrl() {
       let { invitedUrl } = this.$route.params;
       if (!invitedUrl) return;
