@@ -156,7 +156,7 @@ export default {
   },
   data() {
     return {
-      inviteLink: "https://loopss.me/invited/",
+      inviteLink: "http://trust.loopss.me/invited/",
       myInfo: {
         loading: false,
         needInviteCount: 0,

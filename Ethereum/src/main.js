@@ -29,7 +29,7 @@ router.beforeEach((to, from, next) => {
   const redirect = decodeURIComponent(to.path)
   if(!isLogin && (to.path === '/mining' || to.path === '/trust')){
     router.push({
-      path: '/error/404',
+      path: '/error/needLogin',
       query: { redirect }
     })
   }

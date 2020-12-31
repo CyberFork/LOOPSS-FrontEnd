@@ -98,8 +98,8 @@ export default {
       minedTotal: 0,
       trustTotal: 0,
       duration: 3000,
-      inviteLink: " https://loopss.me/invited/",
-      // inviteLink: ' https://loopss.me/#',
+      inviteLink: " http://trust.loopss.me/invited/",
+      // inviteLink: ' http://trust.loopss.me/#',
       price: 0,
     };
   },
