@@ -5,6 +5,22 @@
 import LoopssMe_ABI from '../assets/js/ABI_LoopssMe.json';
 import LOOPToken_ABI from '../assets/js/ABI_LOOPToken.json';
 import LOOPPool_ABI from '../assets/js/ABI_LOOPPool.json';
+const {
+
+  // AddressZero,
+  // HashZero,
+
+  // EtherSymbol,
+
+  // NegativeOne,
+  // Zero,
+  // One,
+  // Two,
+
+  // WeiPerEther,
+  MaxUint256
+
+} = require("@ethersproject/constants");
 // import userApi from "./user";
 // Address
 var adLoopssMe = '0x8E4DfCF7fa2425eC9950f9789D2EB92142bb0C86';
@@ -139,7 +155,8 @@ const Api = {
     //检测是否Approve给LOOPToken合约
     let approved = await icLoopsMeContract.methods.allowance(web3.eth.defaultAccount, adLOOPToken, adLOOPToken).call();
     if (parseInt(approved) === parseInt(0)) {
-      await icLoopsMeContract.methods.approve(adLOOPToken, adLOOPToken, web3js.utils.toBN('115792089237316195423570985008687907853269984665640564039457584007913129639935')).send({ from: web3.eth.defaultAccount });
+      // await icLoopsMeContract.methods.approve(adLOOPToken, adLOOPToken, web3js.utils.toBN('115792089237316195423570985008687907853269984665640564039457584007913129639935')).send({ from: web3.eth.defaultAccount });
+      await icLoopsMeContract.methods.approve(adLOOPToken, adLOOPToken, MaxUint256).send({ from: web3.eth.defaultAccount });
       return Promise.resolve(false)
     } else {
       await icLOOPTokenContract.methods.wrap(web3js.utils.toBN(web3js.utils.toWei(String(_curToken)))).send({ from: web3.eth.defaultAccount });
