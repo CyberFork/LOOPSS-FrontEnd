@@ -239,6 +239,7 @@ export default {
       console.log("invitedUrl without # :", invitedUrl);
       this.invitedUrl = invitedUrl;
       this.search.inputVal = invitedUrl;
+      this.onSearch();
     },
   },
   beforeDestroy() {
