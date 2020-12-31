@@ -5,6 +5,7 @@
 import LoopssMe_ABI from '../assets/js/ABI_LoopssMe.json';
 import LOOPToken_ABI from '../assets/js/ABI_LOOPToken.json';
 import LOOPPool_ABI from '../assets/js/ABI_LOOPPool.json';
+// import userApi from "./user";
 // Address
 var adLoopssMe = '0x8E4DfCF7fa2425eC9950f9789D2EB92142bb0C86';
 var adLOOPToken = '0x880E7Df34378712107AcdaCF705c2257Bf42b1A5';
@@ -28,8 +29,14 @@ icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe);
 icLOOPTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
 icPoolContract = new web3js.eth.Contract(LOOPPool_ABI, adLOOPPool);
 console.log(icLOOPTokenContract)
-console.log(icLoopsMeContract)
-//TODO: 监听账户变化时进行重新登录与页面刷新
+// ethereum.on('accountsChanged', function (accounts) {
+//   console.log(web3.eth.defaultAccount);
+//   // TODO：监听账户变化时进行重新登录与页面刷新，需要重新设置账户
+//   // 目前调用栈：head.vue → store/index.js → this.login/out
+//   // 需要调用栈：this.accountsChanged → store/index.js → this.login/out
+//   // this.$store.dispatch('Logout')
+//   // this.$store.dispatch('Login')
+// })
 //TODO: 检测钱包是否连接，连接的情况下才显示页面。未连接时显示提示连接钱包页面。类似noscript
 const Api = {
   login(params) {
@@ -128,9 +135,16 @@ const Api = {
       return Promise.resolve(false)
     }
   },
-  async wrappToken(){
+  async wrappToken(_curToken) {
     //检测是否Approve给LOOPToken合约
-
+    let approved = await icLoopsMeContract.methods.allowance(web3.eth.defaultAccount, adLOOPToken, adLOOPToken).call();
+    if (parseInt(approved) === parseInt(0)) {
+      await icLoopsMeContract.methods.approve(adLOOPToken, adLOOPToken, web3js.utils.toBN('115792089237316195423570985008687907853269984665640564039457584007913129639935')).send({ from: web3.eth.defaultAccount });
+      return Promise.resolve(false)
+    } else {
+      await icLOOPTokenContract.methods.wrap(web3js.utils.toBN(web3js.utils.toWei(String(_curToken)))).send({ from: web3.eth.defaultAccount });
+      return Promise.resolve(true)
+    }
     // 如果是，则调用wrap方法
     // 如果不是，则调用approve
     // await icLOOPTokenContract.methods

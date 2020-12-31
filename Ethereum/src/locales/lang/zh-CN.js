@@ -51,7 +51,7 @@ const locale = {
       unClaimTokens: '待领取',
       trustCalc: '信任算力',
       tip1: '剩余领取时间',
-      tip2: '过期后LOOP会消失，请每天按时领取',
+      tip2: '过期后LOOP会衰减，请每天按时领取',
       btnTip: '收获 & 更新算力',
       btnTip1: '信任LOOP代币'
     },

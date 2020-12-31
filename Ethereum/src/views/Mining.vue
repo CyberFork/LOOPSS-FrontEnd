@@ -229,8 +229,17 @@ export default {
     withdraw() {
       // 包装内网Token到钱包
       this.myInfo.loading = true;
-      Api.wrappToken()
+      Api.wrappToken(this.myInfo.curToken)
         .then((res) => {
+          //如果未approve则提示approve
+          if (res) {
+            this.$message.success("包装Token成功。复制LOOP地址添加到钱包查看。");
+            this.getMyInfo();
+          } else {
+            // 未Approve
+            this.$message.success("已Approve包装合约");
+            this.getMyInfo();
+          }
           this.myInfo.loading = false;
         })
         .catch(() => {
