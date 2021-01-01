@@ -36,9 +36,11 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
-new Vue({
+var app = new Vue({
   router,
   store,
   i18n,
   render: h => h(App)
 }).$mount('#app')
+// TODO 研究如何在F12中获取app对象，方便进行调试
+console.log(app)
