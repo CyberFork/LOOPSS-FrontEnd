@@ -3,7 +3,7 @@
     <a-box>
       <div class="info">
         <div class="title">
-          <div>{{ $t("hello") }}，{{ user }}</div>
+          <div>{{ $t("hello") }}，{{ user | formatUser }}</div>
           <div>{{ $t("mining.info.title") }}</div>
         </div>
         <div class="slogan">
@@ -156,7 +156,7 @@ export default {
   },
   data() {
     return {
-      inviteLink: "http://trust.loopss.me/invited/",
+      inviteLink: location.origin + "/#/trust?q=",
       myInfo: {
         loading: false,
         needInviteCount: 0,

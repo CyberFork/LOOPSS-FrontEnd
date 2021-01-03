@@ -11,6 +11,10 @@ const filters = {
     if (!dataStr) return '-'
     return moment(dataStr).format(pattern)
   },
+  formatUser(str){
+    if(!str.length) return ''
+    return `${str.slice(0, 6)}****${str.slice(str.length - 4)}`
+  },
   toString(obj) {
     if (!obj) return '-'
     return JSON.stringify(obj)

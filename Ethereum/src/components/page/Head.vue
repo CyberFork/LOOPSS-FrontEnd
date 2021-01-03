@@ -2,7 +2,7 @@
   <a-layout-header class="global-head" theme="light">
     <div v-if="user">
       <a-space>
-        <copy>{{ user }}</copy>
+        <copy>{{ user | formatUser }}</copy>
         <a-text link @click="logout"> {{ $t("head.logout") }} </a-text>
         <a-avatar
           size="small"

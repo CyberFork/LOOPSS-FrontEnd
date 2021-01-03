@@ -148,6 +148,7 @@ export default {
       });
     },
     onSearch() {
+      console.log(1111111111, this.search.inputVal)
       if (!this.search.inputVal) {
         return;
       }
@@ -231,16 +232,13 @@ export default {
           });
       }, 1000);
     },
-    //TODO在nginx服务器下为什么会404呢
+    //TODO在nginx服务器下为什么会404呢(已解决：跳转地址不对)
     showInvitedUrl() {
-      let { invitedUrl } = this.$route.params;
+      //这里使用的query 因为params刷新会丢失
+      let invitedUrl = this.$route.query.q;
       if (!invitedUrl) return;
-      window.history.replaceState(null, "", "/");
-      invitedUrl = invitedUrl.replace(/#/, "");
-      console.log("invitedUrl without # :", invitedUrl);
-      this.invitedUrl = invitedUrl;
       this.search.inputVal = invitedUrl;
-      this.onSearch();
+      this.onSearch()
     },
   },
   beforeDestroy() {

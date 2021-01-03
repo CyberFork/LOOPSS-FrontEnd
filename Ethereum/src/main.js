@@ -18,10 +18,8 @@ Vue.use(Antd)
 Vue.config.productionTip = false
 
 const lang = storage.get('lang') || config.lang
-const user = storage.get('user')
-
+store.dispatch('Login')
 store.dispatch('SetLang', lang)
-store.commit('SET_USER', user)
 store.dispatch('SetMenu', router.options.routes)
 
 router.beforeEach((to, from, next) => {

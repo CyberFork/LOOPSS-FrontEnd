@@ -94,12 +94,12 @@ export default {
   },
   data() {
     return {
+      infoTimer: null,
       total: 0,
       minedTotal: 0,
       trustTotal: 0,
       duration: 3000,
-      inviteLink: " http://trust.loopss.me/invited/",
-      // inviteLink: ' http://trust.loopss.me/#',
+      inviteLink: location.origin + "/#/trust?q=",
       price: 0,
     };
   },
@@ -109,7 +109,11 @@ export default {
         this.$message.success("复制成功");
       });
     },
-    //TODO 定时刷新
+    resetTimer(){
+      this.infoTimer && clearInterval(this.infoTimer)
+      this.infoTimer = null
+    },
+    //TODO 定时刷新(已修改为5s一刷新)
     getInfo() {
       Api.getInfo().then((res) => {
         this.total = res.total;
@@ -137,9 +141,14 @@ export default {
   },
   created() {
     this.isInvited();
-    this.getInfo();
     this.getPrice();
+    this.getInfo();
+    this.resetTimer()
+    this.infoTimer = setInterval(this.getInfo, 5000)
   },
+  beforeDestroy(){
+    this.resetTimer()
+  }
 };
 </script>
 

@@ -1,6 +1,8 @@
 // import w3 from "../assets/js/web3.js";
 // console.log('index.js', w3)
 // import { icLoopsMeContract, icLOOPTokenContract, icPoolContract } from 'assets/js/web3';
+import Vue from 'vue'
+import store from '@/store'
 import LoopssMe_ABI from '../assets/js/ABI_LoopssMe.json';
 import LOOPToken_ABI from '../assets/js/ABI_LOOPToken.json';
 import LOOPPool_ABI from '../assets/js/ABI_LOOPPool.json';
@@ -34,30 +36,37 @@ let web3js = new Web3(web3.currentProvider);
 let ethereum = window.ethereum;
 ethereum.autoRefreshOnNetworkChange = true;
 ethereum.enable();
-// 成功之后这个会返回当前选择的账户
-web3js.eth.getAccounts().then(function (accounts) {
-  //现在只能使用then异步的方式返回单个了
-  console.log('Now account:', accounts);
-});
 
 icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe);
 icLOOPTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
 icPoolContract = new web3js.eth.Contract(LOOPPool_ABI, adLOOPPool);
-console.log(icLOOPTokenContract)
-// ethereum.on('accountsChanged', function (accounts) {
-//   console.log(web3.eth.defaultAccount);
-//   // TODO：监听账户变化时进行重新登录与页面刷新，需要重新设置账户
-//   // 目前调用栈：head.vue → store/index.js → this.login/out
-//   // 需要调用栈：this.accountsChanged → store/index.js → this.login/out
-//   // this.$store.dispatch('Logout')
-//   // this.$store.dispatch('Login')
-// })
+
+ethereum.on('accountsChanged', function (accounts) {
+  // TODO：监听账户变化时进行重新登录与页面刷新，需要重新设置账户
+  // 目前调用栈：head.vue → store/index.js → this.login/out
+  // 需要调用栈：this.accountsChanged → store/index.js → this.login/out
+  store.dispatch('Logout')
+  store.dispatch('Login')
+})
 //TODO: 检测钱包是否连接，连接的情况下才显示页面。未连接时显示提示连接钱包页面。类似noscript
+const app = new Vue()
+function errorNotic(message) {
+  app.$notification.error({
+    duration: 0,
+    message
+  })
+}
+
 const Api = {
   login(params) {
     //登录
-    let myAccount = web3.eth.defaultAccount;
-    return Promise.resolve(myAccount)
+    return web3js.eth.getAccounts()
+    .then(res => {
+      return res[0]
+    })
+    .catch(err => {
+      errorNotic(JSON.stringify(err))
+    })
   },
   logout() {
     //登出

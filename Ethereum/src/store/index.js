@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import storage from 'store'
 import router from '@/router'
 import config from '@/config'
 import Api from '@/apis'
@@ -53,15 +52,14 @@ export default new Vuex.Store({
       commit('SET_LOADING', { isShow: false })
     },
     // 登录
-    Login ({ commit }, params) {
-      const time = 24 * 60 * 60 * 1000
+    async Login ({ commit }, params) {
       const redirect = decodeURIComponent(router.currentRoute.query.redirect || router.currentRoute.path)
-      return Api.login(params)
-      .then(res => {
-        storage.set('user', res, time)
-        commit('SET_USER', res)
+      const user = await Api.login(params)
+      if(user) {
+        commit('SET_USER', user)
         router.push(redirect)
-      })
+      }
+      return user
     },
     // 登出
     Logout ({ commit, state }) {
@@ -69,7 +67,6 @@ export default new Vuex.Store({
       return Api.logout()
       .finally(() => {
         commit('SET_USER', '')
-        storage.remove('user')
         this.dispatch('HideLoading')
         router.push('/')
       })
