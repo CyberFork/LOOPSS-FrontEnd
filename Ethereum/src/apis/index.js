@@ -24,6 +24,7 @@ const {
 } = require("@ethersproject/constants");
 // import userApi from "./user";
 // connect wallet
+export const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/
 let web3js = new Web3(web3.currentProvider);
 ethereum.autoRefreshOnNetworkChange = true;
 ethereum.send('eth_requestAccounts').then((res) => {

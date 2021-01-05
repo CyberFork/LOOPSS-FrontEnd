@@ -42,7 +42,6 @@
       }
     }
   }
-
 </script>
 <style lang="less" scoped>
   .ant-text {
