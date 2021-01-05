@@ -232,7 +232,6 @@ export default {
           });
       }, 1000);
     },
-    //TODO在nginx服务器下为什么会404呢(已解决：跳转地址不对)
     showInvitedUrl() {
       //这里使用的query 因为params刷新会丢失
       let invitedUrl = this.$route.query.q;

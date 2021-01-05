@@ -23,28 +23,55 @@ const {
 
 } = require("@ethersproject/constants");
 // import userApi from "./user";
+// connect wallet
+let web3js = new Web3(web3.currentProvider);
+ethereum.autoRefreshOnNetworkChange = true;
+ethereum.send('eth_requestAccounts').then((res) => {
+  console.log(res)
+})
 // Address
 var adLoopssMe = '0x8E4DfCF7fa2425eC9950f9789D2EB92142bb0C86';
 var adLOOPToken = '0x880E7Df34378712107AcdaCF705c2257Bf42b1A5';
-var adLOOPPool = '0xD1E97844Ad40c9B53Aa51EA38e6928011D027f1A';
+var adLOOPPool = '0x8e4A3E9280f53c0b82c9b64998D4847BCA2AD9A7';
+// console.log(parseInt(ethereum.chainId), adLOOPPool);
+// //TODO:ethereum.chainId 有时候获取不到，这里就需要阻塞等待，当ethereum.chainId获取到了之后才继续执行后面的。否则会报错。
+// switch (parseInt(ethereum.chainId)) {
+//   case 42:
+//     adLOOPPool = '0xD1E97844Ad40c9B53Aa51EA38e6928011D027f1A';
+//     break;
+//   case 100:
+//     adLOOPPool = '0x89434bfc9708623317F964774708cF9f11963e01';
+//     break;
+//   default:
+//     adLOOPPool = '0x89434bfc9708623317F964774708cF9f11963e01';
+//     break;
+// }
 // Contract Instance
 let icLoopsMeContract;
 let icLOOPTokenContract;
 let icPoolContract;
-// connect wallet
-let web3js = new Web3(web3.currentProvider);
-let ethereum = window.ethereum;
-ethereum.autoRefreshOnNetworkChange = true;
-ethereum.enable();
-
-icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe);
-icLOOPTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
-icPoolContract = new web3js.eth.Contract(LOOPPool_ABI, adLOOPPool);
-
+initContract()
+function initContract() {
+  icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe);
+  icLOOPTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken);
+  icPoolContract = new web3js.eth.Contract(LOOPPool_ABI, adLOOPPool);
+}
+ethereum.on('networkChanged', function (networkId) {
+  switch (parseInt(networkId)) {
+    case 42:
+      adLOOPPool = '0x8e4A3E9280f53c0b82c9b64998D4847BCA2AD9A7';
+      initContract();
+      break;
+    case 100:
+      adLOOPPool = '0x8e4A3E9280f53c0b82c9b64998D4847BCA2AD9A7';
+      initContract();
+      break;
+    default:
+      // adLOOPPool = '0x89434bfc9708623317F964774708cF9f11963e01';
+      break;
+  }
+})
 ethereum.on('accountsChanged', function (accounts) {
-  // TODO：监听账户变化时进行重新登录与页面刷新，需要重新设置账户
-  // 目前调用栈：head.vue → store/index.js → this.login/out
-  // 需要调用栈：this.accountsChanged → store/index.js → this.login/out
   store.dispatch('Logout')
   store.dispatch('Login')
 })
@@ -61,12 +88,12 @@ const Api = {
   login(params) {
     //登录
     return web3js.eth.getAccounts()
-    .then(res => {
-      return res[0]
-    })
-    .catch(err => {
-      errorNotic(JSON.stringify(err))
-    })
+      .then(res => {
+        return res[0]
+      })
+      .catch(err => {
+        errorNotic(JSON.stringify(err))
+      })
   },
   logout() {
     //登出
