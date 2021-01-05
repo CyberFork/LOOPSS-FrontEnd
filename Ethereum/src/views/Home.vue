@@ -7,7 +7,7 @@
         <a-text strong>{{ $t("home.info.totalTip") }}</a-text>
         <countTo
           class="animate-num"
-          :startVal="0"
+          :startVal="lastTotal"
           :endVal="total"
           :duration="duration"
         ></countTo>
@@ -95,6 +95,7 @@ export default {
   data() {
     return {
       infoTimer: null,
+      lastTotal: 0,
       total: 0,
       minedTotal: 0,
       trustTotal: 0,
@@ -115,6 +116,7 @@ export default {
     },
     //TODO 定时刷新(已修改为5s一刷新)
     getInfo() {
+      this.lastTotal = this.total
       Api.getInfo().then((res) => {
         this.total = res.total;
         this.minedTotal = res.minedTotal;
