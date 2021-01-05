@@ -24,7 +24,7 @@ store.dispatch('SetMenu', router.options.routes)
 
 router.beforeEach((to, from, next) => {
   let isLogin = store.state.user
-  const redirect = decodeURIComponent(to.path)
+  const redirect = decodeURIComponent(to.fullPath)
   if(!isLogin && (to.path === '/mining' || to.path === '/trust')){
     router.push({
       path: '/error/needLogin',

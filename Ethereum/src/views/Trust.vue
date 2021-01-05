@@ -97,7 +97,7 @@
 <script>
 import { toCopy } from "assets/js/util";
 import i18n from "@/locales";
-import Api from "@/apis";
+import Api, { ADDRESS_REGEX } from "@/apis";
 import infiniteScroll from "vue-infinite-scroll";
 export default {
   directives: {
@@ -148,7 +148,7 @@ export default {
       });
     },
     onSearch() {
-      console.log(1111111111, this.search.inputVal)
+      console.log(1111111111, this.search.inputVal);
       if (!this.search.inputVal) {
         return;
       }
@@ -233,11 +233,11 @@ export default {
       }, 1000);
     },
     showInvitedUrl() {
-      //这里使用的query 因为params刷新会丢失
-      let invitedUrl = this.$route.query.q;
-      if (!invitedUrl) return;
-      this.search.inputVal = invitedUrl;
-      this.onSearch()
+      const address = this.$route.query.q;
+      if (!address || !ADDRESS_REGEX.test(address)) return;
+      this.search.inputVal = address;
+      this.$store.dispatch("SaveInvitation", address);
+      this.onSearch();
     },
   },
   beforeDestroy() {
