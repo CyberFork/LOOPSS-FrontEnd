@@ -233,10 +233,11 @@ export default {
       }, 1000);
     },
     showInvitedUrl() {
-      const address = this.$route.query.q;
+      const address =
+        this.$router?.query?.q || this.$store.state.invitationAddress;
       if (!address || !ADDRESS_REGEX.test(address)) return;
       this.search.inputVal = address;
-      this.$store.dispatch("SaveInvitation", address);
+      this.$store.dispatch("SaveInvitation", "");
       this.onSearch();
     },
   },

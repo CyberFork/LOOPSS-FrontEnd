@@ -110,13 +110,13 @@ export default {
         this.$message.success("复制成功");
       });
     },
-    resetTimer(){
-      this.infoTimer && clearInterval(this.infoTimer)
-      this.infoTimer = null
+    resetTimer() {
+      this.infoTimer && clearInterval(this.infoTimer);
+      this.infoTimer = null;
     },
     //TODO 定时刷新(已修改为5s一刷新)
     getInfo() {
-      this.lastTotal = this.total
+      this.lastTotal = this.total;
       Api.getInfo().then((res) => {
         this.total = res.total;
         this.minedTotal = res.minedTotal;
@@ -128,20 +128,16 @@ export default {
         this.price = res;
       });
     },
-    // isInvited() {
-    //     this.$store.dispatch("SaveInvitation");
-    // },
   },
   created() {
-    //this.isInvited();
     this.getPrice();
     this.getInfo();
-    this.resetTimer()
-    this.infoTimer = setInterval(this.getInfo, 5000)
+    this.resetTimer();
+    this.infoTimer = setInterval(this.getInfo, 5000);
   },
-  beforeDestroy(){
-    this.resetTimer()
-  }
+  beforeDestroy() {
+    this.resetTimer();
+  },
 };
 </script>
 
