@@ -1,11 +1,12 @@
 <template>
   <a-spin size="large" :spinning="globalLoading" :tip="globalLoadingTip" wrapper-class-name="global-loading">
-    <a-layout>
-      <p-side :collapsed="collapsed"></p-side>
-      <a-layout class="layout" :style="mainStyle">
-        <p-head :collapsed="collapsed"></p-head>
+    <a-layout :class="{ layout: true, 'mobile-layout': isMobile }">
+      <p-head :isMobile="isMobile">
+        <p-side :isMobile="isMobile"></p-side>
+      </p-head>
+      <a-layout class="main-wrap">
         <router-view class="main"></router-view>
-        <p-foot></p-foot>
+        <!-- <p-foot></p-foot> -->
       </a-layout>
     </a-layout>
   </a-spin>
@@ -13,10 +14,9 @@
 
 <script>
   // @ is an alias to /src
-  import config from '@/config'
   import Head from './Head'
   import Side from './Side'
-  import Foot from './Foot'
+  // import Foot from './Foot'
   import {
     mapState
   } from 'vuex'
@@ -25,43 +25,46 @@
     name: 'Layout',
     components: {
       'p-head': Head,
-      'p-foot': Foot,
+      // 'p-foot': Foot,
       'p-side': Side
     },
     data() {
       return {
-        collapsed: false
+        isMobile: false
       }
     },
     computed: {
-      ...mapState(['globalLoading', 'globalLoadingTip', 'clientWidth']),
-      mainStyle(){
-        let width = this.collapsed ? config.side.collapsedSideWidth : 200
-        return `margin-left: ${width}px`
-      }
+      ...mapState(['globalLoading', 'globalLoadingTip', 'clientWidth'])
     },
     watch: {
       clientWidth(width) {
-        this.collapsed = width < 800
+        this.isMobile = width < 768
+        console.log(this.isMobile)
       }
     },
     methods: {
     },
     created() {
-      this.collapsed = this.clientWidth < 800
+      this.isMobile = this.clientWidth < 768
     }
   }
 
 </script>
 <style lang="less" scoped>
   .layout {
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-
-    .main {
+    .main-wrap{
       flex: 1;
-      padding: 72px 24px 0;
+      overflow: auto;
+      padding: 134/@r 0 94/@r 210/@r;
+    }
+    &.mobile-layout{
+      .main-wrap{
+        padding: 94/@r 0;
+      }
     }
   }
 
@@ -72,7 +75,7 @@
     max-height: none;
 
     .ant-spin-text {
-      margin-top: 30px;
+      margin-top: 30/@r;
     }
   }
 

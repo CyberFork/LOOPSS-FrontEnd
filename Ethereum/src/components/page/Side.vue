@@ -1,63 +1,46 @@
 <template>
-  <a-layout-sider class="global-side" v-model="isCollapsed" :trigger="null" theme="light" :collapsedWidth="collapsedSideWidth" :width="sideWidth" collapsible>
-    <div class="side-content">
-      <div class="logo-wrap">
-        <router-link to="/" title="LOOP">
-          <div v-if="isCollapsed">
+  <div :class="{ 'global-side': true, 'mobile-side': isMobile}">
+    <div class="logo-wrap">
+      <router-link to="/" title="LOOP">
+        <div v-if="isMobile">
+          <h1 title="LOOP">
             <img class="logo" src="@/assets/img/logo.png" alt="LOOP">
-          </div>
-          <div v-else>
-            <h1 title="LOOP">
-              <img class="logo" src="@/assets/img/logo.png" alt="LOOP"> LOOP
-            </h1>
-            <h2 class="slogan">{{$t('slogan')}}</h2>
-          </div>
-        </router-link>
-      </div>
-      <div class="menu-wrap">
-        <a-menu v-model="selectedKeys" mode="inline" theme="light">
-          <template v-for="item in menu">
-            <a-menu-item v-if="item.meta && item.meta.menu" :key="item.name" @click="$router.push(item.path)">
-              <a-icon :type="item.meta.menuIcon" />
-              <span>{{item.meta.title}}</span>
-            </a-menu-item>
-          </template>
-        </a-menu>
-      </div>
-      <div class="about-wrap" v-if="!isCollapsed">
-        <a-text link href="https://akpvww.axshare.com/#id=u77t6r" target="_blank">
-          <a-button block>{{$t('menu.more')}}</a-button>
-        </a-text>
-        <div class="about-more">
-          <a-icon type="github" />
-          <a-icon type="weibo-circle" />
-          <a-icon type="twitter" />
-          <a-icon type="wechat" />
+          </h1>
         </div>
-      </div>
+        <div v-else>
+          <h1 title="LOOP">
+            <img class="logo" src="@/assets/img/logo.png" alt="LOOP">
+          </h1>
+        </div>
+      </router-link>
     </div>
-  </a-layout-sider>
+    <div class="menu-wrap">
+      <a-menu class="loop-menu" v-model="selectedKeys" mode="inline">
+        <a-menu-item v-for="item in menu" :key="item.name" @click="$router.push(item.path)">
+          <!-- <a-icon :type="item.meta.menuIcon" /> -->
+          <span>{{item.meta.title}}</span>
+        </a-menu-item>
+        <a-menu-item disabled>
+          <a-tooltip placement="rightTop" :title="$t('menu.wait')">
+            <span>更多</span>
+          </a-tooltip>
+        </a-menu-item>
+      </a-menu>
+    </div>
+  </div>
 </template>
 
 <script>
   // @ is an alias to /src
-import config from '@/config'
 import { mapState } from 'vuex'
 
   export default {
     name: 'Side',
-    props: ['collapsed'],
+    props: ['isMobile'],
     components: {},
     data() {
       return {
-        ...config.side,
-        isCollapsed: false,
         selectedKeys: []
-      }
-    },
-    watch: {
-      collapsed(cur) {
-        this.isCollapsed = cur
       }
     },
     computed: {
@@ -69,7 +52,6 @@ import { mapState } from 'vuex'
       }
     },
     created() {
-      this.isCollapsed = this.collapsed
       this.$router.afterEach((to, from) => {
         this.initOpen(to)
       })
@@ -81,44 +63,59 @@ import { mapState } from 'vuex'
 
 <style lang="less" scoped>
 .global-side {
-  overflow: auto;
-  height: 100vh;
-  position: fixed;
-  left: 0;
+  position: absolute;
+  top: 0;
+  right: ~"calc(100% + 30px)";
   z-index: 100;
-  .side-content {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-
-    .logo-wrap {
+  width: 180/@r;
+  .logo-wrap {
+    padding: 26/@r 32/@r;
+    .logo {
+      width: 116/@r;
+    }
+  }
+  .loop-menu {
+    position: relative;
+    border-radius: 30/@r;
+    overflow: hidden;
+    border: 0;
+    &:before{
+      content: '';
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #055475 linear-gradient(310deg, #243187 0%, #009CCF 100%);
+      opacity: 0.1;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    /deep/ li{
+      border-bottom: 1/@r solid #111;
+      width: 100%;
+      font-size: 28/@r;
       text-align: center;
-      padding: 16px 0;
-
-      h1 {
-        font-size: 24px;
-        font-weight: bold;
+      margin: 0;
+      background-color: transparent;
+      line-height: 100/@r;
+      height: 101/@r;
+      padding: 0!important;
+      color: #fff;
+      overflow: visible;
+      position: relative;
+      &.ant-menu-item-selected{
+        &:after{
+          width: 80/@r;
+          height: 4/@r;
+          left: 50%;
+          top: 73/@r;
+          transform: translateX(-50%);
+          background: #00E983;
+          border: 0;
+        }
       }
-
-      h2 {
-        font-size: 18px;
-      }
-
-      .logo {
-        width: 48px;
-      }
-    }
-
-    .menu-wrap {
-      flex: 1;
-    }
-
-    .about-wrap {
-      padding: 20px;
-      .about-more{
-        padding: 20px 0 10px;
-        display: flex;
-        justify-content: space-around;
+      &:last-child{
+        border: 0;
       }
     }
   }

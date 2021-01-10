@@ -37,7 +37,7 @@ export default new Vuex.Store({
       state.clientWidth = screenObj.width
       state.clientHeight = screenObj.height
     },
-    SAVE_INVITATION(state, address = "") {
+    SAVE_INVITATION(state, address = '') {
       state.invitationAddress = address
     }
   },
@@ -45,7 +45,13 @@ export default new Vuex.Store({
     SaveInvitation({ commit }, address) {
       commit('SAVE_INVITATION', address)
   },
-  SetMenu({ commit }, menu) {
+  SetMenu({ commit }, routes) {
+    const menu = []
+    routes.map(item => {
+      if (item.meta && item.meta.menu){
+        menu.push(item)
+      }
+    })
     commit('SET_MENU', menu)
   },
   //开启全局loading
@@ -83,10 +89,8 @@ export default new Vuex.Store({
     commit('SET_SCREEN', screenObj)
   },
   SetLang({ commit }, lang) {
-    return new Promise((resolve, reject) => {
-      commit('SET_LANG', lang)
-      loadLanguageAsync(lang)
-    })
-  },
+    commit('SET_LANG', lang)
+    loadLanguageAsync(lang)
+  }
 }
 })

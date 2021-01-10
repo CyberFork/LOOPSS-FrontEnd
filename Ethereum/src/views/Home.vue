@@ -1,96 +1,65 @@
 <template>
   <div class="home">
-    <a-box class="info">
-      <div class="title">{{ $t("home.info.title") }}</div>
-      <div class="slogan">{{ $t("home.info.slogan") }}</div>
-      <div>
-        <a-text strong>{{ $t("home.info.totalTip") }}</a-text>
-        <countTo
-          class="animate-num"
-          :startVal="lastTotal"
-          :endVal="total"
-          :duration="duration"
-        ></countTo>
-      </div>
-      <div>{{ $t("home.info.info1") }}</div>
-      <div>{{ $t("home.info.info2") }}</div>
-    </a-box>
     <a-box>
-      <a-card class="mining-info">
+      <div class="info">
+        <div class="title">{{ $t("home.info.title") }}</div>
+        <div class="slogan">{{ $t("home.info.slogan") }}</div>
+        <div class="banner">图片占位</div>
+        <div class="tip">{{ $t("home.info.info1") }}</div>
+        <div class="tip">{{ $t("home.info.info2") }}</div>
+      </div>
+      <div class="mining-info">
         <div class="top">
-          <a-space>
-            <a-avatar src="@/assets/img/logo.png" style="background: #fff" />
-            <a-text block>LOOP</a-text>
-            <a-avatar
-              size="small"
-              src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-              title="LOOP"
-            />
-          </a-space>
-          <a-text block class="price">Price：{{ price }} USDT</a-text>
+          <div>
+            <img src="@/assets/img/icon.png" />
+            <a-text>LOOP</a-text>
+          </div>
+          <div class="price">Price：{{ price }} USDT</div>
+        </div>
+        <div class="total-wrap">
+          <countTo
+            class="animate-num"
+            :decimals=2
+            :startVal="lastTotal"
+            :endVal="total"
+            :duration="duration"
+          ></countTo>
+          <div>{{ $t("home.info.totalTip") }}</div>
         </div>
         <div class="content">
           <div class="cont-item">
-            <div>{{ total }}</div>
-            <div>{{ $t("home.mining.total") }}</div>
-          </div>
-          <div class="cont-item">
-            <div>{{ minedTotal }}</div>
+            <div class="num">{{ minedTotal | formatNumber(2) }}</div>
             <div>{{ $t("home.mining.minedTotal") }}</div>
           </div>
           <div class="cont-item">
-            <div>{{ trustTotal }}</div>
+            <div class="num">{{ trustTotal }}</div>
             <div>{{ $t("home.mining.trustTotal") }}</div>
           </div>
         </div>
-      </a-card>
-    </a-box>
-    <a-box v-if="user">
-      <a-card class="task-info">
-        <div class="title">
-          <a-text block strong>{{ $t("home.task.title") }}</a-text>
+      </div>
+      <div class="login-wrap" v-show="!user">
+        <div class="title">选择以下方式登录</div>
+        <div class="login-btn block-btn" @click="login">
+          <img src="@/assets/img/metamask.png" alt="">
+          <a-text>以Metamask 登录</a-text>
         </div>
-        <div class="content">
-          <a-text block class="info-content">{{ $t("home.task.info") }}</a-text>
-          <div class="flex-box">
-            <a-input class="share-input" :default-value="inviteLink + user" />
-            <a-button class="copy-btn" @click="copyFn(inviteLink + user)"
-              >复制 <a-icon type="copy"
-            /></a-button>
-          </div>
-          <div class="share-wrap">
-            <a-text>{{ $t("home.task.shareTip") }}</a-text>
-            <a-space>
-              <a-text link
-                ><a-avatar size="small" icon="weibo-circle"
-              /></a-text>
-              <a-text link
-                ><a-avatar size="small" icon="codepen-circle"
-              /></a-text>
-              <a-text link><a-avatar size="small" icon="qq" /></a-text>
-              <a-text link><a-avatar size="small" icon="linkedin" /></a-text>
-              <a-text link><a-avatar size="small" icon="zhihu" /></a-text>
-              <a-text link><a-avatar size="small" icon="yuque" /></a-text>
-              <a-text link><a-avatar size="small" icon="ant-cloud" /></a-text>
-            </a-space>
-          </div>
-        </div>
-      </a-card>
+      </div>
+      <share-box />
     </a-box>
   </div>
 </template>
 <script>
-import countTo from "vue-count-to";
-import { toCopy } from "assets/js/util";
-import Api from "@/apis";
+import countTo from 'vue-count-to'
+import { toCopy } from 'assets/js/util'
+import Api from '@/apis'
 export default {
   components: {
-    countTo,
+    countTo
   },
   computed: {
     user() {
-      return this.$store.state.user;
-    },
+      return this.$store.state.user
+    }
   },
   data() {
     return {
@@ -100,17 +69,16 @@ export default {
       minedTotal: 0,
       trustTotal: 0,
       duration: 3000,
-      inviteLink: location.origin + "/#/trust?q=",
-      price: 0,
-    };
+      price: 0
+    }
   },
   methods: {
     copyFn(content) {
       toCopy(content).then(() => {
-        this.$message.success("复制成功");
-      });
+        this.$message.success('复制成功')
+      })
     },
-    resetTimer(){
+    clearTimer(){
       this.infoTimer && clearInterval(this.infoTimer)
       this.infoTimer = null
     },
@@ -118,31 +86,30 @@ export default {
     getInfo() {
       this.lastTotal = this.total
       Api.getInfo().then((res) => {
-        this.total = res.total;
-        this.minedTotal = res.minedTotal;
-        this.trustTotal = res.trustTotal;
-      });
+        this.total = res.total
+        this.minedTotal = res.minedTotal
+        this.trustTotal = res.trustTotal
+      })
     },
     getPrice() {
       Api.getPrice().then((res) => {
-        this.price = res;
-      });
+        this.price = res
+      })
     },
-    // isInvited() {
-    //     this.$store.dispatch("SaveInvitation");
-    // },
+    login() {
+      this.$store.dispatch('Login')
+    }
   },
   created() {
-    //this.isInvited();
-    this.getPrice();
-    this.getInfo();
-    this.resetTimer()
+    this.getPrice()
+    this.getInfo()
+    this.clearTimer()
     this.infoTimer = setInterval(this.getInfo, 5000)
   },
   beforeDestroy(){
-    this.resetTimer()
+    this.clearTimer()
   }
-};
+}
 </script>
 
 <style lang="less" scoped>
@@ -150,66 +117,97 @@ export default {
   line-height: 2;
   .info {
     text-align: center;
-    margin-bottom: 30px;
+    .deep-card;
     .title {
-      font-size: 24px;
-      font-weight: bold;
+      font-size: 42/@r;
+      line-height: 60/@r;
+      margin-bottom: 15/@r;
+    }
+    .banner{
+      line-height: 253/@r;
+      text-align:center;
     }
     .slogan {
-      font-size: 18px;
-    }
-    .animate-num {
-      display: block;
-      font-size: 36px;
-      font-weight: 600;
+      font-size: 22/@r;
+      line-height: 30/@r;
+      color: #00C1DC;
     }
   }
   .mining-info {
-    margin-bottom: 20px;
-    border-radius: 6px;
-    background: #eee;
+    .light-card;
     .top {
+      padding: 30/@r 40/@r 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      color: #fff;
+      img{
+        width: 56/@r;
+        margin-right: 16/@r;
+      }
+      .price{
+        opacity: .5;
+      }
+    }
+    .total-wrap{
+      text-align: center;
+      padding: 25/@r 0 36/@r;
+      border-bottom: 1/@r solid #000;
+      .animate-num {
+        display: block;
+        font-size: 72/@r;
+        line-height: 84/@r;
+        font-weight: 600;
+      }
     }
     .content {
       display: flex;
-      padding: 10px 0;
       text-align: center;
-      background: #fff;
-      border-radius: 10px;
+      border-radius: 10/@r;
       .cont-item {
         flex: 1;
-        border-right: 1px solid #000;
+        padding: 30/@r;
+        border-right: 1/@r solid #000;
         &:last-child {
           border: 0;
+        }
+        .num{
+          font-size: 52/@r;
+          line-height: 62/@r;
+          font-weight: bold;
         }
       }
     }
   }
-  .task-info {
-    line-height: 2;
-    background: #eee;
-    border-radius: 6px;
-    .title {
-      margin-bottom: 20px;
+  .login-wrap {
+    padding: 34/@r 60/@r;
+    position: relative;
+    text-align: center;
+    &:before{
+      content: '';
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 40/@r;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: linear-gradient(310deg, #243187 0%, #009CCF 100%);
+      opacity: 0.6;
     }
-    .info-content {
-      margin-bottom: 10px;
+    .title{
+      font-size: 36/@r;
+      font-weight: 600;
+      line-height: 50/@r;
+      margin-bottom: 38/@r;
+      position: relative;
     }
-    .share-input {
-      flex: 1;
-      text-overflow: ellipsis;
-      margin-bottom: 10px;
-    }
-    .copy-btn {
-      margin-left: 20px;
-    }
-    .share-wrap {
-      display: flex;
-      justify-content: space-between;
+    .login-btn{
+      img{
+        width: 56/@r;
+        height: 50/@r;
+        margin-right: 24/@r;
+      }
     }
   }
 }

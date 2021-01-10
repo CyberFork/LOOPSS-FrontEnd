@@ -8,13 +8,13 @@ function resolve(dir) {
 module.exports = {
   chainWebpack: config => {
     config
-    .resolve.alias
+      .resolve.alias
       .set('@', resolve('src'))
       .set('components', resolve('src/components'))
       .set('assets', resolve('src/assets'))
 
-      //可视化打包后文件
-      isProduction && config
+    //可视化打包后文件
+    isProduction && config
       .plugin('webpack-bundle-analyzer')
       .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
   },
@@ -25,6 +25,14 @@ module.exports = {
       moment: 'moment'
     }
   },
+  pluginOptions: {
+    'style-resources-loader': {
+      preProcessor: 'less',
+      patterns: [
+        'D:\\project\\LOOPSS-FrontEnd\\Ethereum\\src\\assets\\css\\var.less'
+      ]
+    }
+  },
   devServer: {
     port: '8080', // 配置跨域，请求后端接口
     proxy: {
@@ -32,7 +40,7 @@ module.exports = {
         target: 'http://localhost:8000/api',
         ws: true,
         changeOrigin: true,
-        cookieDomainRewrite: 'localhost'//如果服务器不在本地，登录成功后，set-cookie到localhost
+        cookieDomainRewrite: 'localhost' //如果服务器不在本地，登录成功后，set-cookie到localhost
       }
     }
   }

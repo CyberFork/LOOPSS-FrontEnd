@@ -1,116 +1,118 @@
 <template>
   <div class="trust">
-    <a-box class="search-wrap">
-      <div class="title">{{ $t("trust.title") }}</div>
-      <a-input-search
-        v-model="search.inputVal"
-        :placeholder="$t('trust.placeholder')"
-        enter-button
-        size="large"
-        @change="onSearch"
-        :loading="search.loading"
-        allowClear
-      />
-      <div class="list-wrap" v-if="search.inputVal">
-        <a-list
-          class="invite-list"
-          :loading="search.loading"
-          :data-source="search.list"
-        >
-          <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
-            <div class="list-item-wrap">
-              <a-space size="large">
-                <a-text>{{ item.address }}</a-text>
-                <a-tag :color="item.trustType | formatTrustType">{{
-                  item.trustType | formatTrustType("desc")
-                }}</a-tag>
-              </a-space>
-              <a-space class="actions f-r">
-                <a-icon
-                  v-if="item.trustType < 2"
-                  class="pointer"
-                  type="plus-circle"
-                  @click="addTrust(item.address)"
-                />
-                <a-icon
-                  v-else
-                  class="pointer"
-                  type="minus-circle"
-                  @click="minusTrust(item.address)"
-                />
-              </a-space>
-            </div>
-          </a-list-item>
-        </a-list>
-      </div>
-    </a-box>
-    <a-box class="your-trusts-container">
-      <div class="title">
-        <a-text strong
-          >{{ $t("trust.yourTrusts") }} ({{ yourTrusts.total }})</a-text
-        >
-      </div>
-      <a-spin :spinning="yourTrusts.loading && !yourTrusts.busy">
-        <div
-          class="content"
-          v-infinite-scroll="getMyTrusts"
-          :infinite-scroll-disabled="yourTrusts.busy"
-          :infinite-scroll-distance="10"
-        >
-          <a-list class="your-trust-list" :data-source="yourTrusts.list">
-            <a-list-item
-              slot="renderItem"
-              slot-scope="item, index"
-              :key="index"
+    <a-box>
+      <div class="search-wrap">
+        <div class="title">{{ $t("trust.title") }}</div>
+        <div class="input-wrap">
+          <a-input-search
+            class="search-input"
+            v-model="search.inputVal"
+            :placeholder="$t('trust.placeholder')"
+            size="large"
+            @change="onSearch"
+            :loading="search.loading"
+            allowClear
+          />
+          <div class="list-wrap" v-if="search.inputVal">
+            <a-list
+              class="invite-list"
+              :loading="search.loading"
+              :data-source="search.list"
             >
-              <div class="list-item-wrap">
-                <a-space size="large">
-                  <a-text>{{ item.returnValues.BeenTrusted }}</a-text>
-                  <div class="add-user">
-                    <a-icon v-if="item.isAdded" type="user-add" />
-                  </div>
-                  <a-text>{{ item.time }}</a-text>
-                </a-space>
-                <a-space class="actions">
-                  <a-icon
-                    class="pointer"
-                    type="copy"
-                    @click="copyFn(item.returnValues.BeenTrusted)"
-                  />
-                  <a-text
-                    link
-                    target="_blank"
-                    :href="item.returnValues.BeenTrusted"
-                  >
-                    <a-avatar size="small" icon="ant-cloud" />
-                  </a-text>
-                </a-space>
-              </div>
-            </a-list-item>
-          </a-list>
+              <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
+                <div class="list-item-wrap">
+                  <a-space size="large">
+                    <a-text>{{ item.address }}</a-text>
+                    <a-tag :color="item.trustType | formatTrustType">{{
+                      item.trustType | formatTrustType("desc")
+                    }}</a-tag>
+                  </a-space>
+                  <a-space class="actions f-r">
+                    <a-icon
+                      v-if="item.trustType < 2"
+                      class="pointer"
+                      type="plus-circle"
+                      @click="addTrust(item.address)"
+                    />
+                    <a-icon
+                      v-else
+                      class="pointer"
+                      type="minus-circle"
+                      @click="minusTrust(item.address)"
+                    />
+                  </a-space>
+                </div>
+              </a-list-item>
+            </a-list>
+          </div>
         </div>
-      </a-spin>
+      </div>
+      <div class="your-trusts-container">
+        <div class="title">
+          <a-text>{{ $t("trust.yourTrusts") }} ({{ yourTrusts.total }})</a-text>
+        </div>
+        <a-spin class="trusts-list" :spinning="yourTrusts.loading && !yourTrusts.busy">
+          <div
+            class="content"
+            v-infinite-scroll="getMyTrusts"
+            :infinite-scroll-disabled="yourTrusts.busy"
+            :infinite-scroll-distance="10"
+          >
+            <a-list :data-source="yourTrusts.list">
+              <a-list-item
+                slot="renderItem"
+                slot-scope="item, index"
+                :key="index"
+              >
+                <div class="list-item-wrap">
+                  <a-space size="large">
+                    <a-text>{{ item.returnValues.BeenTrusted }}</a-text>
+                    <div class="add-user">
+                      <a-icon v-if="item.isAdded" type="user-add" />
+                    </div>
+                    <a-text>{{ item.time }}</a-text>
+                  </a-space>
+                  <a-space class="actions">
+                    <a-icon
+                      class="pointer"
+                      type="copy"
+                      @click="copyFn(item.returnValues.BeenTrusted)"
+                    />
+                    <a-text
+                      link
+                      target="_blank"
+                      :href="item.returnValues.BeenTrusted"
+                    >
+                      <a-avatar size="small" icon="ant-cloud" />
+                    </a-text>
+                  </a-space>
+                </div>
+              </a-list-item>
+            </a-list>
+          </div>
+        </a-spin>
+      </div>
     </a-box>
   </div>
 </template>
 
 <script>
-import { toCopy } from "assets/js/util";
-import i18n from "@/locales";
-import Api, { ADDRESS_REGEX } from "@/apis";
-import infiniteScroll from "vue-infinite-scroll";
+import { toCopy } from 'assets/js/util'
+import i18n from '@/locales'
+import Api, { ADDRESS_REGEX } from '@/apis'
+import infiniteScroll from 'vue-infinite-scroll'
 export default {
   directives: {
-    infiniteScroll,
+    infiniteScroll
   },
   data() {
     return {
       search: {
         timer: null,
-        inputVal: "",
+        inputVal: '',
         loading: false,
         total: 0,
-        list: [],
+        list: []
       },
       yourTrusts: {
         pn: 1,
@@ -118,70 +120,70 @@ export default {
         loading: false,
         busy: false,
         total: 10000,
-        list: [],
-      },
-    };
+        list: []
+      }
+    }
   },
   computed: {
     user() {
-      return this.$store.state.user;
-    },
+      return this.$store.state.user
+    }
   },
   filters: {
     formatTrustType(type, formatType) {
       switch (type) {
         case 1:
-          return formatType === "desc" ? i18n.t("trust.trustYou") : "orange";
+          return formatType === 'desc' ? i18n.t('trust.trustYou') : 'orange'
         case 2:
-          return formatType === "desc" ? i18n.t("trust.youTrust") : "cyan";
+          return formatType === 'desc' ? i18n.t('trust.youTrust') : 'cyan'
         case 3:
-          return formatType === "desc" ? i18n.t("trust.bothTrust") : "green";
+          return formatType === 'desc' ? i18n.t('trust.bothTrust') : 'green'
         default:
-          return formatType === "desc" ? i18n.t("trust.unknownTrust") : "";
+          return formatType === 'desc' ? i18n.t('trust.unknownTrust') : ''
       }
-    },
+    }
   },
   methods: {
     copyFn(content) {
       toCopy(content).then(() => {
-        this.$message.success("复制成功");
-      });
+        this.$message.success('复制成功')
+      })
     },
     onSearch() {
-      console.log(1111111111, this.search.inputVal);
+      console.log(1111111111, this.search.inputVal)
       if (!this.search.inputVal) {
-        return;
+        return
       }
-      this.search.loading = true;
-      this.search.timer && this.removeSearchTimer();
+      this.search.loading = true
+      this.search.timer && this.removeSearchTimer()
       this.search.timer = setTimeout(() => {
         Api.searchByAdress(this.search.inputVal).then((res) => {
-          this.search.list = res.list;
-          this.search.loading = false;
-        });
-      }, 1000);
+          this.search.list = res.list
+          this.search.loading = false
+        })
+      }, 1000)
     },
     addTrust(_address) {
-      this.search.loading = true;
+      this.search.loading = true
       Api.addTrust(_address)
         .then((res) => {
-          this.getMyTrusts();
-          this.onSearch();
+          this.getMyTrusts()
+          this.onSearch()
         })
         .catch(() => {
-          this.search.loading = false;
-        });
+          this.search.loading = false
+        })
     },
     minusTrust(_address) {
-      this.search.loading = true;
+      this.search.loading = true
       Api.minusTrust(_address)
         .then((res) => {
-          this.getMyTrusts();
-          this.onSearch();
+          this.getMyTrusts()
+          this.onSearch()
         })
         .catch(() => {
-          this.search.loading = false;
-        });
+          this.search.loading = false
+        })
     },
     // getYourTrusts() {
     //   this.yourTrusts.loading = true;
@@ -202,15 +204,15 @@ export default {
     // },
     removeSearchTimer() {
       if (this.search.timer) {
-        clearTimeout(this.search.timer);
-        this.search.timer = null;
+        clearTimeout(this.search.timer)
+        this.search.timer = null
       }
     },
     getMyTrusts() {
-      this.yourTrusts.loading = true;
-      this.yourTrusts.busy = false;
-      this.yourTrusts.pn++;
-      this.yourTrusts.list = [];
+      this.yourTrusts.loading = true
+      this.yourTrusts.busy = false
+      this.yourTrusts.pn++
+      this.yourTrusts.list = []
       // if (this.yourTrusts.list.length >= this.yourTrusts.total) {
       //   this.$message.warning("到底了");
       //   this.yourTrusts.loading = false;
@@ -220,85 +222,103 @@ export default {
       setTimeout(() => {
         Api.getMyTrusts()
           .then((res) => {
-            this.yourTrusts.total = res.total;
-            this.yourTrusts.list = [...this.yourTrusts.list, ...res.list];
-            this.yourTrusts.loading = false;
-            this.yourTrusts.busy = false;
+            this.yourTrusts.total = res.total
+            this.yourTrusts.list = [...this.yourTrusts.list, ...res.list]
+            this.yourTrusts.loading = false
+            this.yourTrusts.busy = false
           })
           .catch(() => {
-            this.yourTrusts.pn--;
-            this.yourTrusts.loading = false;
-            this.yourTrusts.busy = false;
-          });
-      }, 1000);
+            this.yourTrusts.pn--
+            this.yourTrusts.loading = false
+            this.yourTrusts.busy = false
+          })
+      }, 1000)
     },
     showInvitedUrl() {
-      const address = this.$route.query.q;
-      if (!address || !ADDRESS_REGEX.test(address)) return;
-      this.search.inputVal = address;
-      this.$store.dispatch("SaveInvitation", address);
-      this.onSearch();
-    },
+      const address = this.$route.query.q
+      if (!address || !ADDRESS_REGEX.test(address)) return
+      this.search.inputVal = address
+      this.$store.dispatch('SaveInvitation', address)
+      this.onSearch()
+    }
   },
   beforeDestroy() {
-    this.removeSearchTimer();
+    this.removeSearchTimer()
   },
   mounted() {
-    this.showInvitedUrl();
-  },
-};
+    this.showInvitedUrl()
+  }
+}
 </script>
 
 <style lang="less" scoped>
 .trust {
   .search-wrap {
     position: relative;
-    padding: 80px 0 40px;
+    padding: 40/@r 30/@r;
+    margin-bottom: 40/@r;
     z-index: 1;
+    background: #093658;
+    border-radius: 30/@r;
     .title {
-      font-size: 20px;
+      font-size: 38/@r;
       font-weight: bold;
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 30/@r;
     }
-    .list-wrap {
-      background: #fff;
-      max-height: 300px;
-      overflow: auto;
-      width: 100%;
-      position: absolute;
-      padding: 0 16px;
-      border: 1px solid #eee;
-      .invite-list {
-        .list-item-wrap {
-          width: 100%;
-          display: flex;
-          justify-content: space-between;
+    .input-wrap{
+      position: relative;
+      .search-input{
+        /deep/ input{
+          font-size: 32/@r;
+          height: 80/@r;
+          line-height: 80/@r;
+          color: #010101;
+        }
+      }
+      .list-wrap {
+        background: #fff;
+        max-height: 300/@r;
+        overflow: auto;
+        width: 100%;
+        position: absolute;
+        padding: 0 16/@r;
+        border: 1/@r solid #eee;
+        .invite-list {
+          .list-item-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+          }
         }
       }
     }
   }
 
   .your-trusts-container {
+    .trust-list;
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
     .title {
-      margin-bottom: 10px;
-    }
-    .content {
-      padding: 0 16px;
-      max-height: 180px;
-      overflow: auto;
+      font-size: 36/@r;
+      line-height: 100/@r;
+      padding: 0 40/@r;
       position: relative;
-      border: 1px solid #eee;
-      border-radius: 6px;
     }
-    .list-item-wrap {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-    }
-    .add-user {
-      width: 20px;
-      text-align: center;
+    .trusts-list{
+      position: relative;
+      display: block;
+      .content {
+        max-height: 560/@r;
+        overflow: auto;
+        position: relative;
+        border-radius: 6/@r;
+      }
+      .add-user {
+        width: 20/@r;
+        text-align: center;
+      }
     }
   }
 }

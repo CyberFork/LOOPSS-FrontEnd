@@ -45,7 +45,6 @@
 </script>
 <style lang="less" scoped>
   .ant-text {
-    color: rgba(0, 0, 0, .85);
     overflow-wrap: break-word;
 
     &.ant-block {
@@ -84,6 +83,9 @@
       color: #cccccc;
       cursor: not-allowed;
       user-select: none;
+      a{
+        cursor: not-allowed;
+      }
     }
 
     &.ant-ellipsis {

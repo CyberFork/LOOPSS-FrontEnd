@@ -1,9 +1,9 @@
 <template>
   <a-row type="flex" justify="center" align="top">
-      <a-col :xs="24" :sm="20" :md="18" :lg="16" :xl="14">
-        <slot></slot>
-      </a-col>
-    </a-row>
+    <a-col :xs="22" :sm="22" :md="20" :lg="18" :xl="16">
+      <slot></slot>
+    </a-col>
+  </a-row>
 </template>
 <script>
   export default {
