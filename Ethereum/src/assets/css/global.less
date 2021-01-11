@@ -35,21 +35,16 @@
 @table-padding-vertical: 8/@r;
 @table-padding-horizontal: 8/@r;
 
+// Tooltip
+@tooltip-color: #fff;
+@tooltip-bg: rgba(60, 60, 60, 0.5);
+
 //其他
 @font-family: 'PingFangSC-Semibold', 'PingFang SC', Helvetica, 'Microsoft Yahei', Avenir, Arial, 'sans-serif';
-@box-shadow-base: 0 2/@r 8/@r rgba(0, 0, 0, 0.15); // 浮层阴影
-html {
-	font-size: 5px;
-}
-
-@media only screen and (min-width: 768px) {
-	html {
-			font-size: 10px !important;
-	}
-}
+@box-shadow-base: 0 2px 8/@r rgba(0, 0, 0, 0.15); // 浮层阴影
 
 body {
-	background: #000;
+	background-color: transparent;
 	.flex-box{
 		display: flex;
 	}
@@ -80,25 +75,27 @@ body {
 	text-align: center;
 }
 
-/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
-::-webkit-scrollbar{
-	width: 10px;
-	height: 10px;
-	background-color: #F5F5F5;
-}
+.pc-layout{
+	/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+	::-webkit-scrollbar{
+		width: 10px;
+		height: 10px;
+		background-color: #F5F5F5;
+	}
 
-/*定义滚动条轨道 内阴影+圆角*/
-::-webkit-scrollbar-track {
-	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
-	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
-	border-radius: 10px;
-	background-color: #F5F5F5;
-}
+	/*定义滚动条轨道 内阴影+圆角*/
+	::-webkit-scrollbar-track {
+		box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+		-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+		border-radius: 10px;
+		background-color: #F5F5F5;
+	}
 
-/*定义滑块 内阴影+圆角*/
-::-webkit-scrollbar-thumb{
-	border-radius: 10px;
-	box-shadow: inset 0 0 6px rgba(0, 0, 0, .7);
-	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .7);
-	background-color: #c8c8c8;
+	/*定义滑块 内阴影+圆角*/
+	::-webkit-scrollbar-thumb{
+		border-radius: 10px;
+		box-shadow: inset 0 0 6px rgba(0, 0, 0, .7);
+		-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .7);
+		background-color: #c8c8c8;
+	}
 }

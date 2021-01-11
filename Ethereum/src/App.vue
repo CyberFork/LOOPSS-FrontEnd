@@ -1,19 +1,16 @@
 <template>
   <a-config-provider :locale="locale">
     <layout></layout>
-    <!-- <backbround /> -->
   </a-config-provider>
 </template>
 <script>
 // @ is an alias to /src
 import 'ant-design-vue/dist/antd.less'
 import Layout from '@/components/page/Layout'
-// import Backbround from '@/components/background'
 export default {
   name: 'App',
   components: {
     Layout
-    // Backbround
   },
   computed: {
     locale () {

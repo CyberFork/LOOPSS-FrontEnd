@@ -280,7 +280,7 @@ export default {
     .title {
       text-align: center;
       font-size: 36/@r;
-      line-height: 90px;
+      line-height: 90/@r;
       border-bottom: 1px solid rgba(0, 0, 0, .25);
       img{
         width: 56/@r;
@@ -310,7 +310,7 @@ export default {
       }
       .right{
         flex: 1;
-        line-height: 100px;
+        line-height: 100/@r;
         .item{
           border-bottom: 1px solid rgba(0, 0, 0, .25);
           &:last-child{
@@ -349,13 +349,13 @@ export default {
       line-height: 80/@r;
       color: #00E983;
       background: #12285B;
-      border-radius: 10px;
+      border-radius: 10/@r;
       margin-bottom: 24/@r;
     }
   }
   .trusts-container {
     .trust-list;
-    border-radius: 30px;
+    border-radius: 30/@r;
     overflow: hidden;
     position: relative;
     .title {

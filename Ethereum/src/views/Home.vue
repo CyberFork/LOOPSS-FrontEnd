@@ -135,6 +135,7 @@ export default {
   }
   .mining-info {
     .light-card;
+    margin: -40/@r 0 40/@r;
     .top {
       padding: 30/@r 40/@r 0;
       display: flex;
@@ -152,7 +153,7 @@ export default {
     .total-wrap{
       text-align: center;
       padding: 25/@r 0 36/@r;
-      border-bottom: 1/@r solid #000;
+      border-bottom: 1px solid #000;
       .animate-num {
         display: block;
         font-size: 72/@r;
@@ -167,7 +168,7 @@ export default {
       .cont-item {
         flex: 1;
         padding: 30/@r;
-        border-right: 1/@r solid #000;
+        border-right: 1px solid #000;
         &:last-child {
           border: 0;
         }

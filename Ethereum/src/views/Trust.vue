@@ -92,6 +92,7 @@
           </div>
         </a-spin>
       </div>
+      <share-box></share-box>
     </a-box>
   </div>
 </template>
@@ -119,7 +120,7 @@ export default {
         ps: 10,
         loading: false,
         busy: false,
-        total: 10000,
+        total: 10,
         list: []
       }
     }
@@ -283,7 +284,7 @@ export default {
         width: 100%;
         position: absolute;
         padding: 0 16/@r;
-        border: 1/@r solid #eee;
+        border: 1px solid #eee;
         .invite-list {
           .list-item-wrap {
             width: 100%;
@@ -297,7 +298,7 @@ export default {
 
   .your-trusts-container {
     .trust-list;
-    border-radius: 30px;
+    border-radius: 30/@r;
     overflow: hidden;
     position: relative;
     .title {

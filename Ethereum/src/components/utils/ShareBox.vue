@@ -18,7 +18,7 @@ export default {
 .share-box {
   color: #152053;
   margin-top: 50/@r;
-  line-height: 64px;
+  line-height: 64/@r;
   display: flex;
   justify-content: space-between;
 }

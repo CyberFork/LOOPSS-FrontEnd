@@ -1,8 +1,8 @@
 <template>
   <a-spin size="large" :spinning="globalLoading" :tip="globalLoadingTip" wrapper-class-name="global-loading">
-    <a-layout :class="{ layout: true, 'mobile-layout': isMobile }">
-      <p-head :isMobile="isMobile">
-        <p-side :isMobile="isMobile"></p-side>
+    <a-layout :class="{ layout: true, 'pc-layout': !isMobile, 'mobile-layout': isMobile }">
+      <p-head :isMobile="isMobile" :showSide="showSide" @showSideFn="showSideFn">
+        <p-side :isMobile="isMobile" :showSide="showSide" @showSideFn="showSideFn"></p-side>
       </p-head>
       <a-layout class="main-wrap">
         <router-view class="main"></router-view>
@@ -30,7 +30,8 @@
     },
     data() {
       return {
-        isMobile: false
+        isMobile: false,
+        showSide: false,
       }
     },
     computed: {
@@ -43,6 +44,9 @@
       }
     },
     methods: {
+      showSideFn(bool){
+        this.showSide = bool
+      }
     },
     created() {
       this.isMobile = this.clientWidth < 768
@@ -58,12 +62,19 @@
     flex-direction: column;
     .main-wrap{
       flex: 1;
-      overflow: auto;
-      padding: 134/@r 0 94/@r 210/@r;
+      padding-left: 210/@r;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      .main{
+        max-height: 100%;
+        overflow: auto;
+        padding: 134/@r 0 90/@r;
+      }
     }
     &.mobile-layout{
       .main-wrap{
-        padding: 94/@r 0;
+        padding: 0;
       }
     }
   }

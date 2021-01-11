@@ -14,8 +14,8 @@ const locale = {
     home: '首页',
     mining: '挖矿',
     trust: '信任',
-    more: '查看更多',
-    wait: '敬请期待'
+    more: '更多',
+    wait: '正在开发，敬请期待'
   },
   head: {
     login: '登录',
