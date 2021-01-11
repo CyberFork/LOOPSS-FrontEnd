@@ -44,53 +44,56 @@ export default new Vuex.Store({
   actions: {
     SaveInvitation({ commit }, address) {
       commit('SAVE_INVITATION', address)
-  },
-  SetMenu({ commit }, routes) {
-    const menu = []
-    routes.map(item => {
-      if (item.meta && item.meta.menu){
-        menu.push(item)
-      }
-    })
-    commit('SET_MENU', menu)
-  },
-  //开启全局loading
-  ShowLoading({ commit }, tip) {
-    commit('SET_LOADING', {
-      isShow: true,
-      tip
-    })
-  },
-  //关闭全局loading
-  HideLoading({ commit }) {
-    commit('SET_LOADING', { isShow: false })
-  },
-  // 登录
-  async Login({ commit }, params) {
-    const redirect = decodeURIComponent(router.currentRoute.query.redirect || router.currentRoute.path)
-    const user = await Api.login(params)
-    if (user) {
-      commit('SET_USER', user)
-      router.push(redirect)
-    }
-    return user
-  },
-  // 登出
-  Logout({ commit, state }) {
-    this.dispatch('ShowLoading')
-    return Api.logout()
-      .finally(() => {
-        commit('SET_USER', '')
-        this.dispatch('HideLoading')
-        router.push('/')
+      //router.push(`/trust?q=${address}`)
+    },
+    SetMenu({ commit }, routes) {
+      const menu = []
+      routes.map(item => {
+        if (item.meta && item.meta.menu){
+          menu.push(item)
+        }
       })
-  },
-  SetScreen({ commit }, screenObj) {
-    commit('SET_SCREEN', screenObj)
-  },
-  SetLang({ commit }, lang) {
-    commit('SET_LANG', lang)
-    loadLanguageAsync(lang)
+      commit('SET_MENU', menu)
+    },
+    //开启全局loading
+    ShowLoading({ commit }, tip) {
+      commit('SET_LOADING', {
+        isShow: true,
+        tip
+      })
+    },
+    //关闭全局loading
+    HideLoading({ commit }) {
+      commit('SET_LOADING', { isShow: false })
+    },
+    // 登录
+    async Login({ commit }, params) {
+      const redirect = decodeURIComponent(router.currentRoute.query.redirect || router.currentRoute.path)
+      const user = await Api.login(params)
+      if (user) {
+        commit('SET_USER', user)
+        router.push(redirect)
+      }
+      return user
+    },
+    // 登出
+    Logout({ commit, state }) {
+      this.dispatch('ShowLoading')
+      return Api.logout()
+        .finally(() => {
+          commit('SET_USER', '')
+          this.dispatch('HideLoading')
+          router.push('/')
+        })
+    },
+    SetScreen({ commit }, screenObj) {
+      commit('SET_SCREEN', screenObj)
+    },
+    SetLang({ commit }, lang) {
+      return new Promise((resolve, reject) => {
+        commit('SET_LANG', lang)
+        loadLanguageAsync(lang)
+      })
+    },
   }
-}
 })

@@ -24,11 +24,17 @@ store.dispatch('SetMenu', router.options.routes)
 router.beforeEach((to, from, next) => {
   const isLogin = store.state.user
   const redirect = decodeURIComponent(to.fullPath)
-  if (!isLogin && (to.path === '/mining' || to.path === '/trust')){
+  if (!isLogin && (to.path === '/mining' || to.path === '/trust')) {
     router.push({
       path: '/error/needLogin',
       query: { redirect }
     })
+  }
+
+  const qIvitationUrl = to.query.q
+  if (qIvitationUrl) {
+    store.dispatch('SaveInvitation', qIvitationUrl)
+    router.push({ path: '/trust' })
   }
   next()
 })

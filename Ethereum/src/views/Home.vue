@@ -84,7 +84,7 @@ export default {
     },
     //TODO 定时刷新(已修改为5s一刷新)
     getInfo() {
-      this.lastTotal = this.total
+      this.lastTotal = this.total;
       Api.getInfo().then((res) => {
         this.total = res.total
         this.minedTotal = res.minedTotal
