@@ -59,11 +59,15 @@ function initContract() {
 }
 ethereum.on('networkChanged', function (networkId) {
   switch (parseInt(networkId)) {
-    case 42:
+    case 42://kovan
       adLOOPPool = '0x8e4A3E9280f53c0b82c9b64998D4847BCA2AD9A7'
       initContract()
       break
-    case 100:
+    case 56://BSC
+      adLOOPPool = "0x697c8EF8f85cddD090Bb126746C71d72637c04F4";
+      initContract()
+      break
+    case 100://xdai
       adLOOPPool = '0x8e4A3E9280f53c0b82c9b64998D4847BCA2AD9A7'
       initContract()
       break
