@@ -25,14 +25,14 @@
           <div class="mining-count">
             <div class="left">
                 <a-text link class="count" v-if="myInfo.ifTrustLOOP" @click="withdraw">
-                  {{ myInfo.curToken }}
+                  {{ myInfo.curToken | formatNumber(2) }}
                 </a-text>
                 <a-text link disabled class="count" v-else> 0 </a-text>
                 <span class="tip">{{ $t("mining.mining.curToken") }}</span>
             </div>
             <div class="right">
               <div class="item">
-                <span class="count">{{ myInfo.unClaimTokens }}</span>
+                <span class="count">{{ myInfo.unClaimTokens | formatNumber(2) }}</span>
                 <span class="tip">{{ $t("mining.mining.unClaimTokens") }}</span>
               </div>
               <div class="item">
@@ -42,6 +42,7 @@
             </div>
           </div>
           <div class="foot">
+            <!-- 剩余领取时间 -->
             <div class="tip-wrap">
               <a-text>{{ $t("mining.mining.tip1") }}: {{ myInfo.time }}</a-text>
               <a-text class="tip">{{ $t("mining.mining.tip2") }}</a-text>
@@ -167,6 +168,7 @@ export default {
           .then((res) => {
             this.myInfo.needInviteCount = res.needInviteCount
             this.myInfo = Object.assign(this.myInfo, res)
+            console.log(res)
           })
           .finally(() => {
             this.myInfo.loading = false
