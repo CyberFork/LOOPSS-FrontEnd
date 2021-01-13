@@ -161,10 +161,7 @@ const Api = {
     // 获取上次挖矿时间，以及计算离24小时距离
     const myLastUpdateTime = await icPoolContract.minerLastUpdateTime(web3.eth.defaultAccount).call()
     const myDate = new Date()
-    var dTime = 86400 - (parseInt(myDate.getTime() / 1000) - (myLastUpdateTime))//直接得到的第三个Trust时间戳
-    if(dTime < 0){
-      dTime = 0
-    }
+    const dTime = 86400 - (parseInt(myDate.getTime() / 1000) - (myLastUpdateTime))//直接得到的第三个Trust时间戳
     const remindTime = this._getDateTime(dTime)
     // 判定是否Trust了LOOP
     let _ifTrustLOOP

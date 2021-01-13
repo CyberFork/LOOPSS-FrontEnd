@@ -26,19 +26,17 @@ const {
 // connect wallet
 export const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/
 const web3js = new Web3(web3.currentProvider)
-const cfx = window.confluxJS;
-conflux.autoRefreshOnNetworkChange = true
-conflux.enable().then(function (accounts) {
-  //现在只能使用then异步的方式返回单个了
-  console.log('Now account:', accounts);
-});
+ethereum.autoRefreshOnNetworkChange = true
+ethereum.send('eth_requestAccounts').then((res) => {
+  console.log(res)
+})
 // Address
-var adLoopssMe = '0x868957d1dfdcdc5ebd44b891c3fa5d6b0405e475'
-var adLOOPToken = '0x8adeed9ba5656855622877825f7971fd475fe1b3'
-var adLOOPPool = '0x81c9d190af86325421e5500baab4d23b1bf350a8'
-// console.log(parseInt(conflux.chainId), adLOOPPool);
-// //TODO:conflux.chainId 有时候获取不到，这里就需要阻塞等待，当conflux.chainId获取到了之后才继续执行后面的。否则会报错。
-// switch (parseInt(conflux.chainId)) {
+var adLoopssMe = '0x8E4DfCF7fa2425eC9950f9789D2EB92142bb0C86'
+var adLOOPToken = '0x880E7Df34378712107AcdaCF705c2257Bf42b1A5'
+var adLOOPPool = '0x8e4A3E9280f53c0b82c9b64998D4847BCA2AD9A7'
+// console.log(parseInt(ethereum.chainId), adLOOPPool);
+// //TODO:ethereum.chainId 有时候获取不到，这里就需要阻塞等待，当ethereum.chainId获取到了之后才继续执行后面的。否则会报错。
+// switch (parseInt(ethereum.chainId)) {
 //   case 42:
 //     adLOOPPool = '0xD1E97844Ad40c9B53Aa51EA38e6928011D027f1A';
 //     break;
@@ -55,35 +53,33 @@ let icLOOPTokenContract
 let icPoolContract
 initContract()
 function initContract() {
-  //TODO 更新ABI到最新
-  icLoopsMeContract = cfx.Contract({ abi: LoopssMe_ABI, address: adLoopssMe })
-  icLOOPTokenContract = cfx.Contract({ abi: LOOPToken_ABI, address: adLOOPToken })
-  icPoolContract = cfx.Contract({ abi: LOOPPool_ABI, address: adLOOPPool })
+  icLoopsMeContract = new web3js.eth.Contract(LoopssMe_ABI, adLoopssMe)
+  icLOOPTokenContract = new web3js.eth.Contract(LOOPToken_ABI, adLOOPToken)
+  icPoolContract = new web3js.eth.Contract(LOOPPool_ABI, adLOOPPool)
 }
-// conflux.on('networkChanged', function (networkId) {
-//   switch (parseInt(networkId)) {
-//     case 42://kovan
-//       adLOOPPool = '0x8e4A3E9280f53c0b82c9b64998D4847BCA2AD9A7'
-//       initContract()
-//       break
-//     case 56://BSC
-//       adLOOPPool = "0x697c8EF8f85cddD090Bb126746C71d72637c04F4";
-//       initContract()
-//       break
-//     case 100://xdai
-//       adLOOPPool = '0x8e4A3E9280f53c0b82c9b64998D4847BCA2AD9A7'
-//       initContract()
-//       break
-//     default:
-//       // adLOOPPool = '0x89434bfc9708623317F964774708cF9f11963e01';
-//       break
-//   }
-// })
-conflux.on('accountsChanged', function (accounts) {
+ethereum.on('networkChanged', function (networkId) {
+  switch (parseInt(networkId)) {
+    case 42://kovan
+      adLOOPPool = '0x8e4A3E9280f53c0b82c9b64998D4847BCA2AD9A7'
+      initContract()
+      break
+    case 56://BSC
+      adLOOPPool = "0x697c8EF8f85cddD090Bb126746C71d72637c04F4";
+      initContract()
+      break
+    case 100://xdai
+      adLOOPPool = '0x8e4A3E9280f53c0b82c9b64998D4847BCA2AD9A7'
+      initContract()
+      break
+    default:
+      // adLOOPPool = '0x89434bfc9708623317F964774708cF9f11963e01';
+      break
+  }
+})
+ethereum.on('accountsChanged', function (accounts) {
   store.dispatch('Logout')
   store.dispatch('Login')
 })
-
 //TODO: 检测钱包是否连接，连接的情况下才显示页面。未连接时显示提示连接钱包页面。类似noscript
 const app = new Vue()
 function errorNotic(message) {
@@ -94,14 +90,15 @@ function errorNotic(message) {
 }
 
 const Api = {
-  //TODO研究如何在切换时新增账号连接
   login(params) {
     //登录
-    if (cfx.defaultAccount === null) {
-      errorNotic('No address')
-      return
-    }
-    return cfx.defaultAccount
+    return web3js.eth.getAccounts()
+      .then(res => {
+        return res[0]
+      })
+      .catch(err => {
+        errorNotic(JSON.stringify(err))
+      })
   },
   logout() {
     //登出
@@ -113,10 +110,10 @@ const Api = {
     const dTime = parseInt(myDate.getTime() / 10000) - 160897528//直接得到的第三个Trust时间戳
     const theoryP = ((dTime) * 0.01)
     // 已挖出并包装：
-    const _minedTotal = this._formatBigNumber(await icPoolContract.totalMined().call())
-    // await icLOOPTokenContract.totalSupply().call()
+    const _minedTotal = this._formatBigNumber(await icPoolContract.methods.totalMined().call())
+    // await icLOOPTokenContract.methods.totalSupply().call()
     // 挖矿信任数：
-    const _trustTotal = await icPoolContract.totalMiningTrust().call() //全网信任量
+    const _trustTotal = await icPoolContract.methods.totalMiningTrust().call() //全网信任量
     //首页-总量信息
     return Promise.resolve({
       total: theoryP, //总计已产出
@@ -131,7 +128,7 @@ const Api = {
   // 数据处理方法
   _formatBigNumber(_bn) {
     // return web3js.utils.fromWei(_bn, 'ether');
-    return parseFloat(web3js.utils.fromWei(String(_bn), 'ether'))//.toLocaleString();
+    return parseFloat(web3js.utils.fromWei(_bn, 'ether'))//.toLocaleString();
     // parseFloat().toLocaleString();
   },
   //时间格式化
@@ -149,17 +146,17 @@ const Api = {
   },
   async getMyInfo() {
     // 被信任数量计算还需信任数量
-    const myTrustCount = (await icLoopsMeContract.getAccountInfoOf(web3.eth.defaultAccount).call()).beenTrustCount
+    const myTrustCount = (await icLoopsMeContract.methods.getAccountInfoOf(web3.eth.defaultAccount).call()).beenTrustCount
     const needTrust = myTrustCount > 3 ? 0 : 3 - myTrustCount
     // 获取未领取数量
-    const unClaim = this._formatBigNumber(await icPoolContract.unClaimOf(web3.eth.defaultAccount).call())
+    const unClaim = this._formatBigNumber(await icPoolContract.methods.unClaimOf(web3.eth.defaultAccount).call())
     // 获取当前未包装余额
-    const unWrappedLOOP = this._formatBigNumber(await icLoopsMeContract.minterBalanceOf(adLOOPToken, web3.eth.defaultAccount).call())
+    const unWrappedLOOP = this._formatBigNumber(await icLoopsMeContract.methods.minterBalanceOf(adLOOPToken, web3.eth.defaultAccount).call())
     // 获取当前已经包装余额
     // 获取当前信任挖矿算力
-    const myMiningTrustCount = await icPoolContract.minerTrustCount(web3.eth.defaultAccount).call()
+    const myMiningTrustCount = await icPoolContract.methods.minerTrustCount(web3.eth.defaultAccount).call()
     // 获取上次挖矿时间，以及计算离24小时距离
-    const myLastUpdateTime = await icPoolContract.minerLastUpdateTime(web3.eth.defaultAccount).call()
+    const myLastUpdateTime = await icPoolContract.methods.minerLastUpdateTime(web3.eth.defaultAccount).call()
     const myDate = new Date()
     var dTime = 86400 - (parseInt(myDate.getTime() / 1000) - (myLastUpdateTime))//直接得到的第三个Trust时间戳
     if(dTime < 0){
@@ -168,7 +165,7 @@ const Api = {
     const remindTime = this._getDateTime(dTime)
     // 判定是否Trust了LOOP
     let _ifTrustLOOP
-    if (parseInt(await icLoopsMeContract.getProportionReceiverTrustedSender(web3.eth.defaultAccount, adLOOPToken).call()) > 0) {
+    if (parseInt(await icLoopsMeContract.methods.getProportionReceiverTrustedSender(web3.eth.defaultAccount, adLOOPToken).call()) > 0) {
       _ifTrustLOOP = true
     } else {
       _ifTrustLOOP = false
@@ -187,11 +184,11 @@ const Api = {
   },
   async updateAndClaim() {
     //挖矿-收取token & 更新算力
-    const myTrustCount = (await icLoopsMeContract.getAccountInfoOf(web3.eth.defaultAccount).call()).beenTrustCount
+    const myTrustCount = (await icLoopsMeContract.methods.getAccountInfoOf(web3.eth.defaultAccount).call()).beenTrustCount
     const needTrust = myTrustCount > 3 ? 0 : 3 - myTrustCount
 
     if (parseInt(needTrust) === 0) {
-      await icPoolContract.claim().send({ from: web3.eth.defaultAccount })
+      await icPoolContract.methods.claim().send({ from: web3.eth.defaultAccount })
       return Promise.resolve(true)
     } else {
       return Promise.resolve(false)
@@ -199,13 +196,13 @@ const Api = {
   },
   async wrappToken(_curToken) {
     //检测是否Approve给LOOPToken合约
-    const approved = await icLoopsMeContract.allowance(web3.eth.defaultAccount, adLOOPToken, adLOOPToken).call()
+    const approved = await icLoopsMeContract.methods.allowance(web3.eth.defaultAccount, adLOOPToken, adLOOPToken).call()
     if (parseInt(approved) === parseInt(0)) {
-      // await icLoopsMeContract.approve(adLOOPToken, adLOOPToken, web3js.utils.toBN('115792089237316195423570985008687907853269984665640564039457584007913129639935')).send({ from: web3.eth.defaultAccount });
-      await icLoopsMeContract.approve(adLOOPToken, adLOOPToken, MaxUint256).send({ from: web3.eth.defaultAccount })
+      // await icLoopsMeContract.methods.approve(adLOOPToken, adLOOPToken, web3js.utils.toBN('115792089237316195423570985008687907853269984665640564039457584007913129639935')).send({ from: web3.eth.defaultAccount });
+      await icLoopsMeContract.methods.approve(adLOOPToken, adLOOPToken, MaxUint256).send({ from: web3.eth.defaultAccount })
       return Promise.resolve(false)
     } else {
-      await icLOOPTokenContract.wrap(web3js.utils.toBN(web3js.utils.toWei(String(_curToken)))).send({ from: web3.eth.defaultAccount })
+      await icLOOPTokenContract.methods.wrap(web3js.utils.toBN(web3js.utils.toWei(String(_curToken)))).send({ from: web3.eth.defaultAccount })
       return Promise.resolve(true)
     }
     // 如果是，则调用wrap方法
@@ -252,8 +249,8 @@ const Api = {
   },
   async searchByAdress(_address) {
     //挖矿-获取我信任的人
-    const myTrustValueTo = await icLoopsMeContract.getProportionReceiverTrustedSender(web3.eth.defaultAccount, _address).call()
-    const toTrustValueMe = await icLoopsMeContract.getProportionReceiverTrustedSender(_address, web3.eth.defaultAccount).call()
+    const myTrustValueTo = await icLoopsMeContract.methods.getProportionReceiverTrustedSender(web3.eth.defaultAccount, _address).call()
+    const toTrustValueMe = await icLoopsMeContract.methods.getProportionReceiverTrustedSender(_address, web3.eth.defaultAccount).call()
     const _trustType = myTrustValueTo * toTrustValueMe > 0 ? 3 : myTrustValueTo === toTrustValueMe ? 0 : parseInt(myTrustValueTo) === 0 ? 1 : 2 //1已信任您 2您已信任 3互相信任
     console.log(_trustType)
     return Promise.resolve({
@@ -298,14 +295,14 @@ const Api = {
     //挖矿-对某地址添加信任
     const trustV = web3js.utils.toWei('0.101')
     console.log(_address, trustV)
-    await icLoopsMeContract.transfer(_address, trustV).send({ from: web3.eth.defaultAccount })
-    // await icPoolContract.claim().send({ from: web3.eth.defaultAccount });
+    await icLoopsMeContract.methods.transfer(_address, trustV).send({ from: web3.eth.defaultAccount })
+    // await icPoolContract.methods.claim().send({ from: web3.eth.defaultAccount });
     return Promise.resolve()
   },
   async minusTrust(_address) {
     //挖矿-对某地址删除信任
     const trustV = web3js.utils.toWei('0')
-    await icLoopsMeContract.transfer(_address, trustV).send({ from: web3.eth.defaultAccount })
+    await icLoopsMeContract.methods.transfer(_address, trustV).send({ from: web3.eth.defaultAccount })
     return Promise.resolve()
   }
 }
