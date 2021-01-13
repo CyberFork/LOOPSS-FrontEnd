@@ -7,7 +7,7 @@
           <a-input-search
             class="search-input"
             v-model="search.inputVal"
-            :placeholder="$t('trust.placeholder')"
+            :placeholder="$t('trust.title')"
             size="large"
             @change="onSearch"
             :loading="search.loading"
@@ -19,29 +19,27 @@
               :loading="search.loading"
               :data-source="search.list"
             >
-              <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
-                <div class="list-item-wrap">
-                  <a-space size="large">
-                    <a-text>{{ item.address }}</a-text>
-                    <a-tag :color="item.trustType | formatTrustType">{{
-                      item.trustType | formatTrustType("desc")
-                    }}</a-tag>
-                  </a-space>
-                  <a-space class="actions f-r">
-                    <a-icon
-                      v-if="item.trustType < 2"
-                      class="pointer"
-                      type="plus-circle"
-                      @click="addTrust(item.address)"
-                    />
-                    <a-icon
-                      v-else
-                      class="pointer"
-                      type="minus-circle"
-                      @click="minusTrust(item.address)"
-                    />
-                  </a-space>
-                </div>
+              <a-list-item class="list-item-wrap" slot="renderItem" slot-scope="item, index" :key="index">
+                <a-space size="large">
+                  <a-text>{{ item.address | formatUser }}</a-text>
+                  <a-text :style="{ color: formatTrustType(item.trustType) }">
+                    {{ formatTrustType(item.trustType, "desc") }}
+                  </a-text>
+                </a-space>
+                <a-space class="actions f-r">
+                  <img
+                    v-if="item.trustType < 2"
+                    class="pointer add-btn"
+                    src="@/assets/img/add.png"
+                    @click="addTrust(item.address)"
+                  />
+                  <img
+                    v-else
+                    class="pointer delete-btn"
+                    src="@/assets/img/delete.png"
+                    @click="minusTrust(item.address)"
+                  />
+                </a-space>
               </a-list-item>
             </a-list>
           </div>
@@ -130,20 +128,6 @@ export default {
       return this.$store.state.user
     }
   },
-  filters: {
-    formatTrustType(type, formatType) {
-      switch (type) {
-        case 1:
-          return formatType === 'desc' ? i18n.t('trust.trustYou') : 'orange'
-        case 2:
-          return formatType === 'desc' ? i18n.t('trust.youTrust') : 'cyan'
-        case 3:
-          return formatType === 'desc' ? i18n.t('trust.bothTrust') : 'green'
-        default:
-          return formatType === 'desc' ? i18n.t('trust.unknownTrust') : ''
-      }
-    }
-  },
   methods: {
     copyFn(content) {
       toCopy(content).then(() => {
@@ -163,6 +147,19 @@ export default {
           this.search.loading = false
         })
       }, 1000)
+    },
+    formatTrustType(type, formatType) {
+      //1已信任您 2您已信任 3互相信任
+      switch (type) {
+        case 1:
+          return formatType === 'desc' ? i18n.t('trust.trustYou') : '#00C1DC'
+        case 2:
+          return formatType === 'desc' ? i18n.t('trust.youTrust') : '#00C1DC'
+        case 3:
+          return formatType === 'desc' ? i18n.t('trust.bothTrust') : '#00D477'
+        default:
+          return formatType === 'desc' ? i18n.t('trust.unknownTrust') : '#082C4C'
+      }
     },
     addTrust(_address) {
       this.search.loading = true
@@ -276,21 +273,37 @@ export default {
           height: 80/@r;
           line-height: 80/@r;
           color: #010101;
+          text-align: center;
+        }
+        /deep/ .ant-input-search-icon svg, /deep/ .ant-input-clear-icon svg{
+          width: 36/@r;
+          height: 36/@r;
         }
       }
       .list-wrap {
-        background: #fff;
         max-height: 300/@r;
+        background: #A8EFE4;
         overflow: auto;
         width: 100%;
         position: absolute;
-        padding: 0 16/@r;
-        border: 1px solid #eee;
+        margin-top: -4px;
+        border-radius: 0 0 10/@r 10/@r;
         .invite-list {
+          color: #082C4C;
           .list-item-wrap {
             width: 100%;
             display: flex;
             justify-content: space-between;
+            padding: 20/@r 20/@r 20/@r 28/@r;
+            height: 70/@r;
+            line-height: 70/@r;
+            .add-btn, .delete-btn{
+              width: 40/@r;
+              height: 40/@r;
+            }
+            &:nth-child(2n){
+              background: rgba(0, 0, 0, .1)
+            }
           }
         }
       }

@@ -29,7 +29,7 @@ module.exports = {
     'style-resources-loader': {
       preProcessor: 'less',
       patterns: [
-        'P:/share/devFolder/FrontEnd/UIFrontEnd/LOOPSS-FrontEnd/Ethereum/src/assets/css/var.less'
+        resolve('src/assets/css/var.less')
       ]
     }
   },
