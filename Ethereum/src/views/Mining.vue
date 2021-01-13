@@ -175,7 +175,7 @@ export default {
     },
     trustLOOPToken() {
       this.myInfo.loading = true
-      Api.addTrust('0x880E7Df34378712107AcdaCF705c2257Bf42b1A5')
+      Api.addTrust('0x8adeed9ba5656855622877825f7971fd475fe1b3')
         .then((res) => {
           this.getMyInfo()
         })
