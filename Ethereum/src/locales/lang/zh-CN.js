@@ -10,6 +10,7 @@ const components = {
 const locale = {
   hello: '您好',
   slogan: '信任驱动，无需质押',
+  noMore: '没有更多了',
   menu: {
     home: '首页',
     mining: '挖矿',

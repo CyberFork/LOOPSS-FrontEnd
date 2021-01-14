@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
+import config from '@/config'
 import storage from 'store'
 
 // default lang
 import zhCN from './lang/zh-CN'
 import enUs from './lang/en-US'
 
-const defaultLang = storage.get('lang')
+const defaultLang = storage.get('lang') || config.lang
 Vue.use(VueI18n)
 
 const messages = {

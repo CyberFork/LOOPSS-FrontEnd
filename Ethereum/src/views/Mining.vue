@@ -95,20 +95,14 @@
                     </div>
                     <a-text>{{ item.time }}</a-text>
                   </a-space>
-                  <a-space class="actions">
-                    <a-icon
-                      class="pointer"
+                  <div>
+                    <img
+                      src="@/assets/img/copy.png"
+                      class="copy-btn pointer"
                       type="copy"
                       @click="copyFn(item.returnValues.TrustSender)"
                     />
-                    <a-text
-                      link
-                      target="_blank"
-                      :href="item.returnValues.TrustSender"
-                    >
-                      <a-avatar size="small" icon="ant-cloud" />
-                    </a-text>
-                  </a-space>
+                  </div>
                 </div>
               </a-list-item>
             </a-list>
@@ -144,7 +138,7 @@ export default {
         busy: false,
         pn: 1,
         ps: 10,
-        total: 10,
+        total: 0,
         speedCount: 0,
         list: []
       }
@@ -225,27 +219,24 @@ export default {
       this.yourTrusts.loading = true
       this.yourTrusts.busy = false
       this.yourTrusts.pn++
-      if (this.yourTrusts.list.length >= this.yourTrusts.total) {
+      if (this.yourTrusts.total && this.yourTrusts.list.length >= this.yourTrusts.total) {
         this.$message.warning('到底了')
         this.yourTrusts.loading = false
         this.yourTrusts.busy = false
         return
       }
-      setTimeout(() => {
-        Api.getTrustMe()
-          .then((res) => {
-            this.yourTrusts.total = res.total
-            this.yourTrusts.list = [...this.yourTrusts.list, ...res.list]
-            console.log(this.yourTrusts.list)
-            this.yourTrusts.loading = false
-            this.yourTrusts.busy = false
-          })
-          .catch(() => {
-            this.yourTrusts.pn--
-            this.yourTrusts.loading = false
-            this.yourTrusts.busy = false
-          })
-      }, 1000)
+      Api.getTrustMe()
+      .then((res) => {
+        this.yourTrusts.total = res.total
+        this.yourTrusts.list = [...this.yourTrusts.list, ...res.list]
+        this.yourTrusts.loading = false
+        this.yourTrusts.busy = false
+      })
+      .catch(() => {
+        this.yourTrusts.pn--
+        this.yourTrusts.loading = false
+        this.yourTrusts.busy = false
+      })
     }
   },
   created() {
@@ -266,9 +257,6 @@ export default {
         height: 72/@r;
         margin-right: 20/@r
       }
-    }
-    .title {
-
     }
     .slogan {
       font-size: 18/@r;
@@ -383,6 +371,9 @@ export default {
       .add-user {
         width: 20/@r;
         text-align: center;
+      }
+      .copy-btn{
+        width: 32/@r;
       }
     }
   }

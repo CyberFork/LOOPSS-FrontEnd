@@ -2,9 +2,9 @@
   <div>
     <div class="logo-wrap">
       <h1 title="LOOP">
-        <img class="logo" src="@/assets/img/logo.png" alt="LOOP" /> LOOP
+        <img class="logo" src="@/assets/img/logo.png" alt="LOOP" />
       </h1>
-      <h2>信任驱动，无需质押</h2>
+      <h1>信任驱动，无需质押</h1>
     </div>
     <router-view></router-view>
   </div>
@@ -18,12 +18,8 @@
     font-weight: 600;
     font-size: 32/@r;
   }
-  h2{
-    font-weight: 600;
-    font-size: 18/@r;
-  }
   .logo{
-    width: 60/@r;
+    width: 116/@r;
   }
 }
 </style>

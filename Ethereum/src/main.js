@@ -6,6 +6,7 @@ import storage from 'store'
 import Antd from 'ant-design-vue'
 import i18n from './locales'
 import config from '@/config'
+import Notification from 'ant-design-vue/es/notification'
 
 import 'assets/css/global.less' //全局样式
 
@@ -17,33 +18,51 @@ import './filters' //全局公用filter
 Vue.use(Antd)
 Vue.config.productionTip = false
 const lang = storage.get('lang') || config.lang
-store.dispatch('Login')
-store.dispatch('SetLang', lang)
-store.dispatch('SetMenu', router.options.routes)
 
-router.beforeEach((to, from, next) => {
-  const isLogin = store.state.user
-  const redirect = decodeURIComponent(to.fullPath)
-  if (!isLogin && (to.path === '/mining' || to.path === '/trust')) {
-    router.push({
-      path: '/error/needLogin',
-      query: { redirect }
-    })
+function checkRouter() {
+  router.beforeEach((to, from, next) => {
+    const isLogin = store.state.user
+    const redirect = to.fullPath
+    if (!isLogin && (to.path === '/mining' || to.path === '/trust')) {
+      next({
+        path: '/error/needLogin',
+        query: {
+          redirect
+        }
+      })
+      return
+    }
+
+    // const qIvitationUrl = to.query.q
+    // if (qIvitationUrl) {
+    //   store.dispatch('SaveInvitation', qIvitationUrl)
+    //   router.push({ path: '/trust' })
+    // }
+    next()
+  })
+}
+
+function initVue() {
+  new Vue({
+    router,
+    store,
+    i18n,
+    render: h => h(App)
+  }).$mount('#app')
+}
+
+async function startApp() {
+  try {
+    await store.dispatch('Login')
+    store.dispatch('SetLang', lang)
+    console.log(router.options.routes)
+    store.dispatch('SetMenu', router.options.routes)
+  } catch (err) {
+    Notification.error(JSON.stringify(err))
+  } finally {
+    console.log('after login')
+    checkRouter()
+    initVue()
   }
-
-  const qIvitationUrl = to.query.q
-  if (qIvitationUrl) {
-    store.dispatch('SaveInvitation', qIvitationUrl)
-    router.push({ path: '/trust' })
-  }
-  next()
-})
-
-var app = new Vue({
-  router,
-  store,
-  i18n,
-  render: h => h(App)
-}).$mount('#app')
-// TODO 研究如何在F12中获取app对象，方便进行调试
-console.log(app)
+}
+startApp()

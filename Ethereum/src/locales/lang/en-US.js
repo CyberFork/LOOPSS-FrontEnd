@@ -10,6 +10,7 @@ const components = {
 const locale = {
   hello: 'Hello',
   slogan: 'Trust, No pledge',
+  noMore: 'All List loaded all',
   menu: {
     home: 'Home',
     mining: 'Mining',
