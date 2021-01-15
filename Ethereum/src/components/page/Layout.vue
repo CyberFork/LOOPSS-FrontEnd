@@ -6,7 +6,7 @@
       </p-head>
       <a-layout class="main-wrap">
         <router-view class="main"></router-view>
-        <p-foot></p-foot>
+        <p-foot v-if="!isError"></p-foot>
       </a-layout>
     </a-layout>
   </a-spin>
@@ -32,6 +32,7 @@
       return {
         isMobile: false,
         showSide: false,
+        isError: false
       }
     },
     computed: {

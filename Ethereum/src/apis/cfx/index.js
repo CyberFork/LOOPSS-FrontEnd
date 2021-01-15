@@ -122,7 +122,7 @@ const Api = {
     return Promise.resolve({
       total: theoryP, //总计已产出
       minedTotal: _minedTotal, //已经被挖出
-      trustTotal: _trustTotal
+      trustTotal: _trustTotal && _trustTotal.length ? _trustTotal[0] : 0
     })
   },
   getPrice() {
