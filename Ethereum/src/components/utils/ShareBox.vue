@@ -24,7 +24,7 @@ export default {
 <style lang="less" scoped>
 .share-box {
   color: #152053;
-  margin: 50/@r 40/@r;
+  margin: 50/@r 0;
   line-height: 64/@r;
   display: flex;
   justify-content: space-between;

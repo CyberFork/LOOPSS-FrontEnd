@@ -1,5 +1,5 @@
 <template>
-  <share-box />
+<a-box><share-box /></a-box>
 </template>
 <script>
 export default {

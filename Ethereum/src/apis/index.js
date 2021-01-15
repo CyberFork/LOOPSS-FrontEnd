@@ -101,7 +101,7 @@ const Api = {
       errorNotic('No address')
       return
     }
-    return cfx.defaultAccount
+    return Promise.resolve(cfx.defaultAccount)
   },
   logout() {
     //登出
