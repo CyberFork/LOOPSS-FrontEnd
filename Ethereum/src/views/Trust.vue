@@ -83,6 +83,7 @@
           </div>
         </a-spin>
       </div>
+      <share-box></share-box>
     </a-box>
   </div>
 </template>
@@ -234,7 +235,7 @@ export default {
     z-index: 1;
     background: url(~@/assets/img/mining_banner.png) no-repeat bottom center/100%;
     border-radius: 30/@r;
-    height: 320/@r;
+    height: 340/@r;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;

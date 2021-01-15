@@ -85,7 +85,6 @@ export default new Vuex.Store({
       return Api.login(params)
         .then(user => {
           if (user) {
-            console.log(user, 88888888888)
             commit('SET_USER', user)
             if (router.currentRoute.name === 'needLogin') {
               router.push(redirect)
@@ -103,7 +102,12 @@ export default new Vuex.Store({
         .finally(() => {
           commit('SET_USER', '')
           this.dispatch('HideLoading')
-          router.push('/')
+          if(router.currentRoute.path === 'minning' || router.currentRoute.path === 'trust'){
+            router.push({
+              path: '/error/needLogin',
+              query: { redirect: router.currentRoute.fullPath }
+            })
+          }
         })
     },
     SetScreen({

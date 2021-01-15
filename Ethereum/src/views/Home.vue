@@ -44,6 +44,7 @@
           <a-text>以Metamask 登录</a-text>
         </div>
       </div>
+      <share-box></share-box>
     </a-box>
   </div>
 </template>

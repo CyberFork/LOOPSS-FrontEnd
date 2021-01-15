@@ -168,6 +168,7 @@
           </div>
         </a-spin>
       </div>
+      <share-box></share-box>
     </a-box>
   </div>
 </template>

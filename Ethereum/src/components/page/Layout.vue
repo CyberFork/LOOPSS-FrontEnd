@@ -6,7 +6,6 @@
       </p-head>
       <a-layout class="main-wrap">
         <router-view class="main"></router-view>
-        <p-foot v-if="!isError"></p-foot>
       </a-layout>
     </a-layout>
   </a-spin>
@@ -16,7 +15,6 @@
   // @ is an alias to /src
   import Head from './Head'
   import Side from './Side'
-  import Foot from './Foot'
   import {
     mapState
   } from 'vuex'
@@ -25,14 +23,12 @@
     name: 'Layout',
     components: {
       'p-head': Head,
-      'p-foot': Foot,
       'p-side': Side
     },
     data() {
       return {
         isMobile: false,
-        showSide: false,
-        isError: false
+        showSide: false
       }
     },
     computed: {
@@ -64,13 +60,10 @@
     .main-wrap{
       flex: 1;
       padding-left: 210/@r;
-      display: flex;
       overflow: auto;
-      flex-direction: column;
-      justify-content: space-between;
 
       .main{
-        padding: 134/@r 0 40/@r;
+        padding: 134/@r 0 0;
       }
     }
     &.mobile-layout{
