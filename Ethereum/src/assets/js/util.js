@@ -48,51 +48,6 @@ export function errorNotic(message) {
   })
 }
 
-export const http = {
-  get: function (url, params, success) {
-    return axios.get(url, {
-      params
-    }).then(res => {
-      if (res.errno) {
-        errorNotic('错误' + res.errno + '：' + res.errmsg)
-        return
-      }
-      success && success(res.data)
-      return res.data
-    })
-  },
-  post: function (url, params, success) {
-    return axios.post(url, params)
-      .then((res) => {
-        if (res.errno) {
-          errorNotic('错误' + res.errno + '：' + res.errmsg)
-          return
-        }
-        success && success(res.data)
-        return res.data
-      })
-  },
-  postStr: function (url, params) {
-    console.log('postStr', url)
-    return axios.post(url, qs.stringify(params))
-    .then((res) => {
-      console.log(123123123)
-      if (res.errno) {
-        errorNotic('错误' + res.errno + '：' + res.errmsg)
-        return
-      }
-      success && success(res.data)
-      return res.data
-    })
-    .catch(err => {
-      console.log(err)
-    })
-  },
-  request: function (option) {
-    return axios(option)
-  }
-}
-
 export function download(href, fileName) {
   var element = document.createElement('a')
   element.href = href

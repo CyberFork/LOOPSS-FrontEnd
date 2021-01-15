@@ -11,7 +11,6 @@ import Notification from 'ant-design-vue/es/notification'
 import 'assets/css/global.less' //全局样式
 
 import 'components/utils' //全局公用组件
-import 'assets/js/axios'
 // import 'assets/js/web3'
 import './filters' //全局公用filter
 
@@ -53,13 +52,12 @@ function initVue() {
 async function startApp() {
   try {
     await store.dispatch('Login')
-    store.dispatch('SetLang', lang)
-    console.log(router.options.routes)
-    store.dispatch('SetMenu', router.options.routes)
   } catch (err) {
     Notification.error(JSON.stringify(err))
   } finally {
     console.log('after login')
+    store.dispatch('SetLang', lang)
+    store.dispatch('SetMenu', router.options.routes)
     checkRouter()
     initVue()
   }
