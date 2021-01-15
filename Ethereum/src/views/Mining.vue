@@ -121,7 +121,7 @@
               <img src="@/assets/img/icon_green.png" alt="">
             </div>
             <div class="bottom">
-              <div class="block-btn" @click="myInfo.showMiningInfo = true">查看矿池</div>
+              <div class="block-btn" @click="showMiningInfoFn">查看矿池</div>
             </div>
           </div>
         </a-spin>
@@ -175,6 +175,7 @@
   import {
     toCopy
   } from 'assets/js/util'
+  import store from 'store'
   import Api from '@/apis'
   import infiniteScroll from 'vue-infinite-scroll'
 
@@ -218,17 +219,20 @@
           this.$message.success('复制成功')
         })
       },
+      showMiningInfoFn(){
+        this.myInfo.showMiningInfo = true
+        store.set('showMiningInfo', this.user)
+      },
       getMyInfo() {
         this.myInfo.loading = true
-        setTimeout(() => {
-          Api.getMyInfo()
-            .then((res) => {
-              this.myInfo = Object.assign(this.myInfo, res)
-            })
-            .finally(() => {
-              this.myInfo.loading = false
-            })
-        }, 1000)
+        return Api.getMyInfo()
+        .then((res) => {
+          this.myInfo = Object.assign(this.myInfo, res)
+          return res
+        })
+        .finally(() => {
+          this.myInfo.loading = false
+        })
       },
       trustLOOPToken() {
         this.myInfo.loading = true
@@ -302,6 +306,13 @@
     },
     created() {
       this.getMyInfo()
+      .then(res => {
+        console.log(res)
+        if(res.needInviteCount < 1 && store.get('showMiningInfo') === this.user) {
+          this.myInfo.showMiningInfo = true
+        }
+        return res
+      })
     }
   }
 
@@ -332,7 +343,7 @@
     }
 
     .task-wrap {
-      margin-top: -40/@r;
+      margin-top: -56/@r;
 
       .title {
         line-height: 50/@r;
@@ -466,6 +477,9 @@
           }
         }
         &.task-three{
+          .sub-title{
+            justify-content: center;
+          }
           .middle{
             padding: 30/@r 0 20/@r;
             text-align: center;
