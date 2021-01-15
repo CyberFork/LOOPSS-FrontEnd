@@ -175,13 +175,13 @@ const Api = {
     } else {
       _ifTrustLOOP = false
     }
-    console.log('_ifTrustLOOP', _ifTrustLOOP)
+
     //挖矿-获取个人信息
     return Promise.resolve({
       needInviteCount: needTrust, //仍然需要邀请人数
       unClaimTokens: unClaim, //待领取
       curToken: unWrappedLOOP, //当前未包装余额
-      trustCalc: myMiningTrustCount, //信任算力
+      trustCalc: myMiningTrustCount && myMiningTrustCount.length ? myMiningTrustCount[0] : 0, //信任算力
       time: remindTime,
       ifTrustLOOP: _ifTrustLOOP
       // time: parseInt(myLastUpdateTime) === 0 ? 'Never' : myLastUpdateTime // 最近挖矿的更新时间
@@ -231,7 +231,7 @@ const Api = {
     // console.log(trustSet)
     const myTrustCount = (await icLoopsMeContract.getAccountInfoOf(cfx.defaultAccount).call()).beenTrustCount
     return Promise.resolve({
-      total: myTrustCount,
+      total: myTrustCount && myTrustCount.length ? myTrustCount[0] : 0,
       list: trustSet
     })
   },

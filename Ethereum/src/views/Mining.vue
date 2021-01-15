@@ -292,6 +292,7 @@
         }
         Api.getTrustMe()
           .then((res) => {
+            console.log(res, 111111111111)
             this.yourTrusts.total = res.total
             this.yourTrusts.list = [...this.yourTrusts.list, ...res.list]
             this.yourTrusts.loading = false
@@ -307,7 +308,6 @@
     created() {
       this.getMyInfo()
       .then(res => {
-        console.log(res)
         if(res.needInviteCount < 1 && store.get('showMiningInfo') === this.user) {
           this.myInfo.showMiningInfo = true
         }

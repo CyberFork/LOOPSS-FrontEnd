@@ -23,7 +23,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .share-box {
-  color: #152053;
+  color: #fff;
   margin: 50/@r 0;
   line-height: 64/@r;
   display: flex;

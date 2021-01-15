@@ -28,10 +28,6 @@ export const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/
 const web3js = new Web3(web3.currentProvider)
 const cfx = window.confluxJS;
 conflux.autoRefreshOnNetworkChange = true
-conflux.enable().then(function (accounts) {
-  //现在只能使用then异步的方式返回单个了
-  console.log('Now account:', accounts);
-});
 // Address
 var adLoopssMe = '0x868957d1dfdcdc5ebd44b891c3fa5d6b0405e475'
 var adLOOPToken = '0x8adeed9ba5656855622877825f7971fd475fe1b3'
@@ -97,11 +93,16 @@ const Api = {
   //TODO研究如何在切换时新增账号连接
   login(params) {
     //登录
-    if (cfx.defaultAccount === null) {
-      errorNotic('No address')
-      return
-    }
-    return cfx.defaultAccount
+    return conflux.enable()
+    .then(function (accounts) {
+      //现在只能使用then异步的方式返回单个了
+      console.log('Now account:', accounts);
+      if(!accounts) {
+        errorNotic('No address')
+        return;
+      }
+      return accounts[0]
+    });
   },
   logout() {
     //登出
@@ -176,7 +177,7 @@ const Api = {
       needInviteCount: needTrust, //仍然需要邀请人数
       unClaimTokens: unClaim, //待领取
       curToken: unWrappedLOOP, //当前未包装余额
-      trustCalc: myMiningTrustCount, //信任算力
+      trustCalc: myMiningTrustCount && myMiningTrustCount.length ? myMiningTrustCount[0] : 0, //信任算力
       time: remindTime,
       ifTrustLOOP: _ifTrustLOOP
       // time: parseInt(myLastUpdateTime) === 0 ? 'Never' : myLastUpdateTime // 最近挖矿的更新时间
