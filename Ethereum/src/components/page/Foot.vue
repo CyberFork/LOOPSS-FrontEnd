@@ -1,5 +1,5 @@
 <template>
-  <a-layout-footer>Copyright&copy;{{year}} xxx.cn 版权所有 xxxxxxxxxx</a-layout-footer>
+  <share-box />
 </template>
 <script>
 export default {
@@ -17,8 +17,3 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
-.ant-layout-footer{
-  text-align: center;
-}
-</style>

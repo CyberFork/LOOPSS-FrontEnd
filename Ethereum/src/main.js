@@ -50,7 +50,6 @@ function initVue() {
     render: h => h(App)
   }).$mount('#app')
 }
-
 async function startApp() {
   try {
     await store.dispatch('Login')

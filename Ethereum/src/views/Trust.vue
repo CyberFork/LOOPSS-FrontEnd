@@ -83,7 +83,6 @@
           </div>
         </a-spin>
       </div>
-      <share-box></share-box>
     </a-box>
   </div>
 </template>
@@ -233,14 +232,14 @@ export default {
     padding: 0 30/@r 24/@r;
     margin-bottom: 40/@r;
     z-index: 1;
-    // background: url(@/assets/img/trust_banner.png) no-repeat center/100% auto;
-    background: #050C33;
+    background: url(~@/assets/img/mining_banner.png) no-repeat bottom center/100%;
     border-radius: 30/@r;
     height: 320/@r;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     .input-wrap{
+      position: relative;
       .search-input{
         /deep/ input{
           font-size: 32/@r;
@@ -248,6 +247,7 @@ export default {
           line-height: 80/@r;
           color: #010101;
           text-align: center;
+          padding-right: 95px;
         }
         /deep/ .ant-input-search-icon svg, /deep/ .ant-input-clear-icon svg{
           width: 36/@r;
@@ -268,7 +268,7 @@ export default {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            padding: 20/@r 20/@r 20/@r 28/@r;
+            padding: 0 20/@r;
             height: 70/@r;
             line-height: 70/@r;
             .add-btn, .delete-btn{

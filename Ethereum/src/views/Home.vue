@@ -4,7 +4,7 @@
       <div class="info">
         <div class="title">{{ $t("home.info.title") }}</div>
         <div class="slogan">{{ $t("home.info.slogan") }}</div>
-        <div class="banner">图片占位</div>
+        <div class="banner"></div>
         <div class="tip">{{ $t("home.info.info1") }}</div>
         <div class="tip">{{ $t("home.info.info2") }}</div>
       </div>
@@ -44,7 +44,6 @@
           <a-text>以Metamask 登录</a-text>
         </div>
       </div>
-      <share-box />
     </a-box>
   </div>
 </template>
@@ -118,19 +117,24 @@ export default {
   .info {
     text-align: center;
     .deep-card;
+    height: 856/@r;
+    background: url(~@/assets/img/mining_banner.png) no-repeat center/auto 100%;
+    padding-top: 24px;
     .title {
       font-size: 42/@r;
       line-height: 60/@r;
       margin-bottom: 15/@r;
     }
     .banner{
-      line-height: 253/@r;
-      text-align:center;
+      height: 530/@r;
     }
     .slogan {
       font-size: 22/@r;
       line-height: 30/@r;
-      color: #00C1DC;
+      color: #fff;
+    }
+    .tip{
+      font-size: 20/@r;
     }
   }
   .mining-info {
