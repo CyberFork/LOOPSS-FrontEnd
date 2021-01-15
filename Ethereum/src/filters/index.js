@@ -2,7 +2,7 @@ import Vue from 'vue'
 const filters = {
   formatNumber(value, decimals){
     //decimals  小数点后保留几位
-    if (!value) {
+    if (!Number(value)) {
       return '0'
     }
     const integer = Math.floor(value)
