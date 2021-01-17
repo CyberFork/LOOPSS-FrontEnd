@@ -11,10 +11,11 @@ const locale = {
   hello: '您好',
   slogan: '信任驱动，无需质押',
   menu: {
-    'home': '首页',
-    'mining': '挖矿',
-    'trust': '信任',
-    'more': '查看更多'
+    home: '首页',
+    mining: '挖矿',
+    trust: '信任',
+    more: '更多',
+    wait: '正在开发，敬请期待'
   },
   head: {
     login: '登录',
@@ -30,7 +31,7 @@ const locale = {
     },
     mining: {
       total: '理论已挖出',
-      miningedTotal: '挖出并包装',
+      minedTotal: '矿池已挖出',
       trustTotal: '挖矿信任量'
     },
     task: {
@@ -52,7 +53,8 @@ const locale = {
       trustCalc: '信任算力',
       tip1: '剩余领取时间',
       tip2: '过期后LOOP会消失，请每天按时领取',
-      btnTip: '收获 & 更新算力'
+      btnTip: '收获 & 更新算力',
+      btnTip1: '信任 LOOP 代币'
     },
     task: {
       title: '当前任务',
@@ -60,7 +62,7 @@ const locale = {
       shareTip: '或以下列方式分享'
     },
     invited: {
-      title: '已受邀的信任人',
+      title: '信任你的人',
       titleTip: '挖矿加速'
     }
   },
@@ -71,7 +73,7 @@ const locale = {
     youTrust: '您已信任',
     bothTrust: '互相信任',
     unknownTrust: '互不信任',
-    yourTrusts: '您信任的人',
+    yourTrusts: '您信任的人'
   }
 }
 

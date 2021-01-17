@@ -117,7 +117,7 @@ export function toCopy(content) {
       document.execCommand('Copy')
       oInput.remove()
       resolve()
-    } catch(error) {
+    } catch (error) {
       errorNotic('复制失败，请您重试')
     }
   })

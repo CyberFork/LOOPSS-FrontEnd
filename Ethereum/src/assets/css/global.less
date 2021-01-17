@@ -1,60 +1,101 @@
-@import "~ant-design-vue/dist/antd.less";
+@import '~ant-design-vue/dist/antd.less';
 
 // Colors
-@body-background: #fff;
-@layout-body-background: #fff;
-@layout-sider-background-light: #eee;
-@menu-bg: #eee;
-@layout-header-background: rgba(233, 233, 233, .8);
-@layout-header-height: 48px;
-@layout-header-padding: 0 20px;
-@menu-collapsed-width: 60px;
-// @primary-color: #1CB289; // 全局主色
-// @link-color: #1CB289; // 链接色
-// @success-color: #1CB289; // 成功色
+@body-background: transparent;
+@layout-body-background: transparent;
+@layout-sider-background: transparent;
+@menu-bg: transparent;
+@layout-header-height: 70/@r;
+@layout-header-padding: 0 20/@r;
+@menu-collapsed-width: 60/@r;
+@primary-color: #00E983; // 全局主色
+@link-color: #00E983; // 链接色
+// @success-color: #00E983; // 成功色
 // @warning-color: #faad14; // 警告色
 // @error-color: #f5222d; // 错误色
 
-@heading-color: #333333; // 标题色
-@text-color:#666666; // 主文本色
-@text-color-secondary: #999999; // 次文本色
+@heading-color: #fff; // 标题色
+@text-color:#fff; // 主文本色
+@text-color-secondary: #eee; // 次文本色
 @disabled-color: #cccccc; // 失效色
 @border-color-base: #dddddd; // 边框色
 
+//avatar
+@avatar-size-base: 32/@r;
+@avatar-size-lg: 40/@r;
+@avatar-size-sm: 24/@r;
+@avatar-font-size-base: 18/@r;
+@avatar-font-size-lg: 24/@r;
+@avatar-font-size-sm: 14/@r;
+
+@alert-message-color: #999;
 //Size
-@font-size-base: 14px;
-@font-size-lg: @font-size-base + 2px;
-@font-size-sm: @font-size-base - 2px;
-@tabs-title-font-size: @font-size-lg;
-@border-radius-base: 6px; // 组件圆角
-@table-padding-vertical: 8px;
-@table-padding-horizontal: 8px;
+@font-size-base: 24/@r;
+@border-radius-base: 6/@r; // 组件圆角
+@table-padding-vertical: 8/@r;
+@table-padding-horizontal: 8/@r;
+
+// Tooltip
+@tooltip-color: #fff;
+@tooltip-bg: rgba(60, 60, 60, 0.5);
 
 //其他
-@font-family: 'PingFang SC', Helvetica, 'Microsoft Yahei', Avenir, Arial, 'sans-serif';
-@box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.15); // 浮层阴影
-@modal-mask-bg: fade(@black, 65%);
+@font-family: 'PingFangSC-Semibold', 'PingFang SC', Helvetica, 'Microsoft Yahei', Avenir, Arial, 'sans-serif';
+@box-shadow-base: 0 2px 8/@r rgba(0, 0, 0, 0.15); // 浮层阴影
 
-.ant-space {
-	flex-wrap: wrap;
-}
-
-.ant-calendar-picker{
-	text-align: center;
-}
-
-body,
-html {
-	padding: 0;
-	margin: 0;
-	height: 100%;
-	width: 100%;
-	min-height: 480px;
+body {
+	background-color: transparent;
 	.flex-box{
 		display: flex;
 	}
 	.pointer{
 		cursor: pointer;
 		user-select: none;
+	}
+	.ellipsis{
+		white-space: nowrap;
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
+
+.ant-space {
+	flex-wrap: wrap;
+}
+
+.ant-message{
+	color: #000;
+	.anticon{
+		vertical-align: middle;
+	}
+}
+
+.ant-calendar-picker{
+	text-align: center;
+}
+
+.pc-layout{
+	/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+	::-webkit-scrollbar{
+		width: 10px;
+		height: 10px;
+		background-color: #F5F5F5;
+	}
+
+	/*定义滚动条轨道 内阴影+圆角*/
+	::-webkit-scrollbar-track {
+		box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+		-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+		border-radius: 10px;
+		background-color: #F5F5F5;
+	}
+
+	/*定义滑块 内阴影+圆角*/
+	::-webkit-scrollbar-thumb{
+		border-radius: 10px;
+		box-shadow: inset 0 0 6px rgba(0, 0, 0, .7);
+		-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .7);
+		background-color: #c8c8c8;
 	}
 }

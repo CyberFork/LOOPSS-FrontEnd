@@ -8,37 +8,42 @@ import i18n from './locales'
 import config from '@/config'
 
 import 'assets/css/global.less' //全局样式
-import 'components/utils' //全局公用组件
 
+import 'components/utils' //全局公用组件
 import 'assets/js/axios'
 // import 'assets/js/web3'
 import './filters' //全局公用filter
 
 Vue.use(Antd)
 Vue.config.productionTip = false
-
 const lang = storage.get('lang') || config.lang
-const user = storage.get('user')
-
+store.dispatch('Login')
 store.dispatch('SetLang', lang)
-store.commit('SET_USER', user)
 store.dispatch('SetMenu', router.options.routes)
 
 router.beforeEach((to, from, next) => {
-  let isLogin = store.state.user
-  const redirect = decodeURIComponent(to.path)
-  if(!isLogin && (to.path === '/mining' || to.path === '/trust')){
+  const isLogin = store.state.user
+  const redirect = decodeURIComponent(to.fullPath)
+  if (!isLogin && (to.path === '/mining' || to.path === '/trust')) {
     router.push({
-      path: '/error/404',
+      path: '/error/needLogin',
       query: { redirect }
     })
+  }
+
+  const qIvitationUrl = to.query.q
+  if (qIvitationUrl) {
+    store.dispatch('SaveInvitation', qIvitationUrl)
+    router.push({ path: '/trust' })
   }
   next()
 })
 
-new Vue({
+var app = new Vue({
   router,
   store,
   i18n,
   render: h => h(App)
 }).$mount('#app')
+// TODO 研究如何在F12中获取app对象，方便进行调试
+console.log(app)

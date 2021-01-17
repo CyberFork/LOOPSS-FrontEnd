@@ -5,6 +5,7 @@
 </template>
 <script>
 // @ is an alias to /src
+import 'ant-design-vue/dist/antd.less'
 import Layout from '@/components/page/Layout'
 export default {
   name: 'App',

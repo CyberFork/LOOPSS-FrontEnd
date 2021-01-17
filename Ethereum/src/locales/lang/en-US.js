@@ -14,14 +14,15 @@ const locale = {
     home: 'Home',
     mining: 'Mining',
     trust: 'Trust',
-    more: 'Learn More'
+    more: 'Learn More',
+    wait: 'Coming Soon'
   },
   head: {
     login: 'Sign in',
     logout: 'Sign out'
   },
   home: {
-    info:{
+    info: {
       title: 'The LOOP is the trust network of the future',
       slogan: 'We are prepared to distribute the currency of the future in a relationship of trust that will enable millions to join',
       totalTip: 'Total output',
@@ -30,7 +31,7 @@ const locale = {
     },
     mining: {
       total: 'Total output',
-      miningedTotal: 'Mininged',
+      minedTotal: 'Mininged',
       trustTotal: 'Network trust volume'
     },
     task: {
@@ -52,7 +53,8 @@ const locale = {
       trustCalc: 'Trust is force',
       tip1: 'Remaining collection time',
       tip2: 'After expiration, the LOOP will disappear. Please pick it up on time every day',
-      btnTip: 'Harvest & Update power'
+      btnTip: 'Harvest & Update power',
+      btnTip1: 'Trust LOOPToken'
     },
     task: {
       title: 'The current task',
@@ -71,7 +73,7 @@ const locale = {
     youTrust: 'You have to trust',
     bothTrust: 'Trust each other',
     unknownTrust: 'unknow',
-    yourTrusts: 'People you trust',
+    yourTrusts: 'People you trust'
   }
 }
 

@@ -6,7 +6,7 @@ import storage from 'store'
 import zhCN from './lang/zh-CN'
 import enUs from './lang/en-US'
 
-let defaultLang = storage.get('lang');
+const defaultLang = storage.get('lang')
 Vue.use(VueI18n)
 
 const messages = {
@@ -26,7 +26,7 @@ const i18n = new VueI18n({
 })
 
 export function loadLanguageAsync (lang = defaultLang) {
-  let locale = messages[lang]
+  const locale = messages[lang]
   return new Promise(resolve => {
     // 缓存语言设置
     storage.set('lang', lang)

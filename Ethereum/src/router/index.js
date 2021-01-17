@@ -15,7 +15,7 @@ Vue.use(Router)
 const routes = [{
     path: '/',
     name: 'home',
-    component: () => import( /* webpackChunkName: "home" */ '@/views/Home.vue'),
+    component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
     meta: {
       title: i18n.t('menu.home'),
       menu: true,
@@ -25,7 +25,7 @@ const routes = [{
   {
     path: '/mining',
     name: 'mining',
-    component: () => import( /* webpackChunkName: "mining" */ '@/views/Mining.vue'),
+    component: () => import(/* webpackChunkName: "mining" */ '@/views/Mining.vue'),
     meta: {
       title: i18n.t('menu.mining'),
       menu: true,
@@ -48,18 +48,29 @@ const routes = [{
     component: Trust,
     meta: {
       title: i18n.t('menu.trust'),
-      menu: false,
+      menu: false
     }
   },
   {
     name: 'error',
     path: '/error',
     redirect: '/error/404',
-    component: () => import( /* webpackChunkName: "error" */ '../views/error'),
+    component: () => import(/* webpackChunkName: "error" */ '../views/error'),
     children: [{
       path: '/error/404',
       name: '404',
-      component: () => import( /* webpackChunkName: "error" */ '../views/error/404.vue')
+      component: () => import(/* webpackChunkName: "error" */ '../views/error/404.vue')
+    }]
+  },
+  {
+    name: 'error',
+    path: '/error',
+    redirect: '/error/needLogin',
+    component: () => import(/* webpackChunkName: "error" */ '../views/error'),
+    children: [{
+      path: '/error/needLogin',
+      name: 'needLogin',
+      component: () => import(/* webpackChunkName: "error" */ '../views/error/needLogin.vue')
     }]
   }, {
     path: '*',

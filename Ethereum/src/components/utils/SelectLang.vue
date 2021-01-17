@@ -18,7 +18,7 @@ import { mapState } from 'vuex'
 const locales = ['zh-CN', 'en-US']
 const languageLabels = {
   'zh-CN': '简体中文',
-  'en-US': 'English',
+  'en-US': 'English'
 }
 const languageIcons = {
   'zh-CN': '🇨🇳',
@@ -31,13 +31,13 @@ export default {
       locales,
       languageLabels,
       languageIcons,
-      selectedKeys: [],
+      selectedKeys: []
     }
   },
-  computed:{
+  computed: {
     ...mapState(['curLang', 'menu'])
   },
-  watch:{
+  watch: {
     lang(cur){
       this.selectedKeys = [this.curLang]
     }
@@ -49,9 +49,9 @@ export default {
       this.$store.dispatch('SetMenu', this.getMenu(item.key))
     },
     getMenu(lang){
-      let arr = [];
+      const arr = []
       this.menu.map(item => {
-        if(item.meta && item.meta.menu){
+        if (item.meta && item.meta.menu){
           item.meta.title = this.$t('menu.' + item.name)
           arr.push(item)
         }

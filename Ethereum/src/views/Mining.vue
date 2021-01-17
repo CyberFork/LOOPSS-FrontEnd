@@ -2,334 +2,391 @@
   <div class="mining">
     <a-box>
       <div class="info">
-        <div class="title">
-          <div>{{ $t("hello") }}，{{ user }}</div>
-          <div>{{ $t("mining.info.title") }}</div>
+        <div class="user-info">
+          <a-avatar class="icon" src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png" />
+          <copy>{{ user | formatUser }}</copy>
         </div>
         <div class="slogan">
-          {{ $t("mining.info.slogan1") }} {{ myInfo.needInviteCount }}
-          {{ $t("mining.info.slogan2")
-          }}<a-icon
-            type="copy"
-            @click="copyFn('0x880E7Df34378712107AcdaCF705c2257Bf42b1A5')"
-          />
+          <div>{{ $t("mining.info.title") }}</div>
+          <div>
+            {{ $t("mining.info.slogan1") }}
+            <a-text success>{{ myInfo.needInviteCount }}</a-text>
+            {{ $t("mining.info.slogan2") }}
+            <a-icon type="copy" @click="copyFn('0x880E7Df34378712107AcdaCF705c2257Bf42b1A5')" />
+          </div>
         </div>
       </div>
-    </a-box>
-    <a-box>
-      <a-spin :spinning="myInfo.loading">
-        <a-card class="mining-info">
+      <a-spin class="mining-info" :spinning="myInfo.loading" style="position: relative;">
+        <div>
           <div class="title">
-            <a-text block strong>{{ $t("mining.mining.title") }}</a-text>
+            <img src="@/assets/img/icon.png" />
+            <a-text strong>{{ $t("mining.mining.title") }}</a-text>
           </div>
-          <div class="content">
-            <div class="cont-item">
-              <div>{{ myInfo.unClaimTokens }}</div>
-              <div>{{ $t("mining.mining.unClaimTokens") }}</div>
+          <div class="mining-count">
+            <div class="left">
+                <a-text link class="count" v-if="myInfo.ifTrustLOOP" @click="withdraw">
+                  {{  myInfo.curToken | formatNumber(2) }}
+                </a-text>
+                <a-text link disabled class="count" v-else> 0 </a-text>
+                <span class="tip">{{ $t("mining.mining.curToken") }}</span>
             </div>
-            <div class="cont-item">
-              <div>{{ myInfo.curToken }}</div>
-              <div>{{ $t("mining.mining.curToken") }}</div>
-            </div>
-            <div class="cont-item">
-              <div>{{ myInfo.trustCalc }}</div>
-              <div>{{ $t("mining.mining.trustCalc") }}</div>
+            <div class="right">
+              <div class="item">
+                <span class="count">{{ myInfo.unClaimTokens | formatNumber(2) }}</span>
+                <span class="tip">{{ $t("mining.mining.unClaimTokens") }}</span>
+              </div>
+              <div class="item">
+                <span class="count">{{ myInfo.trustCalc }}</span>
+                <span class="tip">{{ $t("mining.mining.trustCalc") }}</span>
+              </div>
             </div>
           </div>
           <div class="foot">
+            <!-- 剩余领取时间 -->
             <div class="tip-wrap">
-              <a-text block
-                >{{ $t("mining.mining.tip1") }}: {{ myInfo.time }}</a-text
-              >
-              <a-text gray>{{ $t("mining.mining.tip2") }}</a-text>
+              <a-text>{{ $t("mining.mining.tip1") }}: {{ myInfo.time }}</a-text>
+              <a-text class="tip">{{ $t("mining.mining.tip2") }}</a-text>
             </div>
-            <a-button @click="updateAndClaim">{{
-              $t("mining.mining.btnTip")
-            }}</a-button>
+            <div class="block-btn" v-if="myInfo.ifTrustLOOP" @click="updateAndClaim">
+              {{ $t("mining.mining.btnTip") }}
+            </div>
+            <div class="block-btn" v-else @click="trustLOOPToken">
+              {{ $t("mining.mining.btnTip1") }}
+            </div>
           </div>
-        </a-card>
+        </div>
       </a-spin>
-    </a-box>
-    <a-box>
-      <a-card class="task-info">
+      <div class="task-info">
         <div class="title">
           <a-text block strong>{{ $t("mining.task.title") }}</a-text>
         </div>
         <div class="content">
-          <a-text block class="info-content">{{
-            $t("mining.task.info")
-          }}</a-text>
-          <div class="flex-box">
-            <a-input class="share-input" :default-value="inviteLink + user" />
-            <a-button class="copy-btn" @click="copyFn(inviteLink + user)"
-              >复制 <a-icon type="copy"
-            /></a-button>
-          </div>
-          <div class="share-wrap">
-            <a-text>{{ $t("mining.task.shareTip") }}</a-text>
-            <a-space>
-              <a-text link
-                ><a-avatar size="small" icon="weibo-circle"
-              /></a-text>
-              <a-text link
-                ><a-avatar size="small" icon="codepen-circle"
-              /></a-text>
-              <a-text link><a-avatar size="small" icon="qq" /></a-text>
-              <a-text link><a-avatar size="small" icon="linkedin" /></a-text>
-              <a-text link><a-avatar size="small" icon="zhihu" /></a-text>
-              <a-text link><a-avatar size="small" icon="yuque" /></a-text>
-              <a-text link><a-avatar size="small" icon="ant-cloud" /></a-text>
-            </a-space>
-          </div>
+          <a-text block class="info-content">
+            {{ $t("mining.task.info") }}
+          </a-text>
+          <div class="share-content ellipsis">{{inviteLink}}{{user}}</div>
+          <div class="block-btn" @click="copyFn(inviteLink + user)">复制</div>
         </div>
-      </a-card>
-    </a-box>
-    <a-box class="your-trusts-container">
-      <div class="title">
-        <a-space size="large">
-          <a-text strong
-            >{{ $t("mining.invited.title") }} ({{ yourTrusts.total }})</a-text
-          >
-          <a-text gray
-            >{{ $t("mining.invited.titleTip") }}:
-            {{ yourTrusts.speedCount }}</a-text
-          >
-        </a-space>
       </div>
-      <a-spin :spinning="yourTrusts.loading && !yourTrusts.busy">
-        <div
-          class="content"
-          v-infinite-scroll="getTrustMe"
-          :infinite-scroll-disabled="yourTrusts.busy"
-          :infinite-scroll-distance="10"
-        >
-          <a-list class="your-trust-list" :data-source="yourTrusts.list">
-            <a-list-item
-              slot="renderItem"
-              slot-scope="item, index"
-              :key="index"
-            >
-              <div class="list-item-wrap">
-                <a-space size="large">
-                  <a-text>{{ item.returnValues.TrustSender }}</a-text>
-                  <div class="add-user">
-                    <a-icon v-if="item.isAdded" type="user-add" />
-                  </div>
-                  <a-text>{{ item.time }}</a-text>
-                </a-space>
-                <a-space class="actions">
-                  <a-icon
-                    class="pointer"
-                    type="copy"
-                    @click="copyFn(item.returnValues.TrustSender)"
-                  />
-                  <a-text
-                    link
-                    target="_blank"
-                    :href="item.returnValues.TrustSender"
-                  >
-                    <a-avatar size="small" icon="ant-cloud" />
-                  </a-text>
-                </a-space>
-              </div>
-            </a-list-item>
-          </a-list>
+      <div class="trusts-container">
+        <div class="title">
+          <a-text>{{ $t("mining.invited.title") }} ({{ yourTrusts.total }})</a-text>
+          <a-text class="tip">{{ $t("mining.invited.titleTip") }}: {{ yourTrusts.speedCount }}</a-text>
         </div>
-      </a-spin>
+        <a-spin class="trusts-list" :spinning="yourTrusts.loading && !yourTrusts.busy">
+          <div
+            class="content"
+            v-infinite-scroll="getTrustMe"
+            :infinite-scroll-disabled="yourTrusts.busy"
+            :infinite-scroll-distance="10"
+          >
+            <a-list :data-source="yourTrusts.list">
+              <a-list-item
+                slot="renderItem"
+                slot-scope="item, index"
+                :key="index"
+              >
+                <div class="list-item-wrap">
+                  <a-space size="large">
+                    <a-avatar size="large" src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png" />
+                    <a-text>{{ item.returnValues.TrustSender | formatUser}}</a-text>
+                    <div class="add-user">
+                      <a-icon v-if="item.isAdded" type="user-add" />
+                    </div>
+                    <a-text>{{ item.time }}</a-text>
+                  </a-space>
+                  <a-space class="actions">
+                    <a-icon
+                      class="pointer"
+                      type="copy"
+                      @click="copyFn(item.returnValues.TrustSender)"
+                    />
+                    <a-text
+                      link
+                      target="_blank"
+                      :href="item.returnValues.TrustSender"
+                    >
+                      <a-avatar size="small" icon="ant-cloud" />
+                    </a-text>
+                  </a-space>
+                </div>
+              </a-list-item>
+            </a-list>
+          </div>
+        </a-spin>
+      </div>
+      <share-box />
     </a-box>
   </div>
 </template>
 <script>
-import { toCopy } from "assets/js/util";
-import Api from "@/apis";
-import infiniteScroll from "vue-infinite-scroll";
+import { toCopy } from 'assets/js/util'
+import Api from '@/apis'
+import infiniteScroll from 'vue-infinite-scroll'
 
 export default {
   directives: {
-    infiniteScroll,
+    infiniteScroll
   },
   data() {
     return {
-      inviteLink: "https://loopss.me/invited/",
+      inviteLink: location.origin + '/#/trust?q=',
       myInfo: {
         loading: false,
         needInviteCount: 0,
         curToken: 0,
         unClaimTokens: 0,
         trustCalc: 0,
-        time: 0,
+        time: 0
       },
       yourTrusts: {
         loading: false,
         busy: false,
         pn: 1,
         ps: 10,
-        total: 10000,
+        total: 10,
         speedCount: 0,
-        list: [],
-      },
-    };
+        list: []
+      }
+    }
   },
   computed: {
     user() {
-      return this.$store.state.user;
-    },
+      return this.$store.state.user
+    }
   },
   methods: {
     copyFn(content) {
       toCopy(content).then(() => {
-        this.$message.success("复制成功");
-      });
+        this.$message.success('复制成功')
+      })
     },
     getMyInfo() {
-      this.myInfo.loading = true;
+      this.myInfo.loading = true
       setTimeout(() => {
         Api.getMyInfo()
-          .then((res) => {
-            this.myInfo.needInviteCount = res.needInviteCount;
-            this.myInfo = Object.assign(this.myInfo, res);
+          .then(async (res) => {
+            console.log('getMyInfo mining:', res)
+            this.myInfo = Object.assign(this.myInfo, res)
+            this.myInfo.needInviteCount = await res.needInviteCount
+            this.myInfo.curToken = await res.curToken
+            this.myInfo.unClaimTokens = await res.unClaimTokens
+            console.log(res)
           })
           .finally(() => {
-            this.myInfo.loading = false;
-          });
-      }, 1000);
+            this.myInfo.loading = false
+          })
+      }, 1000)
+    },
+    trustLOOPToken() {
+      this.myInfo.loading = true
+      Api.addTrust('0x880E7Df34378712107AcdaCF705c2257Bf42b1A5')
+        .then((res) => {
+          this.getMyInfo()
+        })
+        .catch(() => {
+          this.myInfo.loading = false
+        })
     },
     updateAndClaim() {
-      this.myInfo.loading = true;
+      this.myInfo.loading = true
       Api.updateAndClaim()
         .then((res) => {
           if (res) {
-            this.$message.success("收获 & 更新成功");
-            this.getMyInfo();
+            this.$message.success('收获 & 更新成功')
+            this.getMyInfo()
           } else {
-            this.$message.warning("信任数量不足");
-            this.myInfo.loading = false;
+            this.$message.warning('信任数量不足')
+            this.myInfo.loading = false
           }
         })
         .catch(() => {
-          this.myInfo.loading = false;
-        });
+          this.myInfo.loading = false
+        })
+    },
+    withdraw() {
+      // 包装内网Token到钱包
+      this.myInfo.loading = true
+      Api.wrappToken(this.myInfo.curToken)
+        .then((res) => {
+          //如果未approve则提示approve
+          if (res) {
+            this.$message.success('包装Token成功。复制LOOP地址添加到钱包查看。')
+            this.getMyInfo()
+          } else {
+            // 未Approve
+            this.$message.success('已Approve包装合约')
+            this.getMyInfo()
+          }
+          this.myInfo.loading = false
+        })
+        .catch(() => {
+          this.myInfo.loading = false
+        })
     },
     getTrustMe() {
-      this.yourTrusts.loading = true;
-      this.yourTrusts.busy = false;
-      this.yourTrusts.pn++;
+      this.yourTrusts.loading = true
+      this.yourTrusts.busy = false
+      this.yourTrusts.pn++
       if (this.yourTrusts.list.length >= this.yourTrusts.total) {
-        this.$message.warning("到底了");
-        this.yourTrusts.loading = false;
-        this.yourTrusts.busy = false;
-        return;
+        this.$message.warning('到底了')
+        this.yourTrusts.loading = false
+        this.yourTrusts.busy = false
+        return
       }
       setTimeout(() => {
         Api.getTrustMe()
           .then((res) => {
-            this.yourTrusts.total = res.total;
-            this.yourTrusts.list = [...this.yourTrusts.list, ...res.list];
-            console.log(this.yourTrusts.list);
-            this.yourTrusts.loading = false;
-            this.yourTrusts.busy = false;
+            this.yourTrusts.total = res.total
+            this.yourTrusts.list = [...this.yourTrusts.list, ...res.list]
+            console.log(this.yourTrusts.list)
+            this.yourTrusts.loading = false
+            this.yourTrusts.busy = false
           })
           .catch(() => {
-            this.yourTrusts.pn--;
-            this.yourTrusts.loading = false;
-            this.yourTrusts.busy = false;
-          });
-      }, 1000);
-    },
+            this.yourTrusts.pn--
+            this.yourTrusts.loading = false
+            this.yourTrusts.busy = false
+          })
+      }, 1000)
+    }
   },
   created() {
-    this.getMyInfo();
-  },
-};
+    this.getMyInfo()
+  }
+}
 </script>
 
 <style lang="less" scoped>
 .mining {
   line-height: 2;
   .info {
-    text-align: center;
-    margin-bottom: 30px;
+    .deep-card;
+    .user-info{
+      margin-bottom: 48/@r;
+      /deep/ .ant-avatar{
+        width: 72/@r;
+        height: 72/@r;
+        margin-right: 20/@r
+      }
+    }
     .title {
-      font-size: 24px;
-      font-weight: bold;
+
     }
     .slogan {
-      font-size: 18px;
+      font-size: 18/@r;
     }
   }
   .mining-info {
-    margin-bottom: 20px;
-    border-radius: 6px;
-    background: #eee;
+    .light-card;
+    border-radius: 40/@r;
+    margin: -40/@r 0 40/@r;
+    overflow: hidden;
     .title {
-      margin-bottom: 20px;
-    }
-    .content {
-      display: flex;
-      padding: 10px 0;
       text-align: center;
-      background: #fff;
-      border-radius: 10px;
-      .cont-item {
+      font-size: 36/@r;
+      line-height: 90/@r;
+      border-bottom: 1px solid rgba(0, 0, 0, .25);
+      img{
+        width: 56/@r;
+        height: 56/@r;
+        margin-right: 10/@r;
+      }
+    }
+    .mining-count {
+      display: flex;
+      text-align: center;
+      border-bottom: 1px solid rgba(0, 0, 0, .25);
+      .count{
+        margin: 0 16/@r;
+        font-weight: bold;
+      }
+      .left{
+        flex: 0 0 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-right: 1px solid rgba(0, 0, 0, .25);
+        .count{
+          line-height: 70/@r;
+          font-size: 60/@r;
+          margin-bottom: 24/@r;
+        }
+      }
+      .right{
         flex: 1;
-        border-right: 1px solid #000;
-        &:last-child {
-          border: 0;
+        line-height: 100/@r;
+        .item{
+          border-bottom: 1px solid rgba(0, 0, 0, .25);
+          &:last-child{
+            border: 0;
+          }
         }
       }
     }
     .foot {
-      display: flex;
-      font-size: 12px;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 20px;
+      padding: 40/@r;
+      font-size: 20/@r;
+      .tip-wrap{
+        margin-bottom: 28/@r;
+        .tip{
+          color: #00C1DC;
+          font-size: 18/@r;
+          margin-left: 30/@r;
+        }
+      }
     }
   }
   .task-info {
-    line-height: 2;
-    margin-bottom: 20px;
-    background: #eee;
-    border-radius: 6px;
+    .light-card;
+    padding: 34/@r 40/@r 48/@r;
+    margin-bottom: 40/@r;
     .title {
-      margin-bottom: 20px;
+      text-align: center;
+      margin-bottom: 16/@r;
+      font-size: 36/@r;
     }
     .info-content {
-      margin-bottom: 10px;
+      margin-bottom: 16/@r;
     }
-    .share-input {
-      flex: 1;
-      text-overflow: ellipsis;
-    }
-    .copy-btn {
-      margin-left: 20px;
-    }
-    .share-wrap {
-      margin-top: 20px;
-      display: flex;
-      justify-content: space-between;
+    .share-content {
+      padding: 0 105/@r;
+      line-height: 80/@r;
+      color: #00E983;
+      background: #12285B;
+      border-radius: 10/@r;
+      margin-bottom: 24/@r;
     }
   }
-  .your-trusts-container {
+  .trusts-container {
+    .trust-list;
+    border-radius: 30/@r;
+    overflow: hidden;
+    position: relative;
     .title {
-      margin-bottom: 10px;
-    }
-    .content {
-      padding: 0 16px;
-      max-height: 180px;
-      overflow: auto;
+      font-size: 36/@r;
+      line-height: 100/@r;
+      padding: 0 40/@r;
       position: relative;
-      border: 1px solid #eee;
-      border-radius: 6px;
+      .tip{
+        font-size: 30/@r;
+        color: rgba(255, 255, 255, .7);
+        margin-left: 40/@r
+      }
     }
-    .list-item-wrap {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-    }
-    .add-user {
-      width: 20px;
-      text-align: center;
+    .trusts-list{
+      position: relative;
+      display: block;
+      .content {
+        max-height: 560/@r;
+        overflow: auto;
+        position: relative;
+        border-radius: 6/@r;
+      }
+      .add-user {
+        width: 20/@r;
+        text-align: center;
+      }
     }
   }
 }

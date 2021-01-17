@@ -32,7 +32,7 @@ const locale = {
     },
     mining: {
       total: '总计已产出',
-      miningedTotal: '已经被挖出',
+      minedTotal: '已经被挖出',
       trustTotal: '全网信任量'
     },
     task: {

@@ -32,7 +32,7 @@ const locale = {
     },
     mining: {
       total: 'Total output',
-      miningedTotal: 'Mininged',
+      minedTotal: 'Mininged',
       trustTotal: 'Network trust volume'
     },
     task: {

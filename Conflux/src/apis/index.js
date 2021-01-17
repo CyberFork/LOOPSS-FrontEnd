@@ -15,7 +15,7 @@ const Api = {
     //首页-总量信息
     return Promise.resolve({
       total: 66666666, //总计已产出
-      miningedTotal: 33333, //已经被挖出
+      minedTotal: 33333, //已经被挖出
       trustTotal: 3453 //全网信任量
     })
   },

@@ -13,17 +13,17 @@
 <style lang="less" scoped>
 .logo-wrap{
   text-align: center;
-  padding-top: 100px;
+  padding-top: 100/@r;
   h1{
     font-weight: 600;
-    font-size: 32px;
+    font-size: 32/@r;
   }
   h2{
     font-weight: 600;
-    font-size: 18px;
+    font-size: 18/@r;
   }
   .logo{
-    width: 60px;
+    width: 60/@r;
   }
 }
 </style>
