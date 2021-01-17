@@ -21,7 +21,6 @@ module.exports = {
   configureWebpack: {
     externals: {
       //左侧vue是我们自己引入时候要用的，右侧是开发依赖库的主人定义的不能修改
-      axios: 'axios',
       moment: 'moment'
     }
   },

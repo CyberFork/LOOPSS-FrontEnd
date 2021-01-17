@@ -3,14 +3,12 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  min-height: 340px;
-  height: 80vh;
+  height: 100vh;
   color: #fff;
 }
 
-.first-loading-wrap > h1 {
-  padding-top: 40px;
-  font-size: 36px;
+.first-loading-wrap .logo{
+  width: 120px;
 }
 
 .first-loading-wrap .author{

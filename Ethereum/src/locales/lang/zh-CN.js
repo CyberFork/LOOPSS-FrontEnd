@@ -10,6 +10,7 @@ const components = {
 const locale = {
   hello: '您好',
   slogan: '信任驱动，无需质押',
+  noMore: '没有更多了',
   menu: {
     home: '首页',
     mining: '挖矿',
@@ -26,7 +27,7 @@ const locale = {
       title: 'LOOP是未来的信任网络',
       slogan: '为使数百万人加入，我们准备以信任关系分发未来货币',
       totalTip: '理论已挖出',
-      info1: 'LOOP 每 10 秒钟 产出1个 ,信任网络所有成员共同分享',
+      info1: 'LOOP 每 10 秒钟 产出1个，信任网络所有成员共同分享',
       info2: '获得好友的信任数量越多，相比其他人可以更快速积累LOOP'
     },
     mining: {

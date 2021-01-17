@@ -2,7 +2,6 @@
   <div class="trust">
     <a-box>
       <div class="search-wrap">
-        <div class="title">{{ $t("trust.title") }}</div>
         <div class="input-wrap">
           <a-input-search
             class="search-input"
@@ -64,26 +63,20 @@
               >
                 <div class="list-item-wrap">
                   <a-space size="large">
-                    <a-text>{{ item.returnValues.BeenTrusted }}</a-text>
+                    <a-text>{{ item.returnValues.BeenTrusted | formatUser }}</a-text>
                     <div class="add-user">
                       <a-icon v-if="item.isAdded" type="user-add" />
                     </div>
                     <a-text>{{ item.time }}</a-text>
                   </a-space>
-                  <a-space class="actions">
-                    <a-icon
-                      class="pointer"
+                  <div>
+                    <img
+                      src="@/assets/img/copy.png"
+                      class="copy-btn pointer"
                       type="copy"
                       @click="copyFn(item.returnValues.BeenTrusted)"
                     />
-                    <a-text
-                      link
-                      target="_blank"
-                      :href="item.returnValues.BeenTrusted"
-                    >
-                      <a-avatar size="small" icon="ant-cloud" />
-                    </a-text>
-                  </a-space>
+                  </div>
                 </div>
               </a-list-item>
             </a-list>
@@ -118,7 +111,7 @@ export default {
         ps: 10,
         loading: false,
         busy: false,
-        total: 10,
+        total: 0,
         list: []
       }
     }
@@ -183,23 +176,6 @@ export default {
           this.search.loading = false
         })
     },
-    // getYourTrusts() {
-    //   this.yourTrusts.loading = true;
-    //   this.yourTrusts.busy = false;
-    //   if (this.yourTrusts.list.length > 14) {
-    //     this.$message.warning("到底了");
-    //     this.yourTrusts.loading = false;
-    //     this.yourTrusts.busy = false;
-    //     return;
-    //   }
-    //   setTimeout(() => {
-    //     this.yourTrusts.loading = false;
-    //     this.yourTrusts.busy = false;
-    //     this.yourTrusts.list = this.yourTrusts.list.concat(
-    //       this.yourTrusts.list
-    //     );
-    //   }, 2000);
-    // },
     removeSearchTimer() {
       if (this.search.timer) {
         clearTimeout(this.search.timer)
@@ -211,33 +187,33 @@ export default {
       this.yourTrusts.busy = false
       this.yourTrusts.pn++
       this.yourTrusts.list = []
-      // if (this.yourTrusts.list.length >= this.yourTrusts.total) {
-      //   this.$message.warning("到底了");
-      //   this.yourTrusts.loading = false;
-      //   this.yourTrusts.busy = false;
-      //   return;
-      // }
-      setTimeout(() => {
-        Api.getMyTrusts()
-          .then((res) => {
-            this.yourTrusts.total = res.total
-            this.yourTrusts.list = [...this.yourTrusts.list, ...res.list]
-            this.yourTrusts.loading = false
-            this.yourTrusts.busy = false
-          })
-          .catch(() => {
-            this.yourTrusts.pn--
-            this.yourTrusts.loading = false
-            this.yourTrusts.busy = false
-          })
-      }, 1000)
+      if (this.yourTrusts.total && this.yourTrusts.list.length >= this.yourTrusts.total) {
+        this.$message.warning("到底了");
+        this.yourTrusts.loading = false;
+        this.yourTrusts.busy = false;
+        return;
+      }
+      Api.getMyTrusts()
+        .then((res) => {
+          this.yourTrusts.total = res.total
+          this.yourTrusts.list = [...this.yourTrusts.list, ...res.list]
+          this.yourTrusts.loading = false
+          this.yourTrusts.busy = false
+        })
+        .catch(() => {
+          this.yourTrusts.pn--
+          this.yourTrusts.loading = false
+          this.yourTrusts.busy = false
+        })
     },
     showInvitedUrl() {
-      const address =
-        this.$router?.query?.q || this.$store.state.invitationAddress;
+      // const address =
+      //   this.$router?.query?.q || this.$store.state.invitationAddress;
+      const address = this.$route.query.q ? this.$route.query.q : ''
+
       if (!address || !ADDRESS_REGEX.test(address)) return;
       this.search.inputVal = address;
-      this.$store.dispatch("SaveInvitation", "");
+      // this.$store.dispatch("SaveInvitation", "");
       this.onSearch();
     },
   },
@@ -254,17 +230,15 @@ export default {
 .trust {
   .search-wrap {
     position: relative;
-    padding: 40/@r 30/@r;
+    padding: 0 30/@r 24/@r;
     margin-bottom: 40/@r;
     z-index: 1;
-    background: #093658;
+    background: url(~@/assets/img/mining_banner.png) no-repeat bottom center/100%;
     border-radius: 30/@r;
-    .title {
-      font-size: 38/@r;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 30/@r;
-    }
+    height: 340/@r;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     .input-wrap{
       position: relative;
       .search-input{
@@ -274,6 +248,7 @@ export default {
           line-height: 80/@r;
           color: #010101;
           text-align: center;
+          padding-right: 95px;
         }
         /deep/ .ant-input-search-icon svg, /deep/ .ant-input-clear-icon svg{
           width: 36/@r;
@@ -294,7 +269,7 @@ export default {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            padding: 20/@r 20/@r 20/@r 28/@r;
+            padding: 0 20/@r;
             height: 70/@r;
             line-height: 70/@r;
             .add-btn, .delete-btn{
@@ -333,6 +308,9 @@ export default {
       .add-user {
         width: 20/@r;
         text-align: center;
+      }
+      .copy-btn{
+        width: 32/@r;
       }
     }
   }

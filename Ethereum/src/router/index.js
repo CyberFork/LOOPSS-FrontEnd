@@ -60,14 +60,7 @@ const routes = [{
       path: '/error/404',
       name: '404',
       component: () => import(/* webpackChunkName: "error" */ '../views/error/404.vue')
-    }]
-  },
-  {
-    name: 'error',
-    path: '/error',
-    redirect: '/error/needLogin',
-    component: () => import(/* webpackChunkName: "error" */ '../views/error'),
-    children: [{
+    }, {
       path: '/error/needLogin',
       name: 'needLogin',
       component: () => import(/* webpackChunkName: "error" */ '../views/error/needLogin.vue')

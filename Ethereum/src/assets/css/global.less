@@ -39,6 +39,11 @@
 @tooltip-color: #fff;
 @tooltip-bg: rgba(60, 60, 60, 0.5);
 
+// button
+@btn-height-base: 48/@r;
+@btn-height-lg: 54/@r;
+@btn-height-sm: 64/@r;
+
 //其他
 @font-family: 'PingFangSC-Semibold', 'PingFang SC', Helvetica, 'Microsoft Yahei', Avenir, Arial, 'sans-serif';
 @box-shadow-base: 0 2px 8/@r rgba(0, 0, 0, 0.15); // 浮层阴影
@@ -58,21 +63,39 @@ body {
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
+	img{
+		vertical-align: middle;
+		border: 0;
+	}
 }
 
 .ant-space {
 	flex-wrap: wrap;
 }
 
+.ant-calendar-picker{
+	text-align: center;
+}
+
 .ant-message{
-	color: #000;
+	.ant-message-notice-content{
+		background:  rgba(100, 100, 100, .7);
+	}
 	.anticon{
-		vertical-align: middle;
+		font-size: 24/@r;
 	}
 }
 
-.ant-calendar-picker{
-	text-align: center;
+.ant-notification-notice{
+	background:  rgba(100, 100, 100, .7);
+	.ant-notification-notice-icon {
+		line-height: 0; 
+		top: 50%;
+		transform: translateY(-50%);
+	}
+	.ant-notification-notice-message{
+		font-size: 24/@r;
+	}
 }
 
 .pc-layout{
