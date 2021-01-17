@@ -3,7 +3,10 @@
     <a-box>
       <div class="info">
         <div class="user-info">
-          <a-avatar class="icon" src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png" />
+          <a-avatar
+            class="icon"
+            src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
+          />
           <copy>{{ user | formatUser }}</copy>
         </div>
         <div class="slogan">
@@ -18,14 +21,26 @@
       </div>
       <div class="task-wrap">
         <a-spin :spinning="myInfo.loading" class="spining-wrap">
-          <div class="mining-info" v-if="myInfo.needInviteCount < 1  && myInfo.ifTrustLOOP && myInfo.showMiningInfo">
+          <div
+            class="mining-info"
+            v-if="
+              myInfo.needInviteCount < 1 &&
+              myInfo.ifTrustLOOP &&
+              myInfo.showMiningInfo
+            "
+          >
             <div class="title">
               <img src="@/assets/img/icon.png" />
               <a-text strong>{{ $t("mining.mining.title") }}</a-text>
             </div>
             <div class="mining-count">
               <div class="left">
-                <a-text link class="count" v-if="myInfo.ifTrustLOOP" @click="withdraw">
+                <a-text
+                  link
+                  class="count"
+                  v-if="myInfo.ifTrustLOOP"
+                  @click="withdraw"
+                >
                   {{ myInfo.curToken | formatNumber(2) }}
                 </a-text>
                 <a-text link disabled class="count" v-else> 0 </a-text>
@@ -36,8 +51,12 @@
               </div>
               <div class="right">
                 <div class="item">
-                  <span class="count">{{ myInfo.unClaimTokens | formatNumber(2) }}</span>
-                  <span class="tip">{{ $t("mining.mining.unClaimTokens") }}</span>
+                  <span class="count">{{
+                    myInfo.unClaimTokens | formatNumber(2)
+                  }}</span>
+                  <span class="tip">{{
+                    $t("mining.mining.unClaimTokens")
+                  }}</span>
                 </div>
                 <div class="item">
                   <span class="count">{{ myInfo.trustCalc }}</span>
@@ -56,7 +75,15 @@
               </div>
             </div>
           </div>
-          <div class="task-one" v-if="myInfo.needInviteCount || (myInfo.needInviteCount < 1 && !myInfo.ifTrustLOOP && !myInfo.showTaskTwo)">
+          <div
+            class="task-one"
+            v-if="
+              myInfo.needInviteCount ||
+              (myInfo.needInviteCount < 1 &&
+                !myInfo.ifTrustLOOP &&
+                !myInfo.showTaskTwo)
+            "
+          >
             <div class="top">
               <div class="title">
                 您的矿池尚未解锁
@@ -73,20 +100,51 @@
               </div>
             </div>
             <div class="middle">
-              <img src="@/assets/img/1.png" alt="" v-if="myInfo.needInviteCount >= 3">
-              <img src="@/assets/img/1_active.png" alt="" v-else>
-              <div :class="{ line: true, active: myInfo.needInviteCount < 3 } "></div>
-              <img src="@/assets/img/2.png" alt="" v-if="myInfo.needInviteCount >= 2">
-              <img src="@/assets/img/2_active.png" alt="" v-else>
-              <div :class="{ line: true, active: myInfo.needInviteCount < 2 } "></div>
-              <img src="@/assets/img/3.png" alt="" v-if="myInfo.needInviteCount >= 1">
-              <img src="@/assets/img/3_active.png" alt="" v-else>
+              <img
+                src="@/assets/img/1.png"
+                alt=""
+                v-if="myInfo.needInviteCount >= 3"
+              />
+              <img src="@/assets/img/1_active.png" alt="" v-else />
+              <div
+                :class="{ line: true, active: myInfo.needInviteCount < 3 }"
+              ></div>
+              <img
+                src="@/assets/img/2.png"
+                alt=""
+                v-if="myInfo.needInviteCount >= 2"
+              />
+              <img src="@/assets/img/2_active.png" alt="" v-else />
+              <div
+                :class="{ line: true, active: myInfo.needInviteCount < 2 }"
+              ></div>
+              <img
+                src="@/assets/img/3.png"
+                alt=""
+                v-if="myInfo.needInviteCount >= 1"
+              />
+              <img src="@/assets/img/3_active.png" alt="" v-else />
             </div>
             <div class="bottom">
-              <div :class="{ 'block-btn': true, 'disabled': myInfo.needInviteCount > 0 }" @click="toTaskTwo">下一步</div>
+              <div
+                :class="{
+                  'block-btn': true,
+                  disabled: myInfo.needInviteCount > 0,
+                }"
+                @click="toTaskTwo"
+              >
+                下一步
+              </div>
             </div>
           </div>
-          <div class="task-two"  v-if="myInfo.needInviteCount < 1 && !myInfo.ifTrustLOOP && myInfo.showTaskTwo">
+          <div
+            class="task-two"
+            v-if="
+              myInfo.needInviteCount < 1 &&
+              !myInfo.ifTrustLOOP &&
+              myInfo.showTaskTwo
+            "
+          >
             <div class="top">
               <div class="title">
                 您的矿池尚未解锁
@@ -103,7 +161,7 @@
               </div>
             </div>
             <div class="middle">
-              <img src="@/assets/img/icon_black.png" alt="">
+              <img src="@/assets/img/icon_black.png" alt="" />
             </div>
             <div class="bottom">
               <div class="block-btn" @click="trustLOOPToken">
@@ -111,17 +169,26 @@
               </div>
             </div>
           </div>
-          <div class="task-three" v-if="myInfo.needInviteCount < 1  && myInfo.ifTrustLOOP && !myInfo.showMiningInfo">
+          <div
+            class="task-three"
+            v-if="
+              myInfo.needInviteCount < 1 &&
+              myInfo.ifTrustLOOP &&
+              !myInfo.showMiningInfo
+            "
+          >
             <div class="top">
               <div class="title">
                 您的矿池已经解锁
                 <div class="sub-title">
-                  <a-text>太棒了！您已经完成所有步骤啦，自动挖矿已经开始了</a-text>
+                  <a-text
+                    >太棒了！您已经完成所有步骤啦，自动挖矿已经开始了</a-text
+                  >
                 </div>
               </div>
             </div>
             <div class="middle">
-              <img src="@/assets/img/icon_green.png" alt="">
+              <img src="@/assets/img/icon_green.png" alt="" />
             </div>
             <div class="bottom">
               <div class="block-btn" @click="showMiningInfoFn">查看矿池</div>
@@ -137,33 +204,57 @@
           <a-text block class="info-content">
             {{ $t("mining.task.info") }}
           </a-text>
-          <div class="share-content ellipsis">{{inviteLink}}{{user}}</div>
+          <div class="share-content ellipsis">{{ inviteLink }}{{ user }}</div>
           <div class="block-btn" @click="copyFn(inviteLink + user)">复制</div>
         </div>
       </div>
       <div class="trusts-container">
         <div class="title">
-          <a-text>{{ $t("mining.invited.title") }} ({{ yourTrusts.total }})</a-text>
-          <a-text class="tip">{{ $t("mining.invited.titleTip") }}: {{ yourTrusts.speedCount }}</a-text>
+          <a-text
+            >{{ $t("mining.invited.title") }} ({{ yourTrusts.total }})</a-text
+          >
+          <a-text class="tip"
+            >{{ $t("mining.invited.titleTip") }}:
+            {{ yourTrusts.speedCount }}</a-text
+          >
         </div>
-        <a-spin class="trusts-list" :spinning="yourTrusts.loading && !yourTrusts.busy">
-          <div class="content" v-infinite-scroll="getTrustMe" :infinite-scroll-disabled="yourTrusts.busy"
-            :infinite-scroll-distance="10">
+        <a-spin
+          class="trusts-list"
+          :spinning="yourTrusts.loading && !yourTrusts.busy"
+        >
+          <div
+            class="content"
+            v-infinite-scroll="getTrustMe"
+            :infinite-scroll-disabled="yourTrusts.busy"
+            :infinite-scroll-distance="10"
+          >
             <a-list :data-source="yourTrusts.list">
-              <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
+              <a-list-item
+                slot="renderItem"
+                slot-scope="item, index"
+                :key="index"
+              >
                 <div class="list-item-wrap">
                   <a-space size="large">
-                    <a-avatar size="large"
-                      src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png" />
-                    <a-text>{{ item.returnValues.TrustSender | formatUser}}</a-text>
+                    <a-avatar
+                      size="large"
+                      src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
+                    />
+                    <a-text>{{
+                      item.returnValues.TrustSender | formatUser
+                    }}</a-text>
                     <div class="add-user">
                       <a-icon v-if="item.isAdded" type="user-add" />
                     </div>
                     <a-text>{{ item.time }}</a-text>
                   </a-space>
                   <div>
-                    <img src="@/assets/img/copy.png" class="copy-btn pointer" type="copy"
-                      @click="copyFn(item.returnValues.TrustSender)" />
+                    <img
+                      src="@/assets/img/copy.png"
+                      class="copy-btn pointer"
+                      type="copy"
+                      @click="copyFn(item.returnValues.TrustSender)"
+                    />
                   </div>
                 </div>
               </a-list-item>
@@ -213,6 +304,7 @@
         }
       }
     },
+
     computed: {
       user() {
         return this.$store.state.user
@@ -234,12 +326,17 @@
       },
       getMyInfo() {
         this.myInfo.loading = true
-        return Api.getMyInfo().then((res) => {
-          this.myInfo = Object.assign(this.myInfo, res)
-          return res
-        }).finally(() => {
-          this.myInfo.loading = false
-        })
+        return Api.getMyInfo().then(async (res) => {
+            console.log('getMyInfo mining:', res)
+            this.myInfo = Object.assign(this.myInfo, res)
+            this.myInfo.needInviteCount = await res.needInviteCount
+            this.myInfo.curToken = await res.curToken
+            this.myInfo.unClaimTokens = await res.unClaimTokens
+            console.log(res)
+          })
+          .finally(() => {
+            this.myInfo.loading = false
+          })
       },
       trustLOOPToken() {
         this.myInfo.loading = true
@@ -338,246 +435,248 @@
 </script>
 
 <style lang="less" scoped>
-  .mining {
-    line-height: 2;
+.mining {
+  line-height: 2;
 
-    .info {
-      .deep-card;
-      height: 364/@r;
-      background: url(~@/assets/img/mining_banner_s.png) no-repeat center/100%;
+  .info {
+    .deep-card;
+    height: 364 / @r;
+    background: url(~@/assets/img/mining_banner_s.png) no-repeat center/100%;
 
-      .user-info {
-        margin-bottom: 48/@r;
+    .user-info {
+      margin-bottom: 48 / @r;
 
-        /deep/ .ant-avatar {
-          width: 72/@r;
-          height: 72/@r;
-          margin-right: 20/@r
-        }
-      }
-
-      .slogan {
-        font-size: 18/@r;
+      /deep/ .ant-avatar {
+        width: 72 / @r;
+        height: 72 / @r;
+        margin-right: 20 / @r;
       }
     }
 
-    .task-wrap {
-      margin-top: -56/@r;
+    .slogan {
+      font-size: 18 / @r;
+    }
+  }
+
+  .task-wrap {
+    margin-top: -56 / @r;
+
+    .title {
+      line-height: 50 / @r;
+      text-align: center;
+      font-size: 36 / @r;
+
+      .sub-title {
+        font-size: 26 / @r;
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+
+    .spining-wrap {
+      .light-card;
+      position: relative;
+      border-radius: 40 / @r;
+      margin: 0 0 40 / @r;
+      overflow: hidden;
+    }
+    .mining-info {
+      .light-card;
+      border-radius: 40 / @r;
+      overflow: hidden;
 
       .title {
-        line-height: 50/@r;
+        line-height: 90 / @r;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+
+        img {
+          width: 56 / @r;
+          height: 56 / @r;
+          margin-right: 10 / @r;
+        }
+      }
+
+      .mining-count {
+        display: flex;
         text-align: center;
-        font-size: 36/@r;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 
-        .sub-title {
-          font-size: 26/@r;
-          display: flex;
-          justify-content: space-between;
-        }
-      }
-
-      .spining-wrap{
-        .light-card;
-        position: relative;
-        border-radius: 40/@r;
-        margin: 0 0 40/@r;
-        overflow: hidden;
-      }
-      .mining-info {
-        .light-card;
-        border-radius: 40/@r;
-        overflow: hidden;
-
-        .title {
-          line-height: 90/@r;
-          border-bottom: 1px solid rgba(0, 0, 0, .25);
-
-          img {
-            width: 56/@r;
-            height: 56/@r;
-            margin-right: 10/@r;
-          }
+        .count {
+          margin: 0 16 / @r;
+          font-weight: bold;
         }
 
-        .mining-count {
+        .left {
+          flex: 0 0 50%;
           display: flex;
-          text-align: center;
-          border-bottom: 1px solid rgba(0, 0, 0, .25);
+          flex-direction: column;
+          justify-content: center;
+          border-right: 1px solid rgba(0, 0, 0, 0.25);
 
           .count {
-            margin: 0 16/@r;
-            font-weight: bold;
+            line-height: 70 / @r;
+            font-size: 60 / @r;
+            margin-bottom: 24 / @r;
           }
-
-          .left {
-            flex: 0 0 50%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border-right: 1px solid rgba(0, 0, 0, .25);
-
-            .count {
-              line-height: 70/@r;
-              font-size: 60/@r;
-              margin-bottom: 24/@r;
-            }
-            .tip{
-              margin-right: 16/@r;
-            }
-          }
-
-          .right {
-            flex: 1;
-            line-height: 100/@r;
-
-            .item {
-              border-bottom: 1px solid rgba(0, 0, 0, .25);
-
-              &:last-child {
-                border: 0;
-              }
-            }
+          .tip {
+            margin-right: 16 / @r;
           }
         }
 
-        .foot {
-          padding: 40/@r;
-          font-size: 20/@r;
+        .right {
+          flex: 1;
+          line-height: 100 / @r;
 
-          .tip-wrap {
-            margin-bottom: 28/@r;
-            text-align: center;
+          .item {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 
-            .tip {
-              color: #00C1DC;
-              font-size: 18/@r;
-              margin-left: 30/@r;
+            &:last-child {
+              border: 0;
             }
           }
         }
       }
 
-      .task-one, .task-two, .task-three {
-        background: linear-gradient(310deg, #243187 0%, #009CCF 100%);
-        border-radius: 40/@r;
-        padding: 24/@r 30/@r 38/@r;
-        &.task-one{
-          .middle {
-            padding: 50/@r;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            img {
-              width: 94/@r;
-              height: 94/@r;
-              margin: 0 16/@r;
-              &.three{
-                width: 90/@r;
-                height: 104/@r;
-              }
-            }
+      .foot {
+        padding: 40 / @r;
+        font-size: 20 / @r;
 
-            .line {
-              flex: 1;
-              background: #fff;
-              height: 6/@r;
-
-              &.active {
-                background: #00E983;
-              }
-            }
-          }
-        }
-        &.task-two{
-          .middle{
-            padding: 30/@r 0 20/@r;
-            text-align: center;
-            img{
-              width: 118/@r;
-              height: 142/@r
-            }
-          }
-        }
-        &.task-three{
-          .sub-title{
-            justify-content: center;
-          }
-          .middle{
-            padding: 30/@r 0 20/@r;
-            text-align: center;
-            img{
-              width: 118/@r;
-              height: 142/@r
-            }
-          }
-        }
-      }
-    }
-
-    .copy-task {
-      .light-card;
-      padding: 34/@r 40/@r 48/@r;
-      margin-bottom: 40/@r;
-
-      .title {
-        text-align: center;
-        margin-bottom: 16/@r;
-        font-size: 36/@r;
-      }
-
-      .info-content {
-        margin-bottom: 16/@r;
-      }
-
-      .share-content {
-        padding: 0 105/@r;
-        line-height: 80/@r;
-        color: #00E983;
-        background: #12285B;
-        border-radius: 10/@r;
-        margin-bottom: 24/@r;
-      }
-    }
-
-    .trusts-container {
-      .trust-list;
-      border-radius: 30/@r;
-      overflow: hidden;
-      position: relative;
-
-      .title {
-        font-size: 36/@r;
-        line-height: 100/@r;
-        padding: 0 40/@r;
-        position: relative;
-
-        .tip {
-          font-size: 30/@r;
-          color: rgba(255, 255, 255, .7);
-          margin-left: 40/@r
-        }
-      }
-
-      .trusts-list {
-        position: relative;
-        display: block;
-
-        .content {
-          max-height: 560/@r;
-          overflow: auto;
-          position: relative;
-          border-radius: 6/@r;
-        }
-
-        .add-user {
-          width: 20/@r;
+        .tip-wrap {
+          margin-bottom: 28 / @r;
           text-align: center;
-        }
 
-        .copy-btn {
-          width: 32/@r;
+          .tip {
+            color: #00c1dc;
+            font-size: 18 / @r;
+            margin-left: 30 / @r;
+          }
+        }
+      }
+    }
+
+    .task-one,
+    .task-two,
+    .task-three {
+      background: linear-gradient(310deg, #243187 0%, #009ccf 100%);
+      border-radius: 40 / @r;
+      padding: 24 / @r 30 / @r 38 / @r;
+      &.task-one {
+        .middle {
+          padding: 50 / @r;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          img {
+            width: 94 / @r;
+            height: 94 / @r;
+            margin: 0 16 / @r;
+            &.three {
+              width: 90 / @r;
+              height: 104 / @r;
+            }
+          }
+
+          .line {
+            flex: 1;
+            background: #fff;
+            height: 6 / @r;
+
+            &.active {
+              background: #00e983;
+            }
+          }
+        }
+      }
+      &.task-two {
+        .middle {
+          padding: 30 / @r 0 20 / @r;
+          text-align: center;
+          img {
+            width: 118 / @r;
+            height: 142 / @r;
+          }
+        }
+      }
+      &.task-three {
+        .sub-title {
+          justify-content: center;
+        }
+        .middle {
+          padding: 30 / @r 0 20 / @r;
+          text-align: center;
+          img {
+            width: 118 / @r;
+            height: 142 / @r;
+          }
         }
       }
     }
   }
+
+  .copy-task {
+    .light-card;
+    padding: 34 / @r 40 / @r 48 / @r;
+    margin-bottom: 40 / @r;
+
+    .title {
+      text-align: center;
+      margin-bottom: 16 / @r;
+      font-size: 36 / @r;
+    }
+
+    .info-content {
+      margin-bottom: 16 / @r;
+    }
+
+    .share-content {
+      padding: 0 105 / @r;
+      line-height: 80 / @r;
+      color: #00e983;
+      background: #12285b;
+      border-radius: 10 / @r;
+      margin-bottom: 24 / @r;
+    }
+  }
+
+  .trusts-container {
+    .trust-list;
+    border-radius: 30 / @r;
+    overflow: hidden;
+    position: relative;
+
+    .title {
+      font-size: 36 / @r;
+      line-height: 100 / @r;
+      padding: 0 40 / @r;
+      position: relative;
+
+      .tip {
+        font-size: 30 / @r;
+        color: rgba(255, 255, 255, 0.7);
+        margin-left: 40 / @r;
+      }
+    }
+
+    .trusts-list {
+      position: relative;
+      display: block;
+
+      .content {
+        max-height: 560 / @r;
+        overflow: auto;
+        position: relative;
+        border-radius: 6 / @r;
+      }
+
+      .add-user {
+        width: 20 / @r;
+        text-align: center;
+      }
+
+      .copy-btn {
+        width: 32 / @r;
+      }
+    }
+  }
+}
 </style>
