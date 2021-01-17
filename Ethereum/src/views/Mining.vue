@@ -29,7 +29,10 @@
                   {{ myInfo.curToken | formatNumber(2) }}
                 </a-text>
                 <a-text link disabled class="count" v-else> 0 </a-text>
-                <span class="tip">{{ $t("mining.mining.curToken") }}</span>
+                <a-tooltip placement="bottom" title="点击上方余额进行收取">
+                  <span class="tip">{{ $t("mining.mining.curToken") }}</span>
+                  <a-icon type="question-circle" />
+                </a-tooltip>
               </div>
               <div class="right">
                 <div class="item">
@@ -186,6 +189,7 @@
     },
     data() {
       return {
+        timer: null,
         inviteLink: location.origin + '/#/trust?q=',
         myInfo: {
           loading: false,
@@ -295,7 +299,6 @@
         }
         Api.getTrustMe()
           .then((res) => {
-            console.log(res, 111111111111)
             this.yourTrusts.total = res.total
             this.yourTrusts.list = [...this.yourTrusts.list, ...res.list]
             this.yourTrusts.loading = false
@@ -320,6 +323,15 @@
         }
         return res
       })
+      this.timer = null
+      this.timer = setInterval(() => {
+        Api.getMyInfo().then((res) => {
+          this.myInfo = Object.assign(this.myInfo, res)
+        })
+      }, 8000)
+    },
+    beforeDestroy(){
+      this.timer && clearInterval(this.timer)
     }
   }
 
@@ -332,7 +344,7 @@
     .info {
       .deep-card;
       height: 364/@r;
-      background: url(~@/assets/img/mining_banner_s.png) no-repeat center/100% 100%;
+      background: url(~@/assets/img/mining_banner_s.png) no-repeat center/100%;
 
       .user-info {
         margin-bottom: 48/@r;
@@ -408,6 +420,9 @@
               line-height: 70/@r;
               font-size: 60/@r;
               margin-bottom: 24/@r;
+            }
+            .tip{
+              margin-right: 16/@r;
             }
           }
 

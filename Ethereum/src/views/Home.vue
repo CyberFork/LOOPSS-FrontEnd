@@ -120,7 +120,7 @@ export default {
     .deep-card;
     height: 856/@r;
     background: url(~@/assets/img/mining_banner.png) no-repeat center/auto 100%;
-    padding-top: 24px;
+    padding-top: 24/@r;
     .title {
       font-size: 42/@r;
       line-height: 60/@r;

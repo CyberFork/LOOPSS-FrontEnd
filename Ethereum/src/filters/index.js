@@ -2,7 +2,6 @@ import Vue from 'vue'
 const filters = {
   formatNumber(value, decimals){
     //decimals  小数点后保留几位
-    console.log(value)
     if (!Number(value)) {
       return '0'
     }

@@ -54,7 +54,7 @@ const locale = {
       trustCalc: '信任算力',
       tip1: '剩余领取时间',
       tip2: '过期后LOOP会消失，请每天按时领取',
-      btnTip: '收获 & 更新算力',
+      btnTip: '领取到余额 & 更新信任算力',
       btnTip1: '信任 LOOP 代币'
     },
     task: {

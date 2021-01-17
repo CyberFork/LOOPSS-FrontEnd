@@ -37,7 +37,6 @@
     watch: {
       clientWidth(width) {
         this.isMobile = width < 768
-        console.log(this.isMobile)
       }
     },
     methods: {

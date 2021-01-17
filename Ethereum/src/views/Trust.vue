@@ -128,7 +128,6 @@ export default {
       })
     },
     onSearch() {
-      console.log(1111111111, this.search.inputVal)
       if (!this.search.inputVal) {
         return
       }
