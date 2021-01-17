@@ -267,171 +267,176 @@
   </div>
 </template>
 <script>
-  import {
-    toCopy
-  } from 'assets/js/util'
-  import store from 'store'
-  import Api from '@/apis'
-  import infiniteScroll from 'vue-infinite-scroll'
+import { toCopy } from "assets/js/util";
+import store from "store";
+import Api from "@/apis";
+import infiniteScroll from "vue-infinite-scroll";
 
-  export default {
-    directives: {
-      infiniteScroll
-    },
-    data() {
-      return {
-        timer: null,
-        inviteLink: location.origin + '/#/trust?q=',
-        myInfo: {
-          loading: false,
-          needInviteCount: 0,
-          curToken: 0,
-          unClaimTokens: 0,
-          trustCalc: 0,
-          time: 0,
-          ifTrustLOOP: false,
-          showTaskTwo: false,
-          showMiningInfo: false
-        },
-        yourTrusts: {
-          loading: false,
-          busy: false,
-          pn: 1,
-          ps: 10,
-          total: 0,
-          speedCount: 0,
-          list: []
-        }
-      }
-    },
+export default {
+  directives: {
+    infiniteScroll,
+  },
+  data() {
+    return {
+      timer: null,
+      inviteLink: location.origin + "/#/trust?q=",
+      myInfo: {
+        loading: false,
+        needInviteCount: 0,
+        curToken: 0,
+        unClaimTokens: 0,
+        trustCalc: 0,
+        time: 0,
+        ifTrustLOOP: false,
+        showTaskTwo: false,
+        showMiningInfo: false,
+      },
+      yourTrusts: {
+        loading: false,
+        busy: false,
+        pn: 1,
+        ps: 10,
+        total: 0,
+        speedCount: 0,
+        list: [],
+      },
+    };
+  },
 
-    computed: {
-      user() {
-        return this.$store.state.user
-      }
+  computed: {
+    user() {
+      return this.$store.state.user;
     },
-    methods: {
-      copyFn(content) {
-        toCopy(content).then(() => {
-          this.$message.success('复制成功')
+  },
+  methods: {
+    copyFn(content) {
+      toCopy(content).then(() => {
+        this.$message.success("复制成功");
+      });
+    },
+    showMiningInfoFn() {
+      this.myInfo.showMiningInfo = true;
+      store.set("showMiningInfo", this.user);
+    },
+    toTaskTwo() {
+      this.myInfo.showTaskTwo = true;
+      store.set("showTaskTwo", this.user);
+    },
+    getMyInfo() {
+      this.myInfo.loading = true;
+      return Api.getMyInfo()
+        .then(async (res) => {
+          console.log("getMyInfo mining:", res);
+          this.myInfo = Object.assign(this.myInfo, res);
+          this.myInfo.needInviteCount = await res.needInviteCount;
+          this.myInfo.curToken = await res.curToken;
+          this.myInfo.unClaimTokens = await res.unClaimTokens;
+          console.log("res:", res);
         })
-      },
-      showMiningInfoFn(){
-        this.myInfo.showMiningInfo = true
-        store.set('showMiningInfo', this.user)
-      },
-      toTaskTwo(){
-        this.myInfo.showTaskTwo = true
-        store.set('showTaskTwo', this.user)
-      },
-      getMyInfo() {
-        this.myInfo.loading = true
-        return Api.getMyInfo().then(async (res) => {
-            console.log('getMyInfo mining:', res)
-            this.myInfo = Object.assign(this.myInfo, res)
-            this.myInfo.needInviteCount = await res.needInviteCount
-            this.myInfo.curToken = await res.curToken
-            this.myInfo.unClaimTokens = await res.unClaimTokens
-            console.log(res)
-          })
-          .finally(() => {
-            this.myInfo.loading = false
-          })
-      },
-      trustLOOPToken() {
-        this.myInfo.loading = true
-        Api.addTrust('0x8adeed9ba5656855622877825f7971fd475fe1b3')
-          .then((res) => {
-            this.getMyInfo()
-          })
-          .catch(() => {
-            this.myInfo.loading = false
-          })
-      },
-      updateAndClaim() {
-        this.myInfo.loading = true
-        Api.updateAndClaim()
-          .then((res) => {
-            if (res) {
-              this.$message.success('收获 & 更新成功')
-              this.getMyInfo()
-            } else {
-              this.$message.warning('信任数量不足')
-              this.myInfo.loading = false
-            }
-          })
-          .catch(() => {
-            this.myInfo.loading = false
-          })
-      },
-      withdraw() {
-        // 包装内网Token到钱包
-        this.myInfo.loading = true
-        Api.wrappToken(this.myInfo.curToken)
-          .then((res) => {
-            //如果未approve则提示approve
-            if (res) {
-              this.$message.success('包装Token成功。复制LOOP地址添加到钱包查看。')
-              this.getMyInfo()
-            } else {
-              // 未Approve
-              this.$message.success('已Approve包装合约')
-              this.getMyInfo()
-            }
-            this.myInfo.loading = false
-          })
-          .catch(() => {
-            this.myInfo.loading = false
-          })
-      },
-      getTrustMe() {
-        this.yourTrusts.loading = true
-        this.yourTrusts.busy = false
-        this.yourTrusts.pn++
-        if (this.yourTrusts.total && this.yourTrusts.list.length >= this.yourTrusts.total) {
-          this.$message.warning('到底了')
-          this.yourTrusts.loading = false
-          this.yourTrusts.busy = false
-          return
-        }
-        Api.getTrustMe()
-          .then((res) => {
-            this.yourTrusts.total = res.total
-            this.yourTrusts.list = [...this.yourTrusts.list, ...res.list]
-            this.yourTrusts.loading = false
-            this.yourTrusts.busy = false
-          })
-          .catch(() => {
-            this.yourTrusts.pn--
-            this.yourTrusts.loading = false
-            this.yourTrusts.busy = false
-          })
-      }
+        .finally(() => {
+          this.myInfo.loading = false;
+        });
     },
-    created() {
-      this.getMyInfo()
-      .then(res => {
-        if(res.needInviteCount < 1 && store.get('showTaskTwo') === this.user){
-          this.myInfo.showTaskTwo = true
-        }
-
-        if(res.ifTrustLOOP && store.get('showMiningInfo') === this.user) {
-          this.myInfo.showMiningInfo = true
-        }
-        return res
-      })
-      this.timer = null
-      this.timer = setInterval(() => {
-        Api.getMyInfo().then((res) => {
-          this.myInfo = Object.assign(this.myInfo, res)
+    trustLOOPToken() {
+      this.myInfo.loading = true;
+      Api.addTrust("0x8adeed9ba5656855622877825f7971fd475fe1b3")
+        .then((res) => {
+          this.getMyInfo();
         })
-      }, 8000)
+        .catch(() => {
+          this.myInfo.loading = false;
+        });
     },
-    beforeDestroy(){
-      this.timer && clearInterval(this.timer)
-    }
-  }
+    updateAndClaim() {
+      this.myInfo.loading = true;
+      Api.updateAndClaim()
+        .then((res) => {
+          if (res) {
+            this.$message.success("收获 & 更新成功");
+            this.getMyInfo();
+          } else {
+            this.$message.warning("信任数量不足");
+            this.myInfo.loading = false;
+          }
+        })
+        .catch(() => {
+          this.myInfo.loading = false;
+        });
+    },
+    withdraw() {
+      // 包装内网Token到钱包
+      this.myInfo.loading = true;
+      Api.wrappToken(this.myInfo.curToken)
+        .then((res) => {
+          //如果未approve则提示approve
+          if (res) {
+            this.$message.success(
+              "包装Token成功。复制LOOP地址添加到钱包查看。"
+            );
+            this.getMyInfo();
+          } else {
+            // 未Approve
+            this.$message.success("已Approve包装合约");
+            this.getMyInfo();
+          }
+          this.myInfo.loading = false;
+        })
+        .catch(() => {
+          this.myInfo.loading = false;
+        });
+    },
+    getTrustMe() {
+      this.yourTrusts.loading = true;
+      this.yourTrusts.busy = false;
+      this.yourTrusts.pn++;
+      if (
+        this.yourTrusts.total &&
+        this.yourTrusts.list.length >= this.yourTrusts.total
+      ) {
+        this.$message.warning("到底了");
+        this.yourTrusts.loading = false;
+        this.yourTrusts.busy = false;
+        return;
+      }
+      Api.getTrustMe()
+        .then((res) => {
+          this.yourTrusts.total = res.total;
+          this.yourTrusts.list = [...this.yourTrusts.list, ...res.list];
+          this.yourTrusts.loading = false;
+          this.yourTrusts.busy = false;
+        })
+        .catch(() => {
+          this.yourTrusts.pn--;
+          this.yourTrusts.loading = false;
+          this.yourTrusts.busy = false;
+        });
+    },
+  },
+  created() {
+    this.getMyInfo().then((res) => {
+      if (res.needInviteCount < 1 && store.get("showTaskTwo") === this.user) {
+        this.myInfo.showTaskTwo = true;
+      }
 
+      if (res.ifTrustLOOP && store.get("showMiningInfo") === this.user) {
+        this.myInfo.showMiningInfo = true;
+      }
+      return res;
+    });
+    this.timer = null;
+    this.timer = setInterval(() => {
+      Api.getMyInfo().then(async (res) => {
+        this.myInfo = Object.assign(this.myInfo, res);
+         this.myInfo.needInviteCount = await res.needInviteCount;
+          this.myInfo.curToken = await res.curToken;
+          this.myInfo.unClaimTokens = await res.unClaimTokens;
+      });
+    }, 8000);
+  },
+  beforeDestroy() {
+    this.timer && clearInterval(this.timer);
+  },
+};
 </script>
 
 <style lang="less" scoped>

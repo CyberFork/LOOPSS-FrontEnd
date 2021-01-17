@@ -91,7 +91,7 @@ export default new Vuex.Store({
     }, params) {
       const redirect = router.currentRoute.query.redirect || router.currentRoute.path
       return Api.login(params)
-        .then(({account}) => {
+        .then(({ account }) => {
           if (account) {
             commit('SET_USER', account)
             if (router.currentRoute.name === 'needLogin') {
@@ -111,7 +111,7 @@ export default new Vuex.Store({
           commit('SET_USER', '')
           commit('SET_WEB3', null)
           this.dispatch('HideLoading')
-          if(router.currentRoute.path === 'minning' || router.currentRoute.path === 'trust'){
+          if (router.currentRoute.path === 'minning' || router.currentRoute.path === 'trust') {
             router.push({
               path: '/error/needLogin',
               query: { redirect: router.currentRoute.fullPath }
