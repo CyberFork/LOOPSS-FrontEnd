@@ -123,7 +123,6 @@ export default {
         list: []
       }
     }
-
   },
   computed: {
     user() {

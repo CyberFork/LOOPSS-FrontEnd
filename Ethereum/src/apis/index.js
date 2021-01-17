@@ -149,7 +149,6 @@ const Api = {
     let provider
     let web3 = store.state.web3
     //登录
-    console.log('Api login')
     if (web3) {
       let account = await web3.eth.getAccounts().then((res) => { return res[0] })
       store.dispatch('SetUser', account)
@@ -157,39 +156,34 @@ const Api = {
       return { web3, account }
     }
 
-    console.log('Api login new web3')
     const web3Modal = new Web3Modal({
       //network: "mainnet", // optional
       cacheProvider: false, // optional
       providerOptions, // required
       theme: {
-        background: "#00C1DCaa",
+        background: "#00C1DCdd",
         main: "rgb(255, 255, 255,.721)",
         secondary: "rgb(255, 255, 255,.65)",
         border: "#1890ffbb",
         hover: "#00E983"
+        // background: "rgb(39, 49, 56)",
+        // main: "rgb(199, 199, 199)",
+        // secondary: "rgb(136, 136, 136)",
+        // border: "rgba(195, 195, 195, 0.14)",
+        // hover: "rgb(16, 26, 32)"
       }
     });
-    web3Modal.onConnect((aa) => {
-      console.log('web3Modal.onConnect aa:', aa)
-      web3Modal.toggleModal()
-    })
+
     web3Modal.on(CONNECT_EVENT, (aa) => {
-      console.log('CONNECT_EVENT aa:', aa)
       store.dispatch('SetWalletSelecting', false)
     })
-    console.log('Api login before connect')
-    store.dispatch('SetWalletSelecting', true) //set loading
+
+    store.dispatch('SetWalletSelecting', true)
+
     provider = await web3Modal.connect();
-    if (!provider) {
-      console.log('provider is null:', provider)
-      return {}
-    }
-    console.log('Api login after connect')
+
     console.log('provider:', provider)
     web3 = new Web3(provider);
-    store.dispatch('SetWeb3', web3)
-    console.log('web3:', web3)
     // Subscribe to accounts change
     provider.on("accountsChanged", (accounts) => {
       console.log('accountsChanged', accounts);
@@ -272,8 +266,6 @@ const Api = {
     if (!web3js()) return
     return web3js().then(async (web3) => {
       // return web3js.utils.fromWei(_bn, 'ether');
-      console.log('web3.utils!!!!')
-      console.log('web3!:', web3)
       return parseFloat(web3.utils.fromWei(_bn, 'ether'))//.toLocaleString();
       // parseFloat().toLocaleString();
     })
@@ -294,7 +286,6 @@ const Api = {
   async getMyInfo() {
     if (!web3js()) return
     return web3js().then(async (web3) => {
-      console.log('store.state.user:', store.state.user)
       const account = store.state.user
       // 被信任数量计算还需信任数量
       const myTrustCount = (await icLoopsMeContract.methods.getAccountInfoOf(account).call()).beenTrustCount
