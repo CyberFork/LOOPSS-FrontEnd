@@ -248,7 +248,7 @@ const Api = {
     //挖矿-获取我信任的人
     // console.log(trustSet)
     return Promise.resolve({
-      total: '日志服务不可用',
+      total: '日志开发中',
       list: trustSet
     })
   },
