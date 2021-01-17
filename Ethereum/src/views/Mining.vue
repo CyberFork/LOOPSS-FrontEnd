@@ -80,7 +80,7 @@
               <img src="@/assets/img/3_active.png" alt="" v-else>
             </div>
             <div class="bottom">
-              <div :class="{ 'block-btn': true, 'disabled': myInfo.needInviteCount > 0 }" @click="myInfo.showTaskTwo = true">下一步</div>
+              <div :class="{ 'block-btn': true, 'disabled': myInfo.needInviteCount > 0 }" @click="toTaskTwo">下一步</div>
             </div>
           </div>
           <div class="task-two"  v-if="myInfo.needInviteCount < 1 && !myInfo.ifTrustLOOP && myInfo.showTaskTwo">
@@ -224,14 +224,16 @@
         this.myInfo.showMiningInfo = true
         store.set('showMiningInfo', this.user)
       },
+      toTaskTwo(){
+        this.myInfo.showTaskTwo = true
+        store.set('showTaskTwo', this.user)
+      },
       getMyInfo() {
         this.myInfo.loading = true
-        return Api.getMyInfo()
-        .then((res) => {
+        return Api.getMyInfo().then((res) => {
           this.myInfo = Object.assign(this.myInfo, res)
           return res
-        })
-        .finally(() => {
+        }).finally(() => {
           this.myInfo.loading = false
         })
       },
@@ -309,7 +311,11 @@
     created() {
       this.getMyInfo()
       .then(res => {
-        if(res.needInviteCount < 1 && store.get('showMiningInfo') === this.user) {
+        if(res.needInviteCount < 1 && store.get('showTaskTwo') === this.user){
+          this.myInfo.showTaskTwo = true
+        }
+
+        if(res.ifTrustLOOP && store.get('showMiningInfo') === this.user) {
           this.myInfo.showMiningInfo = true
         }
         return res
