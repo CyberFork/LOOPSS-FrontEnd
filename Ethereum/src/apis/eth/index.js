@@ -3,9 +3,9 @@
 // import { icLoopsMeContract, icLOOPTokenContract, icPoolContract } from 'assets/js/web3';
 //import Vue from 'vue'
 import store from '@/store'
-import LoopssMe_ABI from '../assets/js/ABI_LoopssMe.json'
-import LOOPToken_ABI from '../assets/js/ABI_LOOPToken.json'
-import LOOPPool_ABI from '../assets/js/ABI_LOOPPool.json'
+import LoopssMe_ABI from '../../assets/js/ABI_LoopssMe.json'
+import LOOPToken_ABI from '../../assets/js/ABI_LOOPToken.json'
+import LOOPPool_ABI from '../../assets/js/ABI_LOOPPool.json'
 import Web3 from "web3";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
