@@ -18,11 +18,16 @@ export default new Vuex.Store({
     clientHeight: document.documentElement.clientHeight,
     globalLoading: false,
     globalLoadingTip: '',
-    invitationAddress: ''
+    invitationAddress: '',
+    web3: null,
+    isWalletSelecting: false
   },
   mutations: {
     SET_USER: (state, address) => {
       state.user = address
+    },
+    SET_WALLET_SELECTING: (state, isWalletSelecting) => {
+      state.isWalletSelecting = isWalletSelecting
     },
     SET_LANG: (state, lang) => {
       state.curLang = lang
@@ -40,6 +45,9 @@ export default new Vuex.Store({
     },
     SAVE_INVITATION(state, address = '') {
       state.invitationAddress = address
+    },
+    SET_WEB3(state, web3) {
+      state.web3 = web3
     }
   },
   actions: {
@@ -83,9 +91,9 @@ export default new Vuex.Store({
     }, params) {
       const redirect = router.currentRoute.query.redirect || router.currentRoute.path
       return Api.login(params)
-        .then(user => {
-          if (user) {
-            commit('SET_USER', user)
+        .then(({ account }) => {
+          if (account) {
+            commit('SET_USER', account)
             if (router.currentRoute.name === 'needLogin') {
               router.push(redirect)
             }
@@ -101,6 +109,7 @@ export default new Vuex.Store({
       return Api.logout()
         .finally(() => {
           commit('SET_USER', '')
+          commit('SET_WEB3', null)
           this.dispatch('HideLoading')
           if(router.currentRoute.name === 'mining' || router.currentRoute.name === 'trust'){
             router.push({
@@ -122,6 +131,21 @@ export default new Vuex.Store({
         commit('SET_LANG', lang)
         loadLanguageAsync(lang)
       })
-    }
+    },
+    SetWeb3({ commit }, web3) {
+      return new Promise((resolve, reject) => {
+        commit('SET_WEB3', web3)
+      })
+    },
+    SetUser({ commit }, account) {
+      return new Promise((resolve, reject) => {
+        commit('SET_USER', account)
+      })
+    },
+    SetWalletSelecting({ commit }, isSelecting) {
+      return new Promise((resolve, reject) => {
+        commit('SET_WALLET_SELECTING', isSelecting)
+      })
+    },
   }
 })
