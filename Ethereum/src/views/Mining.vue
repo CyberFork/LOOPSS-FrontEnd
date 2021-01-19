@@ -3,7 +3,7 @@
     <a-box>
       <div class="info">
         <div class="user-info">
-          <a-avatar class="icon" src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png" />
+          <img class="user-icon" src="@/assets/img/user.png" />
           <copy>{{ user | formatUser }}</copy>
         </div>
         <div class="slogan">
@@ -63,7 +63,7 @@
                 <div class="sub-title">
                   <a-text>步骤 1/2 您需要邀请3位好友信任您</a-text>
                   <a-tooltip placement="bottomRight">
-                    <template slot="title">说明XXXX</template>
+                    <template slot="title">使用邀请链接发送给三位好友信任您。</template>
                     <a-text link class="f-r">
                       如何被信任
                       <a-icon type="question-circle" />
@@ -93,7 +93,7 @@
                 <div class="sub-title">
                   <a-text>步骤 2/2 点击信任LOOP，即可开始挖</a-text>
                   <a-tooltip placement="bottomRight">
-                    <template slot="title">说明XXXX</template>
+                    <template slot="title">挖矿赚取LOOP需要信任LOOPToken的地址之后才能收到LOOP的转账。</template>
                     <a-text link class="f-r">
                       为什么
                       <a-icon type="question-circle" />
@@ -154,7 +154,7 @@
                 <div class="list-item-wrap">
                   <a-space size="large">
                     <a-avatar size="large"
-                      src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png" />
+                      src="@/assets/img/user.png" />
                     <a-text>{{ item.returnValues.TrustSender | formatUser}}</a-text>
                     <div class="add-user">
                       <a-icon v-if="item.isAdded" type="user-add" />
@@ -349,7 +349,7 @@
       .user-info {
         margin-bottom: 48/@r;
 
-        /deep/ .ant-avatar {
+        .user-icon {
           width: 72/@r;
           height: 72/@r;
           margin-right: 20/@r
