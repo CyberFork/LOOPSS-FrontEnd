@@ -18,7 +18,12 @@
               :loading="search.loading"
               :data-source="search.list"
             >
-              <a-list-item class="list-item-wrap" slot="renderItem" slot-scope="item, index" :key="index">
+              <a-list-item
+                class="list-item-wrap"
+                slot="renderItem"
+                slot-scope="item, index"
+                :key="index"
+              >
                 <a-space size="large">
                   <a-text>{{ item.address | formatUser }}</a-text>
                   <a-text :style="{ color: formatTrustType(item.trustType) }">
@@ -48,7 +53,10 @@
         <div class="title">
           <a-text>{{ $t("trust.yourTrusts") }} ({{ yourTrusts.total }})</a-text>
         </div>
-        <a-spin class="trusts-list" :spinning="yourTrusts.loading && !yourTrusts.busy">
+        <a-spin
+          class="trusts-list"
+          :spinning="yourTrusts.loading && !yourTrusts.busy"
+        >
           <div
             class="content"
             v-infinite-scroll="getMyTrusts"
@@ -89,22 +97,22 @@
 </template>
 
 <script>
-import { toCopy } from 'assets/js/util'
-import i18n from '@/locales'
-import Api, { ADDRESS_REGEX } from '@/apis'
-import infiniteScroll from 'vue-infinite-scroll'
+import { toCopy } from "assets/js/util";
+import i18n from "@/locales";
+import Api, { ADDRESS_REGEX } from "@/apis";
+import infiniteScroll from "vue-infinite-scroll";
 export default {
   directives: {
-    infiniteScroll
+    infiniteScroll,
   },
   data() {
     return {
       search: {
         timer: null,
-        inputVal: '',
+        inputVal: "",
         loading: false,
         total: 0,
-        list: []
+        list: [],
       },
       yourTrusts: {
         pn: 1,
@@ -118,68 +126,69 @@ export default {
   },
   computed: {
     user() {
-      return this.$store.state.user
-    }
+      return this.$store.state.user;
+    },
   },
   methods: {
     copyFn(content) {
       toCopy(content).then(() => {
-        this.$message.success('复制成功')
-      })
+        this.$message.success("复制成功");
+      });
     },
     onSearch() {
-      console.log(1111111111, this.search.inputVal)
       if (!this.search.inputVal) {
-        return
+        return;
       }
-      this.search.loading = true
-      this.search.timer && this.removeSearchTimer()
+      this.search.loading = true;
+      this.search.timer && this.removeSearchTimer();
       this.search.timer = setTimeout(() => {
         Api.searchByAdress(this.search.inputVal).then((res) => {
-          this.search.list = res.list
-          this.search.loading = false
-        })
-      }, 1000)
+          this.search.list = res.list;
+          this.search.loading = false;
+        });
+      }, 1000);
     },
     formatTrustType(type, formatType) {
       //1已信任您 2您已信任 3互相信任
       switch (type) {
         case 1:
-          return formatType === 'desc' ? i18n.t('trust.trustYou') : '#00C1DC'
+          return formatType === "desc" ? i18n.t("trust.trustYou") : "#00C1DC";
         case 2:
-          return formatType === 'desc' ? i18n.t('trust.youTrust') : '#00C1DC'
+          return formatType === "desc" ? i18n.t("trust.youTrust") : "#00C1DC";
         case 3:
-          return formatType === 'desc' ? i18n.t('trust.bothTrust') : '#00D477'
+          return formatType === "desc" ? i18n.t("trust.bothTrust") : "#00D477";
         default:
-          return formatType === 'desc' ? i18n.t('trust.unknownTrust') : '#082C4C'
+          return formatType === "desc"
+            ? i18n.t("trust.unknownTrust")
+            : "#082C4C";
       }
     },
     addTrust(_address) {
-      this.search.loading = true
+      this.search.loading = true;
       Api.addTrust(_address)
         .then((res) => {
-          this.getMyTrusts()
-          this.onSearch()
+          this.getMyTrusts();
+          this.onSearch();
         })
         .catch(() => {
-          this.search.loading = false
-        })
+          this.search.loading = false;
+        });
     },
     minusTrust(_address) {
-      this.search.loading = true
+      this.search.loading = true;
       Api.minusTrust(_address)
         .then((res) => {
-          this.getMyTrusts()
-          this.onSearch()
+          this.getMyTrusts();
+          this.onSearch();
         })
         .catch(() => {
-          this.search.loading = false
-        })
+          this.search.loading = false;
+        });
     },
     removeSearchTimer() {
       if (this.search.timer) {
-        clearTimeout(this.search.timer)
-        this.search.timer = null
+        clearTimeout(this.search.timer);
+        this.search.timer = null;
       }
     },
     getMyTrusts() {
@@ -218,12 +227,12 @@ export default {
     },
   },
   beforeDestroy() {
-    this.removeSearchTimer()
+    this.removeSearchTimer();
   },
   mounted() {
-    this.showInvitedUrl()
-  }
-}
+    this.showInvitedUrl();
+  },
+};
 </script>
 
 <style lang="less" scoped>
@@ -241,30 +250,31 @@ export default {
     justify-content: flex-end;
     .input-wrap{
       position: relative;
-      .search-input{
-        /deep/ input{
-          font-size: 32/@r;
-          height: 80/@r;
-          line-height: 80/@r;
+      .search-input {
+        /deep/ input {
+          font-size: 32 / @r;
+          height: 80 / @r;
+          line-height: 80 / @r;
           color: #010101;
           text-align: center;
           padding-right: 95px;
         }
-        /deep/ .ant-input-search-icon svg, /deep/ .ant-input-clear-icon svg{
-          width: 36/@r;
-          height: 36/@r;
+        /deep/ .ant-input-search-icon svg,
+        /deep/ .ant-input-clear-icon svg {
+          width: 36 / @r;
+          height: 36 / @r;
         }
       }
       .list-wrap {
-        max-height: 300/@r;
-        background: #A8EFE4;
+        max-height: 300 / @r;
+        background: #a8efe4;
         overflow: auto;
         width: 100%;
         position: absolute;
         margin-top: -4px;
-        border-radius: 0 0 10/@r 10/@r;
+        border-radius: 0 0 10 / @r 10 / @r;
         .invite-list {
-          color: #082C4C;
+          color: #082c4c;
           .list-item-wrap {
             width: 100%;
             display: flex;
@@ -276,8 +286,8 @@ export default {
               width: 40/@r;
               height: 40/@r;
             }
-            &:nth-child(2n){
-              background: rgba(0, 0, 0, .1)
+            &:nth-child(2n) {
+              background: rgba(0, 0, 0, 0.1);
             }
           }
         }
@@ -287,26 +297,26 @@ export default {
 
   .your-trusts-container {
     .trust-list;
-    border-radius: 30/@r;
+    border-radius: 30 / @r;
     overflow: hidden;
     position: relative;
     .title {
-      font-size: 36/@r;
-      line-height: 100/@r;
-      padding: 0 40/@r;
+      font-size: 36 / @r;
+      line-height: 100 / @r;
+      padding: 0 40 / @r;
       position: relative;
     }
-    .trusts-list{
+    .trusts-list {
       position: relative;
       display: block;
       .content {
-        max-height: 560/@r;
+        max-height: 560 / @r;
         overflow: auto;
         position: relative;
-        border-radius: 6/@r;
+        border-radius: 6 / @r;
       }
       .add-user {
-        width: 20/@r;
+        width: 20 / @r;
         text-align: center;
       }
       .copy-btn{

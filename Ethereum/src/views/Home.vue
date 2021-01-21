@@ -10,6 +10,7 @@
       </div>
       <div class="mining-info">
         <div class="top">
+
           <div>
             <img src="@/assets/img/icon.png" />
             <a-text>LOOP</a-text>
@@ -85,9 +86,10 @@ export default {
     //TODO 定时刷新(已修改为5s一刷新)
     getInfo() {
       this.lastTotal = this.total;
-      Api.getInfo().then((res) => {
+      Api.getInfo().then(async (res) => {
+        console.log('getInfo total res:', res)
         this.total = res.total
-        this.minedTotal = res.minedTotal
+        this.minedTotal = await res.minedTotal
         this.trustTotal = res.trustTotal
       })
     },
@@ -116,11 +118,10 @@ export default {
 .home {
   line-height: 2;
   .info {
-    text-align: center;
     .deep-card;
     height: 856/@r;
     background: url(~@/assets/img/mining_banner.png) no-repeat center/auto 100%;
-    padding-top: 24px;
+    padding-top: 24/@r;
     .title {
       font-size: 42/@r;
       line-height: 60/@r;
