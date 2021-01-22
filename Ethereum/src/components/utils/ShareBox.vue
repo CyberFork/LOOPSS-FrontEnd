@@ -3,7 +3,7 @@
     <a-text>{{ $t("mining.task.shareTip") }}</a-text>
     <div class="btn-wrap">
       <a-text link>
-        <img v-for="(item, i) in 4" :key="i" src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png" alt="" />
+        <img v-for="(item, i) in 4" :key="i" src="@/assets/img/user.png" alt="" />
       </a-text>
     </div>
   </div>

@@ -161,11 +161,16 @@ const Api = {
       cacheProvider: false, // optional
       providerOptions, // required
       theme: {
-        background: "#00C1DCaa",
+        background: "#00C1DCdd",
         main: "rgb(255, 255, 255,.721)",
         secondary: "rgb(255, 255, 255,.65)",
         border: "#1890ffbb",
         hover: "#00E983"
+        // background: "rgb(39, 49, 56)",
+        // main: "rgb(199, 199, 199)",
+        // secondary: "rgb(136, 136, 136)",
+        // border: "rgba(195, 195, 195, 0.14)",
+        // hover: "rgb(16, 26, 32)"
       }
     });
 

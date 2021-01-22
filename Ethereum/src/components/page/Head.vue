@@ -8,7 +8,7 @@
             <a-space size="large">
               <div>{{ user | formatUser }} <a-icon type="copy" @click="copyFn(user)" /></div>
               <a-text link @click="logout"> {{ $t("head.logout") }} </a-text>
-              <a-avatar size="large" src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png" />
+              <a-avatar size="large" src="@/assets/img/user.png" />
               <!-- <select-lang /> -->
             </a-space>
           </div>
