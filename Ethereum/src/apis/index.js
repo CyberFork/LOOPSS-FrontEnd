@@ -107,7 +107,7 @@ const providerOptions = {
 export const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/
 
 const web3js = async () => {
-  // return Promise.resolve(await initProvider())
+  if (store.state.web3) return Promise.resolve(store.state.web3)
   const { web3 } = await Api.login()
   console.log('web3js, web3 :', web3)
   return Promise.resolve(web3)
@@ -184,6 +184,7 @@ const Api = {
 
     console.log('provider:', provider)
     web3 = new Web3(provider);
+    store.dispatch('SetWeb3', web3)
     // Subscribe to accounts change
     provider.on("accountsChanged", (accounts) => {
       console.log('accountsChanged', accounts);
