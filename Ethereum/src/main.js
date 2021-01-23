@@ -32,11 +32,11 @@ function checkRouter() {
       return
     }
 
-    // const qIvitationUrl = to.query.q
-    // if (qIvitationUrl) {
-    //   store.dispatch('SaveInvitation', qIvitationUrl)
-    //   router.push({ path: '/trust' })
-    // }
+    if (isLogin && to.path === '/error/needLogin') {
+      to.query.redirect ? next( to.query.redirect ) : next()
+      return
+    }
+
     next()
   })
 }

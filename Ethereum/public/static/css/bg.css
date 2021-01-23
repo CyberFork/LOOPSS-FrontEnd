@@ -17,6 +17,12 @@ body {
 
 @media only screen and (min-width: 768px) {
 	html {
+    font-size: 8px !important;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+	html {
     font-size: 10px !important;
   }
   body {
