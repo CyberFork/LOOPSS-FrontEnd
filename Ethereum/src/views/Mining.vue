@@ -7,15 +7,19 @@
             class="icon"
             src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
           />
-          <copy>{{ user | formatUser }}</copy>
+          <a-text>{{ user | formatUser }} </a-text>
+          <a-icon type="copy" @click="copyFn(user)" />
         </div>
         <div class="slogan">
           <div>{{ $t("mining.info.title") }}</div>
           <div>
-            {{ $t("mining.info.slogan1") }}
+            <a-text>{{ $t("mining.info.slogan1") }}</a-text>
             <a-text success>{{ myInfo.needInviteCount }}</a-text>
-            {{ $t("mining.info.slogan2") }}
-            <a-icon type="copy" @click="copyFn(inviteLink + user)" />
+            <a-text>{{ $t("mining.info.slogan2") }}</a-text>
+          </div>
+          <div>
+            LOOP合约地址：{{LOOPToken}}
+            <a-icon type="copy" @click="copyFn(LOOPToken)" />
           </div>
         </div>
       </div>
@@ -90,7 +94,7 @@
                 <div class="sub-title">
                   <a-text>步骤 1/2 您需要邀请3位好友信任您</a-text>
                   <a-tooltip placement="bottomRight">
-                    <template slot="title">说明XXXX</template>
+                    <template slot="title">复制当前任务中邀请链接，邀请三人信任之后可启动挖矿权限</template>
                     <a-text link class="f-r">
                       如何被信任
                       <a-icon type="question-circle" />
@@ -151,7 +155,7 @@
                 <div class="sub-title">
                   <a-text>步骤 2/2 点击信任LOOP，即可开始挖</a-text>
                   <a-tooltip placement="bottomRight">
-                    <template slot="title">说明XXXX</template>
+                    <template slot="title">挖矿赚取LOOP需要信任LOOPToken的地址之后才能收到LOOP的转账。</template>
                     <a-text link class="f-r">
                       为什么
                       <a-icon type="question-circle" />
@@ -282,7 +286,7 @@ export default {
       inviteLink: location.origin + "/#/trust?q=",
       myInfo: {
         loading: false,
-        needInviteCount: 0,
+        needInviteCount: 3,
         curToken: 0,
         unClaimTokens: 0,
         trustCalc: 0,
@@ -305,8 +309,11 @@ export default {
 
   computed: {
     user() {
-      return this.$store.state.user;
+      return this.$store.state.user
     },
+    LOOPToken() {
+      return this.$store.state.LOOPToken
+    }
   },
   methods: {
     copyFn(content) {
@@ -331,7 +338,7 @@ export default {
           this.myInfo.needInviteCount = await res.needInviteCount;
           this.myInfo.curToken = await res.curToken;
           this.myInfo.unClaimTokens = await res.unClaimTokens;
-          console.log("res:", res);
+          return res
         })
         .finally(() => {
           this.myInfo.loading = false;
@@ -413,7 +420,7 @@ export default {
     },
   },
   created() {
-    this.getMyInfo().then((res) => {
+    this.getMyInfo().then(async (res) => {
       if (res.needInviteCount < 1 && store.get("showTaskTwo") === this.user) {
         this.myInfo.showTaskTwo = true;
       }
@@ -427,9 +434,6 @@ export default {
     this.timer = setInterval(() => {
       Api.getMyInfo().then(async (res) => {
         this.myInfo = Object.assign(this.myInfo, res);
-         this.myInfo.needInviteCount = await res.needInviteCount;
-          this.myInfo.curToken = await res.curToken;
-          this.myInfo.unClaimTokens = await res.unClaimTokens;
       });
     }, 8000);
   },
@@ -445,7 +449,7 @@ export default {
 
   .info {
     .deep-card;
-    height: 364 / @r;
+    min-height: 364 / @r;
     background: url(~@/assets/img/mining_banner_s.png) no-repeat center/100%;
 
     .user-info {

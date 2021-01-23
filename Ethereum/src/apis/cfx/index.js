@@ -1,8 +1,8 @@
 // import w3 from "../assets/js/web3.js";
 // console.log('index.js', w3)
 // import { icLoopsMeContract, icLOOPTokenContract, icPoolContract } from 'assets/js/web3';
-import Vue from 'vue'
 import store from '@/store'
+import { errorNotic } from 'assets/js/util.js'
 import LoopssMe_ABI from 'assets/js/ABI_LoopssMe.json'
 import LOOPToken_ABI from 'assets/js/ABI_LOOPToken.json'
 import LOOPPool_ABI from 'assets/js/ABI_LOOPPool.json'
@@ -26,10 +26,10 @@ const {
 } = require('@ethersproject/constants')
 // import userApi from "./user";
 // connect wallet
-export const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/
-const web3js = new Web3(web3.currentProvider)
+const web3js = new Web3()
 const cfx = window.confluxJS;
-conflux.autoRefreshOnNetworkChange = true
+const conflux = window.conflux
+const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/
 
 // Address
 var adLoopssMe = '0x868957d1dfdcdc5ebd44b891c3fa5d6b0405e475'
@@ -52,7 +52,6 @@ var adLOOPPool = '0x81c9d190af86325421e5500baab4d23b1bf350a8'
 let icLoopsMeContract
 let icLOOPTokenContract
 let icPoolContract
-initContract()
 
 function initContract() {
   //TODO 更新ABI到最新
@@ -68,6 +67,16 @@ function initContract() {
     abi: LOOPPool_ABI,
     address: adLOOPPool
   })
+  store.dispatch('setLOOPToken', adLOOPPool)
+}
+
+if(cfx && conflux){
+  conflux.autoRefreshOnNetworkChange = true
+  conflux.on('accountsChanged', function (accounts) {
+    store.dispatch('Logout')
+    store.dispatch('Login')
+  })
+  initContract()
 }
 // conflux.on('networkChanged', function (networkId) {
 //   switch (parseInt(networkId)) {
@@ -88,25 +97,17 @@ function initContract() {
 //       break
 //   }
 // })
-conflux.on('accountsChanged', function (accounts) {
-  store.dispatch('Logout')
-  store.dispatch('Login')
-})
 
 //TODO: 检测钱包是否连接，连接的情况下才显示页面。未连接时显示提示连接钱包页面。类似noscript
-const app = new Vue()
-
-function errorNotic(message) {
-  app.$notification.error({
-    duration: 0,
-    message
-  })
-}
 
 const Api = {
   //TODO研究如何在切换时新增账号连接
   login(params) {
     //登录
+    if(!cfx || !conflux){
+      errorNotic('请安装 Conflux Portal 或在 conflux浏览器中运行')
+      return Promise.reject(new Error('不支持conflux'))
+    }
     if (cfx.defaultAccount) {
       return Promise.resolve({
         account: cfx.defaultAccount
@@ -341,6 +342,14 @@ const Api = {
       from: cfx.defaultAccount
     })
     return Promise.resolve()
+  },
+  checkAddress(address){
+    if(!ADDRESS_REGEX.test(address)){
+      errorNotic('地址错误')
+      return false
+    }
+    return true
   }
 }
+
 export default Api

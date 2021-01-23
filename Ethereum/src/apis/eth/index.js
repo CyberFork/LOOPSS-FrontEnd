@@ -104,7 +104,7 @@ const providerOptions = {
 };
 
 // connect wallet
-export const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/
+const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/
 
 const web3js = async () => {
   if (store.state.web3) return Promise.resolve(store.state.web3)
@@ -142,6 +142,7 @@ function initContract(web3) {
   icLoopsMeContract = new web3.eth.Contract(LoopssMe_ABI, adLoopssMe)
   icLOOPTokenContract = new web3.eth.Contract(LOOPToken_ABI, adLOOPToken)
   icPoolContract = new web3.eth.Contract(LOOPPool_ABI, adLOOPPool)
+  store.dispatch('setLOOPToken', adLOOPPool)
 }
 
 const Api = {
@@ -474,6 +475,13 @@ const Api = {
       await icLoopsMeContract.methods.transfer(_address, trustV).send({ from: account })
       return Promise.resolve()
     })
+  },
+  checkAddress(address){
+    if(!ADDRESS_REGEX.test(address)){
+      errorNotic('地址错误')
+      return false
+    }
+    return true
   }
 }
 export default Api

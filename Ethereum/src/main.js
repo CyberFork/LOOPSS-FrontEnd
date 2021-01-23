@@ -6,7 +6,6 @@ import storage from 'store'
 import Antd from 'ant-design-vue'
 import i18n from './locales'
 import config from '@/config'
-import Notification from 'ant-design-vue/es/notification'
 
 import 'assets/css/global.less' //全局样式
 
@@ -50,16 +49,10 @@ function initVue() {
   }).$mount('#app')
 }
 async function startApp() {
-  try {
-    await store.dispatch('Login')
-  } catch (err) {
-    Notification.error(JSON.stringify(err))
-  } finally {
-    console.log('after login')
-    store.dispatch('SetLang', lang)
-    store.dispatch('SetMenu', router.options.routes)
-    checkRouter()
-    initVue()
-  }
+  await store.dispatch('Login')
+  store.dispatch('SetLang', lang)
+  store.dispatch('SetMenu', router.options.routes)
+  checkRouter()
+  initVue()
 }
 startApp()
