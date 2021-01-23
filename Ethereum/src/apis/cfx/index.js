@@ -1,11 +1,13 @@
 // import w3 from "../assets/js/web3.js";
 // console.log('index.js', w3)
 // import { icLoopsMeContract, icLOOPTokenContract, icPoolContract } from 'assets/js/web3';
-import Vue from 'vue'
 import store from '@/store'
-import LoopssMe_ABI from '../assets/js/ABI_LoopssMe.json'
-import LOOPToken_ABI from '../assets/js/ABI_LOOPToken.json'
-import LOOPPool_ABI from '../assets/js/ABI_LOOPPool.json'
+import { errorNotic } from 'assets/js/util.js'
+import LoopssMe_ABI from 'assets/js/ABI_LoopssMe.json'
+import LOOPToken_ABI from 'assets/js/ABI_LOOPToken.json'
+import LOOPPool_ABI from 'assets/js/ABI_LOOPPool.json'
+import Web3 from 'web3'
+
 const {
 
   // AddressZero,
@@ -24,10 +26,11 @@ const {
 } = require('@ethersproject/constants')
 // import userApi from "./user";
 // connect wallet
-export const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/
-const web3js = new Web3(web3.currentProvider)
+const web3js = new Web3()
 const cfx = window.confluxJS;
-conflux.autoRefreshOnNetworkChange = true
+const conflux = window.conflux
+const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/
+
 // Address
 var adLoopssMe = '0x868957d1dfdcdc5ebd44b891c3fa5d6b0405e475'
 var adLOOPToken = '0x8adeed9ba5656855622877825f7971fd475fe1b3'
@@ -49,12 +52,31 @@ var adLOOPPool = '0x81c9d190af86325421e5500baab4d23b1bf350a8'
 let icLoopsMeContract
 let icLOOPTokenContract
 let icPoolContract
-initContract()
+
 function initContract() {
   //TODO 更新ABI到最新
-  icLoopsMeContract = cfx.Contract({ abi: LoopssMe_ABI, address: adLoopssMe })
-  icLOOPTokenContract = cfx.Contract({ abi: LOOPToken_ABI, address: adLOOPToken })
-  icPoolContract = cfx.Contract({ abi: LOOPPool_ABI, address: adLOOPPool })
+  icLoopsMeContract = cfx.Contract({
+    abi: LoopssMe_ABI,
+    address: adLoopssMe
+  })
+  icLOOPTokenContract = cfx.Contract({
+    abi: LOOPToken_ABI,
+    address: adLOOPToken
+  })
+  icPoolContract = cfx.Contract({
+    abi: LOOPPool_ABI,
+    address: adLOOPPool
+  })
+  store.dispatch('setLOOPToken', adLOOPPool)
+}
+
+if(cfx && conflux){
+  conflux.autoRefreshOnNetworkChange = true
+  conflux.on('accountsChanged', function (accounts) {
+    store.dispatch('Logout')
+    store.dispatch('Login')
+  })
+  initContract()
 }
 // conflux.on('networkChanged', function (networkId) {
 //   switch (parseInt(networkId)) {
@@ -75,34 +97,34 @@ function initContract() {
 //       break
 //   }
 // })
-conflux.on('accountsChanged', function (accounts) {
-  store.dispatch('Logout')
-  store.dispatch('Login')
-})
 
 //TODO: 检测钱包是否连接，连接的情况下才显示页面。未连接时显示提示连接钱包页面。类似noscript
-const app = new Vue()
-function errorNotic(message) {
-  app.$notification.error({
-    duration: 0,
-    message
-  })
-}
 
 const Api = {
   //TODO研究如何在切换时新增账号连接
   login(params) {
     //登录
+    if(!cfx || !conflux){
+      errorNotic('请安装 Conflux Portal 或在 conflux浏览器中运行')
+      return Promise.reject(new Error('不支持conflux'))
+    }
+    if (cfx.defaultAccount) {
+      return Promise.resolve({
+        account: cfx.defaultAccount
+      })
+    }
     return conflux.enable()
-    .then(function (accounts) {
-      //现在只能使用then异步的方式返回单个了
-      console.log('Now account:', accounts);
-      if(!accounts) {
-        errorNotic('No address')
-        return;
-      }
-      return accounts[0]
-    });
+      .then(function (accounts) {
+        //现在只能使用then异步的方式返回单个了
+        console.log('Now account:', accounts);
+        if (!accounts) {
+          errorNotic('No address')
+          return;
+        }
+        return {
+          account: accounts[0]
+        }
+      });
   },
   logout() {
     //登出
@@ -111,7 +133,7 @@ const Api = {
   async getInfo() {
     // 理论产出
     const myDate = new Date()
-    const dTime = parseInt(myDate.getTime() / 10000) - 160897528//直接得到的第三个Trust时间戳
+    const dTime = parseInt(myDate.getTime() / 10000) - 160897528 //直接得到的第三个Trust时间戳
     const theoryP = ((dTime) * 0.01)
     // 已挖出并包装：
     const _minedTotal = this._formatBigNumber(await icPoolContract.totalMined().call())
@@ -132,7 +154,7 @@ const Api = {
   // 数据处理方法
   _formatBigNumber(_bn) {
     // return web3js.utils.fromWei(_bn, 'ether');
-    return parseFloat(web3js.utils.fromWei(String(_bn), 'ether'))//.toLocaleString();
+    return parseFloat(web3js.utils.fromWei(String(_bn), 'ether')) //.toLocaleString();
     // parseFloat().toLocaleString();
   },
   //时间格式化
@@ -162,7 +184,11 @@ const Api = {
     // 获取上次挖矿时间，以及计算离24小时距离
     const myLastUpdateTime = await icPoolContract.minerLastUpdateTime(cfx.defaultAccount).call()
     const myDate = new Date()
+<<<<<<< HEAD
     var dTime = 86400 - (parseInt(myDate.getTime() / 1000) - (myLastUpdateTime))//直接得到的第三个Trust时间戳
+=======
+    var dTime = 86400 - (parseInt(myDate.getTime() / 1000) - (myLastUpdateTime)) //直接得到的第三个Trust时间戳
+>>>>>>> 14c8401827665eab4a333f06e73ca62d3a821b79
     if (dTime < 0) {
       dTime = 0
     }
@@ -174,7 +200,11 @@ const Api = {
     } else {
       _ifTrustLOOP = false
     }
+<<<<<<< HEAD
     console.log('_ifTrustLOOP', _ifTrustLOOP)
+=======
+
+>>>>>>> 14c8401827665eab4a333f06e73ca62d3a821b79
     //挖矿-获取个人信息
     return Promise.resolve({
       needInviteCount: needTrust, //仍然需要邀请人数
@@ -192,7 +222,13 @@ const Api = {
     const needTrust = myTrustCount > 3 ? 0 : 3 - myTrustCount
 
     if (parseInt(needTrust) === 0) {
+<<<<<<< HEAD
       await icPoolContract.claim().sendTransaction({ from: cfx.defaultAccount });
+=======
+      await icPoolContract.claim().sendTransaction({
+        from: cfx.defaultAccount
+      });
+>>>>>>> 14c8401827665eab4a333f06e73ca62d3a821b79
       return Promise.resolve(true)
     } else {
       return Promise.resolve(false)
@@ -204,10 +240,21 @@ const Api = {
     const approved = await icLoopsMeContract.allowance(cfx.defaultAccount, adLOOPToken, adLOOPToken).call()
     if (parseInt(approved) === parseInt(0)) {
       // await icLoopsMeContract.approve(adLOOPToken, adLOOPToken, web3js.utils.toBN('115792089237316195423570985008687907853269984665640564039457584007913129639935')).sendTransaction({ from: cfx.defaultAccount });
+<<<<<<< HEAD
       await icLoopsMeContract.approve(adLOOPToken, adLOOPToken, MaxUint256).sendTransaction({ from: cfx.defaultAccount })
       return Promise.resolve(false)
     } else {
       await icLOOPTokenContract.wrap(web3js.utils.toBN(web3js.utils.toWei(String(_curToken)))).sendTransaction({ from: cfx.defaultAccount })
+=======
+      await icLoopsMeContract.approve(adLOOPToken, adLOOPToken, MaxUint256).sendTransaction({
+        from: cfx.defaultAccount
+      })
+      return Promise.resolve(false)
+    } else {
+      await icLOOPTokenContract.wrap(web3js.utils.toBN(web3js.utils.toWei(String(_curToken)))).sendTransaction({
+        from: cfx.defaultAccount
+      })
+>>>>>>> 14c8401827665eab4a333f06e73ca62d3a821b79
       return Promise.resolve(true)
     }
     // 如果是，则调用wrap方法
@@ -230,7 +277,11 @@ const Api = {
     // console.log(trustSet)
     const myTrustCount = (await icLoopsMeContract.getAccountInfoOf(cfx.defaultAccount).call()).beenTrustCount
     return Promise.resolve({
+<<<<<<< HEAD
       total: myTrustCount,
+=======
+      total: myTrustCount && myTrustCount.length ? myTrustCount[0] : 0,
+>>>>>>> 14c8401827665eab4a333f06e73ca62d3a821b79
       list: trustSet
     })
   },
@@ -301,15 +352,35 @@ const Api = {
     //挖矿-对某地址添加信任
     const trustV = web3js.utils.toWei('0.101')
     console.log('addTrust', _address, trustV, cfx.defaultAccount)
+<<<<<<< HEAD
     await icLoopsMeContract.transfer(_address, trustV).sendTransaction({ from: cfx.defaultAccount });
+=======
+    await icLoopsMeContract.transfer(_address, trustV).sendTransaction({
+      from: cfx.defaultAccount
+    });
+>>>>>>> 14c8401827665eab4a333f06e73ca62d3a821b79
     // await icPoolContract.claim().sendTransaction({ from: cfx.defaultAccount });
     return Promise.resolve()
   },
   async minusTrust(_address) {
     //挖矿-对某地址删除信任
     const trustV = web3js.utils.toWei('0')
+<<<<<<< HEAD
     await icLoopsMeContract.transfer(_address, trustV).sendTransaction({ from: cfx.defaultAccount })
+=======
+    await icLoopsMeContract.transfer(_address, trustV).sendTransaction({
+      from: cfx.defaultAccount
+    })
+>>>>>>> 14c8401827665eab4a333f06e73ca62d3a821b79
     return Promise.resolve()
+  },
+  checkAddress(address){
+    if(!ADDRESS_REGEX.test(address)){
+      errorNotic('地址错误')
+      return false
+    }
+    return true
   }
 }
+
 export default Api

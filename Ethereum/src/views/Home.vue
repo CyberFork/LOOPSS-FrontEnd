@@ -2,15 +2,17 @@
   <div class="home">
     <a-box>
       <div class="info">
-        <div class="title">{{ $t("home.info.title") }}</div>
-        <div class="slogan">{{ $t("home.info.slogan") }}</div>
-        <div class="banner"></div>
-        <div class="tip">{{ $t("home.info.info1") }}</div>
-        <div class="tip">{{ $t("home.info.info2") }}</div>
+        <div>
+          <div class="title">{{ $t("home.info.title") }}</div>
+          <div class="slogan">{{ $t("home.info.slogan") }}</div>
+        </div>
+        <div>
+          <div class="tip">{{ $t("home.info.info1") }}</div>
+          <div class="tip">{{ $t("home.info.info2") }}</div>
+        </div>
       </div>
       <div class="mining-info">
         <div class="top">
-
           <div>
             <img src="@/assets/img/icon.png" />
             <a-text>LOOP</a-text>
@@ -119,16 +121,17 @@ export default {
   line-height: 2;
   .info {
     .deep-card;
+    text-align: center;
     height: 856/@r;
     background: url(~@/assets/img/mining_banner.png) no-repeat center/auto 100%;
-    padding-top: 24/@r;
+    padding-top: 54/@r;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     .title {
       font-size: 42/@r;
       line-height: 60/@r;
       margin-bottom: 15/@r;
-    }
-    .banner{
-      height: 530/@r;
     }
     .slogan {
       font-size: 22/@r;

@@ -99,8 +99,9 @@
 <script>
 import { toCopy } from "assets/js/util";
 import i18n from "@/locales";
-import Api, { ADDRESS_REGEX } from "@/apis";
+import Api from "@/apis";
 import infiniteScroll from "vue-infinite-scroll";
+
 export default {
   directives: {
     infiniteScroll,
@@ -216,13 +217,9 @@ export default {
         })
     },
     showInvitedUrl() {
-      // const address =
-      //   this.$router?.query?.q || this.$store.state.invitationAddress;
       const address = this.$route.query.q ? this.$route.query.q : ''
-
-      if (!address || !ADDRESS_REGEX.test(address)) return;
+      if(!address || !Api.checkAddress(address)) return
       this.search.inputVal = address;
-      // this.$store.dispatch("SaveInvitation", "");
       this.onSearch();
     },
   },

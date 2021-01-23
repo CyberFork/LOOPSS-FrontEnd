@@ -36,7 +36,7 @@
     },
     watch: {
       clientWidth(width) {
-        this.isMobile = width < 768
+        this.isMobile = width < 1024
       }
     },
     methods: {
@@ -45,7 +45,7 @@
       }
     },
     created() {
-      this.isMobile = this.clientWidth < 768
+      this.isMobile = this.clientWidth < 1024
     }
   }
 

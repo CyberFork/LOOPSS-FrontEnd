@@ -20,7 +20,8 @@ export default new Vuex.Store({
     globalLoadingTip: '',
     invitationAddress: '',
     web3: null,
-    isWalletSelecting: false
+    isWalletSelecting: false,
+    LOOPToken: ''
   },
   mutations: {
     SET_USER: (state, address) => {
@@ -48,6 +49,9 @@ export default new Vuex.Store({
     },
     SET_WEB3(state, web3) {
       state.web3 = web3
+    },
+    SET_LOOPTOKEN(state, token) {
+      state.LOOPToken = token
     }
   },
   actions: {
@@ -111,10 +115,12 @@ export default new Vuex.Store({
           commit('SET_USER', '')
           commit('SET_WEB3', null)
           this.dispatch('HideLoading')
-          if (router.currentRoute.path === 'minning' || router.currentRoute.path === 'trust') {
+          if(['/mining', '/trust'].includes(router.currentRoute.path)){
             router.push({
               path: '/error/needLogin',
-              query: { redirect: router.currentRoute.fullPath }
+              query: {
+                redirect: router.currentRoute.fullPath
+              }
             })
           }
         })
@@ -146,6 +152,9 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         commit('SET_WALLET_SELECTING', isSelecting)
       })
+    },
+    setLOOPToken({ commit }, token) {
+      commit('SET_LOOPTOKEN', token)
     },
   }
 })

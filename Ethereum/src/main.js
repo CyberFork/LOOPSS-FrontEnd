@@ -6,7 +6,6 @@ import storage from 'store'
 import Antd from 'ant-design-vue'
 import i18n from './locales'
 import config from '@/config'
-import Notification from 'ant-design-vue/es/notification'
 
 import 'assets/css/global.less' //全局样式
 
@@ -32,11 +31,11 @@ function checkRouter() {
       return
     }
 
-    // const qIvitationUrl = to.query.q
-    // if (qIvitationUrl) {
-    //   store.dispatch('SaveInvitation', qIvitationUrl)
-    //   router.push({ path: '/trust' })
-    // }
+    if (isLogin && to.path === '/error/needLogin') {
+      to.query.redirect ? next( to.query.redirect ) : next()
+      return
+    }
+
     next()
   })
 }
@@ -50,16 +49,10 @@ function initVue() {
   }).$mount('#app')
 }
 async function startApp() {
-  try {
-    await store.dispatch('Login')
-  } catch (err) {
-    Notification.error(JSON.stringify(err))
-  } finally {
-    console.log('after login')
-    store.dispatch('SetLang', lang)
-    store.dispatch('SetMenu', router.options.routes)
-    checkRouter()
-    initVue()
-  }
+  await store.dispatch('Login')
+  store.dispatch('SetLang', lang)
+  store.dispatch('SetMenu', router.options.routes)
+  checkRouter()
+  initVue()
 }
 startApp()
