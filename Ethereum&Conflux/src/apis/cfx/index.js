@@ -67,7 +67,7 @@ function initContract() {
     abi: LOOPPool_ABI,
     address: adLOOPPool
   })
-  store.dispatch('setLOOPToken', adLOOPPool)
+  store.dispatch('setLOOPToken', adLOOPToken)
 }
 
 if (cfx && conflux) {
@@ -226,14 +226,14 @@ const Api = {
     //检测是否Approve给LOOPToken合约
     console.log(cfx.defaultAccount, 'da')
     const approved = await icLoopsMeContract.allowance(cfx.defaultAccount, adLOOPToken, adLOOPToken).call()
-    if (parseInt(approved) === parseInt(0)) {
+    if (parseInt(approved) < parseInt(1)) {
       // await icLoopsMeContract.approve(adLOOPToken, adLOOPToken, web3js.utils.toBN('115792089237316195423570985008687907853269984665640564039457584007913129639935')).sendTransaction({ from: cfx.defaultAccount });
       await icLoopsMeContract.approve(adLOOPToken, adLOOPToken, MaxUint256).sendTransaction({
         from: cfx.defaultAccount
       })
       return Promise.resolve(false)
     } else {
-      await icLOOPTokenContract.wrap(web3js.utils.toBN(web3js.utils.toWei(String(_curToken)))).sendTransaction({
+      await icLOOPTokenContract.wrap(web3js.utils.toBN(web3js.utils.toWei(String(parseFloat(_curToken) - 0.0001)))).sendTransaction({
         from: cfx.defaultAccount
       })
       return Promise.resolve(true)

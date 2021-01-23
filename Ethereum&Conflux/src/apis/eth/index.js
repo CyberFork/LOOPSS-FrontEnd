@@ -142,7 +142,7 @@ function initContract(web3) {
   icLoopsMeContract = new web3.eth.Contract(LoopssMe_ABI, adLoopssMe)
   icLOOPTokenContract = new web3.eth.Contract(LOOPToken_ABI, adLOOPToken)
   icPoolContract = new web3.eth.Contract(LOOPPool_ABI, adLOOPPool)
-  store.dispatch('setLOOPToken', adLOOPPool)
+  store.dispatch('setLOOPToken', adLOOPToken)
 }
 
 const Api = {
@@ -351,7 +351,7 @@ const Api = {
         await icLoopsMeContract.methods.approve(adLOOPToken, adLOOPToken, MaxUint256).send({ from: account })
         return Promise.resolve(false)
       } else {
-        await icLOOPTokenContract.methods.wrap(web3.utils.toBN(web3.utils.toWei(String(_curToken)))).send({ from: account })
+        await icLOOPTokenContract.methods.wrap(web3.utils.toBN(web3.utils.toWei(String(parseFloat(_curToken) - 0.0001)))).send({ from: account })
         return Promise.resolve(true)
       }
       // 如果是，则调用wrap方法
