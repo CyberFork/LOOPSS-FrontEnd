@@ -1,0 +1,66 @@
+//less全局变量
+
+//用于计算尺寸
+@r: 10rem;
+
+.deep-card{
+  background:  #050C33;
+  box-shadow: 0 2 20/@r 0 #000000;
+  border-radius: 30/@r;
+  padding:40/@r 30/@r 80/@r;
+}
+
+.light-card{
+	position: relative;
+	border-radius: 40/@r;
+	background: linear-gradient(310deg, #243187 0%, #009CCF 100%);
+}
+//按钮
+.block-btn{
+	line-height: 80/@r;
+	font-size: 32/@r;
+	background:#00C1DC;
+	color: #fff;
+	cursor: pointer;
+	position: relative;
+	border-radius: 10/@r;
+	text-align: center;
+	&:hover{
+		background: #00E983;
+	}
+	&.disabled{
+		background: #aaa;
+		cursor: not-allowed;
+	}
+}
+//信任列表
+.trust-list{
+	position: relative;
+	&:before{
+		content: '';
+		display: block;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		background: linear-gradient(310deg, #243187 0%, #009CCF 100%);
+		border-radius: 30/@r;
+		opacity: 0.5;
+	}
+
+	.ant-list-item{
+		padding: 0 40/@r;
+		border: 0;
+		&:nth-child(2n + 1){
+			background: rgba(0, 0, 0, .3)
+		}
+		.list-item-wrap {
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+			padding: 0;
+			line-height: 88/@r;
+		}
+	}
+}
