@@ -111,7 +111,7 @@ export default new Vuex.Store({
           commit('SET_USER', '')
           commit('SET_WEB3', null)
           this.dispatch('HideLoading')
-          if(router.currentRoute.name === 'mining' || router.currentRoute.name === 'trust'){
+          if (router.currentRoute.path === 'minning' || router.currentRoute.path === 'trust') {
             router.push({
               path: '/error/needLogin',
               query: { redirect: router.currentRoute.fullPath }
