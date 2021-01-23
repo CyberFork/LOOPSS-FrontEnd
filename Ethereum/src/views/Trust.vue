@@ -254,7 +254,7 @@ export default {
           line-height: 80 / @r;
           color: #010101;
           text-align: center;
-          padding-right: 95px;
+          padding-right: 96 / @r;
         }
         /deep/ .ant-input-search-icon svg,
         /deep/ .ant-input-clear-icon svg {
