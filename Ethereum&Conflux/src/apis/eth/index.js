@@ -280,7 +280,7 @@ const Api = {
       if (time > 3600) {
         time = parseInt(time / 3600) + ':' + parseInt(((time % 3600) / 60)) + ':' + time % 60
       } else {
-        time = time + '秒'
+        time = time + ' s'
       }
     }
     return time

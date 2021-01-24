@@ -165,7 +165,7 @@ const Api = {
       if (time > 3600) {
         time = parseInt(time / 3600) + ':' + parseInt(((time % 3600) / 60)) + ':' + time % 60
       } else {
-        time = time + '秒'
+        time = time + ' s'
       }
     }
     return time
@@ -277,7 +277,7 @@ const Api = {
     //挖矿-获取我信任的人
     // console.log(trustSet)
     return Promise.resolve({
-      total: '日志开发中',
+      total: 'Developing...',
       list: trustSet
     })
   },

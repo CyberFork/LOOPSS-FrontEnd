@@ -18,7 +18,7 @@
             <a-text>{{ $t("mining.info.slogan2") }}</a-text>
           </div>
           <div>
-            LOOP合约地址：{{LOOPToken}}
+            {{ $t("mining.info.loopAddress") }}：{{LOOPToken}}
             <a-icon type="copy" @click="copyFn(LOOPToken)" />
           </div>
         </div>
@@ -90,13 +90,13 @@
           >
             <div class="top">
               <div class="title">
-                您的矿池尚未解锁
+                 {{ $t("mining.mining.locked") }}
                 <div class="sub-title">
-                  <a-text>步骤 1/2 您需要邀请3位好友信任您</a-text>
+                  <a-text>{{$t("mining.mining.steps.step1.info")}}</a-text>
                   <a-tooltip placement="bottomRight">
-                    <template slot="title">复制当前任务中邀请链接，邀请三人信任之后可启动挖矿权限</template>
+                    <template slot="title">{{$t("mining.mining.steps.step1.desc")}}</template>
                     <a-text link class="f-r">
-                      如何被信任
+                      {{$t("mining.mining.steps.step1.how")}}
                       <a-icon type="question-circle" />
                     </a-text>
                   </a-tooltip>
@@ -137,7 +137,7 @@
                 }"
                 @click="toTaskTwo"
               >
-                下一步
+                {{$t("mining.mining.steps.next")}}
               </div>
             </div>
           </div>
@@ -151,13 +151,13 @@
           >
             <div class="top">
               <div class="title">
-                您的矿池尚未解锁
+                 {{ $t("mining.mining.locked") }}
                 <div class="sub-title">
-                  <a-text>步骤 2/2 点击信任LOOP，即可开始挖</a-text>
+                  <a-text>{{$t("mining.mining.steps.step2.info")}}</a-text>
                   <a-tooltip placement="bottomRight">
-                    <template slot="title">挖矿赚取LOOP需要信任LOOPToken的地址之后才能收到LOOP的转账。</template>
+                    <template slot="title">{{$t("mining.mining.steps.step2.desc")}}</template>
                     <a-text link class="f-r">
-                      为什么
+                      {{$t("mining.mining.steps.step2.why")}}
                       <a-icon type="question-circle" />
                     </a-text>
                   </a-tooltip>
@@ -183,10 +183,10 @@
           >
             <div class="top">
               <div class="title">
-                您的矿池已经解锁
+                 {{ $t("mining.mining.unlocked") }}
                 <div class="sub-title">
                   <a-text
-                    >太棒了！您已经完成所有步骤啦，自动挖矿已经开始了</a-text
+                    >{{$t("mining.mining.steps.step3.info")}}</a-text
                   >
                 </div>
               </div>
@@ -195,7 +195,7 @@
               <img src="@/assets/img/icon_green.png" alt="" />
             </div>
             <div class="bottom">
-              <div class="block-btn" @click="showMiningInfoFn">查看矿池</div>
+              <div class="block-btn" @click="showMiningInfoFn">{{$t("mining.mining.view")}}</div>
             </div>
           </div>
         </a-spin>
@@ -209,7 +209,7 @@
             {{ $t("mining.task.info") }}
           </a-text>
           <div class="share-content ellipsis">{{ inviteLink }}{{ user }}</div>
-          <div class="block-btn" @click="copyFn(inviteLink + user)">复制</div>
+          <div class="block-btn" @click="copyFn(inviteLink + user)"> {{ $t("mining.task.copy") }}</div>
         </div>
       </div>
       <div class="trusts-container">

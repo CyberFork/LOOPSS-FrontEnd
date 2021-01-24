@@ -45,7 +45,8 @@ const locale = {
     info: {
       title: '欢迎进入信任关系的未来',
       slogan1: '您需要邀请',
-      slogan2: '位好友信任您，即可开始挖取 LOOP'
+      slogan2: '位好友信任您，即可开始挖取 LOOP',
+      loopAddress: 'LOOP合约地址'
     },
     mining: {
       title: '你获得的 LOOP',
@@ -55,12 +56,32 @@ const locale = {
       tip1: '剩余领取时间',
       tip2: '过期后LOOP会消失，请每天按时领取',
       btnTip: '领取到余额 & 更新信任算力',
-      btnTip1: '信任 LOOP 代币'
+      btnTip1: '信任 LOOP 代币',
+      unlocked: '您的矿池已经解锁',
+      locked: '您的矿池尚未解锁',
+      steps: {
+        step1: {
+          info: '步骤 1/2 您需要邀请3位好友信任您',
+          desc: '复制当前任务中邀请链接，邀请三人信任之后可启动挖矿权限',
+          how: '如何被信任'
+        },
+        next: '下一步',
+        step2: {
+          info: '步骤 2/2 点击信任LOOP，即可开始挖',
+          desc: '挖矿赚取LOOP需要信任LOOPToken的地址之后才能收到LOOP的转账。',
+          why: '为什么'
+        },
+        step3: {
+          info: '太棒了！您已经完成所有步骤啦，自动挖矿已经开始了',
+        }
+      },
+      view: '查看矿池',
     },
     task: {
       title: '当前任务',
       info: '邀请您的朋友或您认识的人，参与信任关系认证，解锁挖矿特权',
-      shareTip: '或以下列方式分享'
+      shareTip: '或以下列方式分享',
+      copy: '复制'
     },
     invited: {
       title: '信任你的人',

@@ -45,7 +45,8 @@ const locale = {
     info: {
       title: 'Welcome to the future of trust',
       slogan1: 'You need to invite',
-      slogan2: 'friends to trust you to start digging the LOOP'
+      slogan2: 'friends to trust you to start digging the LOOP',
+      loopAddress: 'LOOP contract address'
     },
     mining: {
       title: 'You get the LOOP',
@@ -55,12 +56,32 @@ const locale = {
       tip1: 'Remaining collection time',
       tip2: 'After expiration, the LOOP will disappear. Please pick it up on time every day',
       btnTip: 'Harvest & Update power',
-      btnTip1: 'Trust LOOPToken'
+      btnTip1: 'Trust LOOPToken',
+      unlocked: 'Unlocked',
+      locked: 'Locked',
+      steps: {
+        step1: {
+          info: 'Step 1/2 your address needs three trusts',
+          desc: 'Copy the link，start mining after inviting three more people to trust',
+          how: 'How'
+        },
+        next: 'Next',
+        step2: {
+          info: 'Step 2/2 Click LOOP button to start',
+          desc: 'Trust LOOPToken before mining',
+          why: 'Why'
+        },
+        step3: {
+          info: 'Awesome! Mining has started',
+        }
+      },
+      view: 'View',
     },
     task: {
       title: 'The current task',
       info: 'Invite your friends or acquaintances to participate in trust relationship authentication and unlock mining privileges',
-      shareTip: 'Or share in the following ways'
+      shareTip: 'Or share in the following ways',
+      copy: 'COPY'
     },
     invited: {
       title: 'Trusted person who has been invited',
