@@ -94,6 +94,7 @@ export default new Vuex.Store({
       commit
     }, params) {
       const redirect = router.currentRoute.query.redirect || router.currentRoute.path
+      console.log('登录')
       return Api.login(params)
         .then(({ account }) => {
           if (account) {
@@ -114,6 +115,7 @@ export default new Vuex.Store({
         .finally(() => {
           commit('SET_USER', '')
           commit('SET_WEB3', null)
+          console.log(router.currentRoute, ['/mining', '/trust'].includes(router.currentRoute.path))
           this.dispatch('HideLoading')
           if(['/mining', '/trust'].includes(router.currentRoute.path)){
             router.push({

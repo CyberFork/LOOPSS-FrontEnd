@@ -3,4 +3,5 @@ import cfxApi from './cfx'
 
 console.log(ethApi)
 console.log(cfxApi)
-export default ethApi
+// export default ethApi
+export default cfxApi

@@ -72,11 +72,11 @@ function initContract() {
 
 if (cfx && conflux) {
   conflux.autoRefreshOnNetworkChange = true
-  conflux.on('accountsChanged', function (accounts) {
-    store.dispatch('Logout')
-    store.dispatch('Login')
-  })
   initContract()
+  // conflux.on('accountsChanged', function (accounts) {
+  //   store.dispatch('Logout')
+  //   store.dispatch('Login')
+  // })
 }
 // conflux.on('networkChanged', function (networkId) {
 //   switch (parseInt(networkId)) {
