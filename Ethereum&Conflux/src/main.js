@@ -49,7 +49,6 @@ function initVue() {
   }).$mount('#app')
 }
 async function startApp() {
-  console.log(11111111111)
   await store.dispatch('Login')
   store.dispatch('SetLang', lang)
   store.dispatch('SetMenu', router.options.routes)

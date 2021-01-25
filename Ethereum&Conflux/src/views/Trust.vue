@@ -133,7 +133,7 @@ export default {
   methods: {
     copyFn(content) {
       toCopy(content).then(() => {
-        this.$message.success("复制成功");
+        this.$message.success(this.$t('message.copySuccess'));
       });
     },
     onSearch() {
@@ -200,7 +200,7 @@ export default {
       this.yourTrusts.pn++
       this.yourTrusts.list = []
       if (this.yourTrusts.total && this.yourTrusts.list.length >= this.yourTrusts.total) {
-        this.$message.warning("到底了");
+        this.$message.warning(this.$t('noMore'));
         this.yourTrusts.loading = false;
         this.yourTrusts.busy = false;
         return;

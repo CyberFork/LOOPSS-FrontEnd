@@ -3,19 +3,19 @@
     <span><slot></slot></span>
     <a-tooltip placement="top" v-if="!status">
       <template slot="title">
-        <span>复制</span>
+        <span>{{ $t('message.copy') }}</span>
       </template>
       <a-icon type="copy" @click.stop.prevent="copy" />
     </a-tooltip>
     <a-tooltip placement="top" v-else-if="status == 1">
       <template slot="title">
-        <span>复制成功</span>
+        <span>{{ $t('message.copySuccess') }}</span>
       </template>
       <a-icon type="smile" style="color:#52c41a" />
     </a-tooltip>
     <a-tooltip placement="top" v-else-if="status == 2">
       <template slot="title">
-        <span>复制失败</span>
+        <span>{{ $t('message.copyFail') }}</span>
       </template>
       <a-icon type="frown" style="color:#f00" />
     </a-tooltip>

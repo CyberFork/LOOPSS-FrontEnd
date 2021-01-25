@@ -11,6 +11,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    isConflux: false,
     user: '',
     menu: [],
     curLang: config.lang, //中zh-CN 英en-US
@@ -52,7 +53,10 @@ export default new Vuex.Store({
     },
     SET_LOOPTOKEN(state, token) {
       state.LOOPToken = token
-    }
+    },
+    SET_CONFLUX(state, bool) {
+      state.isConflux = bool
+    },
   },
   actions: {
     SaveInvitation({
@@ -115,7 +119,7 @@ export default new Vuex.Store({
         .finally(() => {
           commit('SET_USER', '')
           commit('SET_WEB3', null)
-          console.log(router.currentRoute, ['/mining', '/trust'].includes(router.currentRoute.path))
+          console.log('登出', router.currentRoute, ['/mining', '/trust'].includes(router.currentRoute.path))
           this.dispatch('HideLoading')
           if(['/mining', '/trust'].includes(router.currentRoute.path)){
             router.push({
@@ -155,8 +159,11 @@ export default new Vuex.Store({
         commit('SET_WALLET_SELECTING', isSelecting)
       })
     },
-    setLOOPToken({ commit }, token) {
+    SetLOOPToken({ commit }, token) {
       commit('SET_LOOPTOKEN', token)
+    },
+    SetConflux({ commit }, bool) {
+      commit('SET_CONFLUX', bool)
     },
   }
 })

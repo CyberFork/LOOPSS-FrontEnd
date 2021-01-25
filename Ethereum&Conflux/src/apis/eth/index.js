@@ -142,7 +142,7 @@ function initContract(web3) {
   icLoopsMeContract = new web3.eth.Contract(LoopssMe_ABI, adLoopssMe)
   icLOOPTokenContract = new web3.eth.Contract(LOOPToken_ABI, adLOOPToken)
   icPoolContract = new web3.eth.Contract(LOOPPool_ABI, adLOOPPool)
-  store.dispatch('setLOOPToken', adLOOPToken)
+  store.dispatch('SetLOOPToken', adLOOPToken)
 }
 
 const Api = {
@@ -274,16 +274,18 @@ const Api = {
   },
   //时间格式化
   _getDateTime(time) {
-    if (time >= 60 && time <= 3600) {
-      time = parseInt(time / 60) + ':' + time % 60
-    } else {
-      if (time > 3600) {
-        time = parseInt(time / 3600) + ':' + parseInt(((time % 3600) / 60)) + ':' + time % 60
-      } else {
-        time = time + '秒'
-      }
-    }
-    return time
+    let mTime = moment.duration(time, 'seconds')
+    return moment({ h: mTime.hours(), m: mTime.minutes(), s: mTime.seconds() }).format('HH:mm:ss')
+    // if (time >= 60 && time <= 3600) {
+    //   time = parseInt(time / 60) + ':' + time % 60
+    // } else {
+    //   if (time > 3600) {
+    //     time = parseInt(time / 3600) + ':' + parseInt(((time % 3600) / 60)) + ':' + time % 60
+    //   } else {
+    //     time = time + ' s'
+    //   }
+    // }
+    // return time
   },
   async getMyInfo() {
     if (!web3js()) return
@@ -293,9 +295,9 @@ const Api = {
       const myTrustCount = (await icLoopsMeContract.methods.getAccountInfoOf(account).call()).beenTrustCount
       const needTrust = myTrustCount > 3 ? 0 : 3 - myTrustCount
       // 获取未领取数量
-      const unClaim = this._formatBigNumber(await icPoolContract.methods.unClaimOf(account).call())
+      const unClaim = await this._formatBigNumber(await icPoolContract.methods.unClaimOf(account).call())
       // 获取当前未包装余额
-      const unWrappedLOOP = this._formatBigNumber(await icLoopsMeContract.methods.minterBalanceOf(adLOOPToken, account).call())
+      const unWrappedLOOP = await this._formatBigNumber(await icLoopsMeContract.methods.minterBalanceOf(adLOOPToken, account).call())
       // 获取当前已经包装余额
       // 获取当前信任挖矿算力
       const myMiningTrustCount = await icPoolContract.methods.minerTrustCount(account).call()
@@ -303,7 +305,7 @@ const Api = {
       const myLastUpdateTime = await icPoolContract.methods.minerLastUpdateTime(account).call()
       const myDate = new Date()
       const dTime = 86400 - (parseInt(myDate.getTime() / 1000) - (myLastUpdateTime))//直接得到的第三个Trust时间戳
-      const remindTime = this._getDateTime(dTime)
+      const remindTime = this._getDateTime(dTime < 0 ? 0 : dTime)
       // 判定是否Trust了LOOP
       let _ifTrustLOOP
       if (parseInt(await icLoopsMeContract.methods.getProportionReceiverTrustedSender(account, adLOOPToken).call()) > 0) {

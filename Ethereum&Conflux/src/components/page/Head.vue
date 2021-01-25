@@ -1,14 +1,14 @@
 <template>
   <a-layout-header :class="{ 'global-head': true, 'mobile-head': isMobile }">
     <a-row class="head-wrap" type="flex" justify="center" align="top">
-      <a-col :xs="22" :sm="22" :md="20" :lg="18" :xl="16">
+      <a-col :xs="22" :sm="22" :md="20" :lg="20" :xl="16">
         <slot></slot>
         <template v-if="!isMobile">
           <div v-if="user" class="content">
             <a-space size="large">
               <div>{{ user | formatUser }} <a-icon type="copy" @click="copyFn(user)" /></div>
               <a-text link @click="logout"> {{ $t("head.logout") }} </a-text>
-              <a-avatar size="large" src="@/assets/img/user.png" />
+              <img class="user-icon" src="@/assets/img/user.png" />
               <!-- <select-lang /> -->
             </a-space>
           </div>
@@ -58,7 +58,7 @@ export default {
   methods: {
     copyFn(content) {
       toCopy(content).then(() => {
-        this.$message.success('复制成功')
+        this.$message.success(this.$t('message.copySuccess'))
       })
     },
     login() {
@@ -88,7 +88,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 99;
+  z-index: 2;
   padding-left: 210/@r;
   width: 100%;
   background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, .7));
@@ -98,6 +98,11 @@ export default {
   }
   .head-wrap{
     width: 100%;
+    .user-icon{
+      width: 40 / @r;
+      height: 40 / @r;
+      border-radius: 100%;
+    }
   }
   &.mobile-head{
     padding-left: 0;

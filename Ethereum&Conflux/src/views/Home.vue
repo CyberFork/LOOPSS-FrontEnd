@@ -41,10 +41,14 @@
         </div>
       </div>
       <div class="login-wrap" v-show="!user">
-        <div class="title">选择以下方式登录</div>
-        <div class="login-btn block-btn" @click="login">
+        <div class="title">{{ $t("home.loginBtn.title") }}</div>
+        <div v-if="isConflux" class="login-btn block-btn" @click="login">
+          <img src="@/assets/img/cfx.png" alt="">
+          <a-text>{{ $t("home.loginBtn.btnTextCfx") }}</a-text>
+        </div>
+        <div v-else class="login-btn block-btn" @click="login">
           <img src="@/assets/img/metamask.png" alt="">
-          <a-text>以Metamask 登录</a-text>
+          <a-text>{{ $t("home.loginBtn.btnTextEth") }}</a-text>
         </div>
       </div>
       <share-box></share-box>
@@ -53,7 +57,6 @@
 </template>
 <script>
 import countTo from 'vue-count-to'
-import { toCopy } from 'assets/js/util'
 import Api from '@/apis'
 export default {
   components: {
@@ -62,6 +65,9 @@ export default {
   computed: {
     user() {
       return this.$store.state.user
+    },
+    isConflux() {
+      return this.$store.state.isConflux
     }
   },
   data() {
@@ -76,11 +82,6 @@ export default {
     }
   },
   methods: {
-    copyFn(content) {
-      toCopy(content).then(() => {
-        this.$message.success('复制成功')
-      })
-    },
     clearTimer(){
       this.infoTimer && clearInterval(this.infoTimer)
       this.infoTimer = null

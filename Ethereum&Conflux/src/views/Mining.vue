@@ -18,7 +18,7 @@
             <a-text>{{ $t("mining.info.slogan2") }}</a-text>
           </div>
           <div>
-            LOOP合约地址：{{LOOPToken}}
+            {{ $t("mining.info.loopAddress") }}：{{LOOPToken}}
             <a-icon type="copy" @click="copyFn(LOOPToken)" />
           </div>
         </div>
@@ -90,13 +90,13 @@
           >
             <div class="top">
               <div class="title">
-                您的矿池尚未解锁
+                 {{ $t("mining.mining.locked") }}
                 <div class="sub-title">
-                  <a-text>步骤 1/2 您需要邀请3位好友信任您</a-text>
+                  <a-text>{{$t("mining.mining.steps.step1.info")}}</a-text>
                   <a-tooltip placement="bottomRight">
-                    <template slot="title">复制当前任务中邀请链接，邀请三人信任之后可启动挖矿权限</template>
+                    <template slot="title">{{$t("mining.mining.steps.step1.desc")}}</template>
                     <a-text link class="f-r">
-                      如何被信任
+                      {{$t("mining.mining.steps.step1.how")}}
                       <a-icon type="question-circle" />
                     </a-text>
                   </a-tooltip>
@@ -137,7 +137,7 @@
                 }"
                 @click="toTaskTwo"
               >
-                下一步
+                {{$t("mining.mining.steps.next")}}
               </div>
             </div>
           </div>
@@ -151,13 +151,13 @@
           >
             <div class="top">
               <div class="title">
-                您的矿池尚未解锁
+                 {{ $t("mining.mining.locked") }}
                 <div class="sub-title">
-                  <a-text>步骤 2/2 点击信任LOOP，即可开始挖</a-text>
+                  <a-text>{{$t("mining.mining.steps.step2.info")}}</a-text>
                   <a-tooltip placement="bottomRight">
-                    <template slot="title">挖矿赚取LOOP需要信任LOOPToken的地址之后才能收到LOOP的转账。</template>
+                    <template slot="title">{{$t("mining.mining.steps.step2.desc")}}</template>
                     <a-text link class="f-r">
-                      为什么
+                      {{$t("mining.mining.steps.step2.why")}}
                       <a-icon type="question-circle" />
                     </a-text>
                   </a-tooltip>
@@ -183,10 +183,10 @@
           >
             <div class="top">
               <div class="title">
-                您的矿池已经解锁
+                 {{ $t("mining.mining.unlocked") }}
                 <div class="sub-title">
                   <a-text
-                    >太棒了！您已经完成所有步骤啦，自动挖矿已经开始了</a-text
+                    >{{$t("mining.mining.steps.step3.info")}}</a-text
                   >
                 </div>
               </div>
@@ -195,7 +195,7 @@
               <img src="@/assets/img/icon_green.png" alt="" />
             </div>
             <div class="bottom">
-              <div class="block-btn" @click="showMiningInfoFn">查看矿池</div>
+              <div class="block-btn" @click="showMiningInfoFn">{{$t("mining.mining.view")}}</div>
             </div>
           </div>
         </a-spin>
@@ -209,7 +209,7 @@
             {{ $t("mining.task.info") }}
           </a-text>
           <div class="share-content ellipsis">{{ inviteLink }}{{ user }}</div>
-          <div class="block-btn" @click="copyFn(inviteLink + user)">复制</div>
+          <div class="block-btn" @click="copyFn(inviteLink + user)"> {{ $t("mining.task.copy") }}</div>
         </div>
       </div>
       <div class="trusts-container">
@@ -276,13 +276,14 @@ import store from "store";
 import Api from "@/apis";
 import infiniteScroll from "vue-infinite-scroll";
 
+let timer = null //挖矿时间倒计时定时器
+let infoTimer = null //获取挖矿信息定时器
 export default {
   directives: {
     infiniteScroll,
   },
   data() {
     return {
-      timer: null,
       inviteLink: location.origin + "/#/trust?q=",
       myInfo: {
         loading: false,
@@ -318,7 +319,7 @@ export default {
   methods: {
     copyFn(content) {
       toCopy(content).then(() => {
-        this.$message.success("复制成功");
+        this.$message.success(this.$t('message.copySuccess'));
       });
     },
     showMiningInfoFn() {
@@ -335,9 +336,6 @@ export default {
         .then(async (res) => {
           console.log("getMyInfo mining:", res);
           this.myInfo = Object.assign(this.myInfo, res);
-          this.myInfo.needInviteCount = await res.needInviteCount;
-          this.myInfo.curToken = await res.curToken;
-          this.myInfo.unClaimTokens = await res.unClaimTokens;
           return res
         })
         .finally(() => {
@@ -347,26 +345,21 @@ export default {
     trustLOOPToken() {
       this.myInfo.loading = true;
       Api.addTrust("0x8adeed9ba5656855622877825f7971fd475fe1b3")
-        .then((res) => {
-          this.getMyInfo();
-        })
-        .catch(() => {
-          this.myInfo.loading = false;
-        });
+      .finally(() => {
+        this.myInfo.loading = false;
+      });
     },
     updateAndClaim() {
       this.myInfo.loading = true;
       Api.updateAndClaim()
         .then((res) => {
           if (res) {
-            this.$message.success("收获 & 更新成功");
-            this.getMyInfo();
+            this.$message.success(this.$t('message.harvestSuccess'));
           } else {
-            this.$message.warning("信任数量不足");
-            this.myInfo.loading = false;
+            this.$message.warning(this.$t('message.harvestFail'));
           }
         })
-        .catch(() => {
+        .finally(() => {
           this.myInfo.loading = false;
         });
     },
@@ -378,17 +371,14 @@ export default {
           //如果未approve则提示approve
           if (res) {
             this.$message.success(
-              "包装Token成功。复制LOOP地址添加到钱包查看。"
+              this.$t('message.packSuccess')
             );
-            this.getMyInfo();
           } else {
             // 未Approve
-            this.$message.success("已Approve包装合约");
-            this.getMyInfo();
+            this.$message.success(this.$t('message.packed'));
           }
-          this.myInfo.loading = false;
         })
-        .catch(() => {
+        .finally(() => {
           this.myInfo.loading = false;
         });
     },
@@ -400,7 +390,7 @@ export default {
         this.yourTrusts.total &&
         this.yourTrusts.list.length >= this.yourTrusts.total
       ) {
-        this.$message.warning("到底了");
+        this.$message.warning(this.$t('noMore'));
         this.yourTrusts.loading = false;
         this.yourTrusts.busy = false;
         return;
@@ -418,9 +408,19 @@ export default {
           this.yourTrusts.busy = false;
         });
     },
+    clockTimer(time) {
+      let seconds = moment.duration(time).as('seconds')
+      timer && clearInterval(timer)
+      timer = setInterval(() => {
+        seconds--
+        let mTime = moment.duration(seconds, 'seconds')
+        this.myInfo.time = moment({ h: mTime.hours(), m: mTime.minutes(), s: mTime.seconds() }).format('HH:mm:ss')
+      }, 1000);
+    }
   },
   created() {
-    this.getMyInfo().then(async (res) => {
+    this.getMyInfo()
+    .then(async (res) => {
       if (res.needInviteCount < 1 && store.get("showTaskTwo") === this.user) {
         this.myInfo.showTaskTwo = true;
       }
@@ -428,18 +428,22 @@ export default {
       if (res.ifTrustLOOP && store.get("showMiningInfo") === this.user) {
         this.myInfo.showMiningInfo = true;
       }
-      return res;
+      this.clockTimer(this.myInfo.time)
+      infoTimer && clearInterval(infoTimer)
+      infoTimer = setInterval(() => {
+        Api.getMyInfo().then(res => {
+          this.myInfo = Object.assign(this.myInfo, res);
+          console.log('轮询', res)
+          this.clockTimer(this.myInfo.time)
+        });
+      }, 5000);
     });
-    this.timer = null;
-    this.timer = setInterval(() => {
-      // Api.getMyInfo().then(async (res) => {
-      //   this.myInfo = Object.assign(this.myInfo, res);
-      // });
-      this.getMyInfo();
-    }, 8000);
   },
   beforeDestroy() {
-    this.timer && clearInterval(this.timer);
+    infoTimer && clearInterval(infoTimer);
+    timer && clearInterval(timer)
+    infoTimer = null
+    timer = null
   },
 };
 </script>

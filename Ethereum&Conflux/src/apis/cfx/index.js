@@ -67,16 +67,13 @@ function initContract() {
     abi: LOOPPool_ABI,
     address: adLOOPPool
   })
-  store.dispatch('setLOOPToken', adLOOPToken)
+  store.dispatch('SetLOOPToken', adLOOPToken)
 }
 
 if (cfx && conflux) {
   conflux.autoRefreshOnNetworkChange = true
+  store.dispatch('SetConflux', true)
   initContract()
-  // conflux.on('accountsChanged', function (accounts) {
-  //   store.dispatch('Logout')
-  //   store.dispatch('Login')
-  // })
 }
 // conflux.on('networkChanged', function (networkId) {
 //   switch (parseInt(networkId)) {
@@ -102,29 +99,32 @@ if (cfx && conflux) {
 
 const Api = {
   //TODO研究如何在切换时新增账号连接
-  login(params) {
+  async login() {
     //登录
+    let account = ''
     if (!cfx || !conflux) {
       errorNotic('请安装 Conflux Portal 或在 conflux浏览器中运行')
       return Promise.reject(new Error('不支持conflux'))
     }
+
     if (cfx.defaultAccount) {
-      return Promise.resolve({
-        account: cfx.defaultAccount
-      })
-    }
-    return conflux.enable()
+      account = cfx.defaultAccount
+    } else {
+      await conflux.enable()
       .then(function (accounts) {
         //现在只能使用then异步的方式返回单个了
         console.log('Now account:', accounts);
-        if (!accounts) {
+        if (!accounts || !accounts[0]) {
           errorNotic('No address')
-          return;
+          return Promise.reject(new Error('不支持conflux'));
         }
-        return {
-          account: accounts[0]
-        }
-      });
+        account = accounts[0]
+      })
+    }
+    conflux.on('accountsChanged', async function (accounts) {
+      !accounts[0] && store.dispatch('Logout')
+    })
+    return Promise.resolve({ account })
   },
   logout() {
     //登出
@@ -159,16 +159,18 @@ const Api = {
   },
   //时间格式化
   _getDateTime(time) {
-    if (time >= 60 && time <= 3600) {
-      time = parseInt(time / 60) + ':' + time % 60
-    } else {
-      if (time > 3600) {
-        time = parseInt(time / 3600) + ':' + parseInt(((time % 3600) / 60)) + ':' + time % 60
-      } else {
-        time = time + '秒'
-      }
-    }
-    return time
+    let mTime = moment.duration(time, 'seconds')
+    return moment({ h: mTime.hours(), m: mTime.minutes(), s: mTime.seconds() }).format('HH:mm:ss')
+    // if (time >= 60 && time <= 3600) {
+    //   time = parseInt(time / 60) + ':' + time % 60
+    // } else {
+    //   if (time > 3600) {
+    //     time = parseInt(time / 3600) + ':' + parseInt(((time % 3600) / 60)) + ':' + time % 60
+    //   } else {
+    //     time = time + ' s'
+    //   }
+    // }
+    // return time
   },
   async getMyInfo() {
     // 被信任数量计算还需信任数量
@@ -277,7 +279,7 @@ const Api = {
     //挖矿-获取我信任的人
     // console.log(trustSet)
     return Promise.resolve({
-      total: '日志开发中',
+      total: 'Developing...',
       list: trustSet
     })
   },
